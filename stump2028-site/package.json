@@ -1,0 +1,15 @@
+{
+  "name": "stump2028-site",
+  "version": "1.0.0",
+  "description": "This folder is the whole site:",
+  "main": "config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
