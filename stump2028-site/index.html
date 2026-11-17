@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STUMP 2028 — The Campaign Trail</title>
+<script src="config.js" onerror="window.STUMP_CONFIG=window.STUMP_CONFIG||{}"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e131d; --panel:#151c2a; --panel2:#1b2436; --line:#27324a; --ink:#ece6d8; --mut:#8e97ab;
+  --gold:#e3b24f; --D:#4b80e2; --R:#e0544b; --good:#5fbf8a; --bad:#e0716b;
+  --disp:'Fraunces',Georgia,serif; --sans:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45}
+button{font-family:inherit;cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--disp);margin:0;font-weight:700;letter-spacing:-.01em}
+.mono{font-family:var(--mono)}
+.mut{color:var(--mut)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+
+/* ---------- Title / setup ---------- */
+#title{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;
+  background:radial-gradient(1200px 600px at 20% -10%,rgba(75,128,226,.18),transparent 60%),radial-gradient(1000px 600px at 110% 110%,rgba(224,84,75,.16),transparent 60%),var(--bg)}
+.tbox{max-width:880px;width:100%}
+.logo{font-family:var(--disp);font-weight:900;font-size:clamp(56px,11vw,120px);line-height:.88;letter-spacing:-.04em}
+.logo span{color:var(--gold)}
+.tag{font-family:var(--disp);font-size:22px;color:var(--mut);margin:10px 0 26px}
+.stripe{height:6px;background:linear-gradient(90deg,var(--D) 0 50%,var(--R) 50% 100%);width:220px;margin:18px 0}
+.setgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}
+.opt{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.opt label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.seg{display:flex;flex-direction:column;gap:6px}
+.seg button{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:8px 10px;border-radius:7px;text-align:left;font-size:13px}
+.seg button.on{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold)}
+.seg button small{display:block;color:var(--mut);font-size:11.5px}
+.big{background:var(--gold);color:#1b1407;border:0;padding:14px 26px;border-radius:9px;font-weight:600;font-size:16px}
+.big:hover{filter:brightness(1.08)}
+.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);padding:12px 20px;border-radius:9px;font-size:14px}
+.tbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px}
+.ghost.sm{padding:7px 12px;font-size:13px}
+.big.alt{background:transparent;color:var(--gold);border:2px solid var(--gold)}
+.tin{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:10px 12px;border-radius:8px;font-size:15px;font-family:inherit;margin-top:4px}
+.tin:focus{outline:none;border-color:var(--gold)}
+.lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-top:12px}
+.seg button.on{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold)}
+#modal.opaque{background:#0b0f17;backdrop-filter:none}
+.bigcode{font-family:var(--mono);font-size:44px;letter-spacing:.3em;color:var(--gold);text-align:center;padding:14px;border:2px dashed var(--gold);border-radius:12px;margin:12px 0}
+#draft{min-height:100vh;padding:24px clamp(14px,4vw,48px) 60px}
+.dtitle{font-size:36px;margin:4px 0 8px}
+.dlot{background:var(--panel);border:1px solid var(--gold);border-radius:14px;padding:18px;margin:16px 0;max-width:820px}
+.dlot h2{font-size:30px;margin:4px 0}
+.bidrow{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:12px}
+.bidrow label{font-size:12px;color:var(--mut);display:flex;flex-direction:column}
+.bidin{width:150px;font-family:var(--mono);font-size:20px}
+.dsides{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1100px}
+.dside{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.dside.me{border-color:var(--gold)}
+.dhd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dhd b{font-family:var(--disp);font-size:19px}
+.dbud{margin-left:auto;color:var(--gold);font-size:15px}
+@media (max-width:760px){.dsides{grid-template-columns:1fr}}
+.disc{font-size:12px;color:var(--mut);margin-top:22px;max-width:720px}
+
+#pick{min-height:100vh;padding:28px clamp(16px,4vw,48px)}
+.ptabs{display:flex;gap:10px;margin:16px 0 20px}
+.ptabs button{flex:0 0 auto;padding:10px 18px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:600}
+.ptabs button.onD{border-color:var(--D);background:rgba(75,128,226,.15)}
+.ptabs button.onR{border-color:var(--R);background:rgba(224,84,75,.15)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;transition:transform .12s,border-color .12s;position:relative}
+.card:hover{transform:translateY(-2px);border-color:var(--gold)}
+.card.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.card .pin{position:absolute;top:14px;right:14px;width:10px;height:10px;border-radius:50%}
+.card h3{font-size:21px}
+.wcard{background:linear-gradient(160deg,#1d1a2c,#151c2a 60%);border-color:#4a3f6e}
+.wctag{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#c9a8ff;margin-bottom:6px}
+.wcrules{margin:10px 0 6px;padding-left:16px;font-size:12px;color:var(--ink)}
+.wcrules li{margin:2px 0}
+.wcch{font-size:12px;border:1px dashed #6d5aa8;border-radius:7px;padding:6px 8px;color:#d9ccff}
+.wchead{grid-column:1/-1;margin-top:14px;border-top:1px solid var(--line);padding-top:16px}
+.wchead h3{font-size:24px;margin:4px 0}
+.card .role{color:var(--mut);font-size:12.5px;margin:2px 0 10px}
+.card .trait{font-size:12.5px;border-left:2px solid var(--gold);padding-left:8px;margin:8px 0 12px}
+.statrow{display:grid;grid-template-columns:88px 1fr 18px;gap:8px;align-items:center;font-size:11.5px;color:var(--mut);margin:3px 0}
+.bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold)}
+.stancebox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:20px}
+.stance{display:grid;grid-template-columns:200px 1fr;gap:16px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.stance:first-of-type{border-top:0}
+.stance .nm{font-weight:600}
+.stance .nm small{display:block;color:var(--mut);font-weight:400;font-size:11.5px}
+.five{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.five button{background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-size:11.5px;padding:7px 6px;border-radius:6px;line-height:1.25;min-height:46px}
+.five button.on{border-color:var(--gold);background:rgba(227,178,79,.14)}
+.five button.orig{outline:1px dashed var(--mut);outline-offset:-4px}
+.axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--mut);letter-spacing:.1em;margin-bottom:4px}
+
+/* ---------- Game layout ---------- */
+#game{display:grid;grid-template-rows:auto 1fr;min-height:100vh}
+.top{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:10px 18px;background:#0b0f17;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.top .who{display:flex;align-items:center;gap:10px;margin-right:auto}
+.top .who b{font-family:var(--disp);font-size:19px}
+.menubtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:6px 11px;border-radius:7px;font-size:13px;font-weight:600}
+.menubtn:hover{border-color:var(--gold)}
+.chip{font-family:var(--mono);font-size:10px;padding:3px 7px;border-radius:4px;letter-spacing:.08em}
+.res{display:flex;gap:16px;flex-wrap:wrap}
+.r{display:flex;flex-direction:column;min-width:64px}
+.r span{font-family:var(--mono);font-size:10px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase}
+.r b{font-family:var(--mono);font-size:15px}
+.main{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(330px,1fr);gap:16px;padding:16px 18px}
+.pnl{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.pnl h2{font-size:18px;margin-bottom:8px}
+.phasebar{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.phasebar h2{font-size:24px}
+#map svg{width:100%;height:auto;display:block}
+.tile{cursor:pointer}
+.tile rect{transition:stroke .1s}
+.tile:hover rect{stroke:var(--ink)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:6px;align-items:center}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.evbar{height:26px;display:flex;border-radius:6px;overflow:hidden;position:relative;background:var(--panel2);margin:6px 0 4px}
+.evbar div{height:100%}
+.evbar .mid{position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:var(--ink)}
+.evnums{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13px}
+.below{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.side{display:flex;flex-direction:column;gap:16px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.act{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 10px;text-align:left;min-height:62px}
+.act:hover:not(:disabled){border-color:var(--gold)}
+.act:disabled{opacity:.38;cursor:not-allowed}
+.act b{display:block;font-size:13.5px}
+.act small{display:block;color:var(--mut);font-size:11px;line-height:1.3}
+.act .cost{font-family:var(--mono);font-size:10.5px;color:var(--gold);margin-top:3px}
+.tabs{display:flex;gap:4px;margin-bottom:10px}
+.tabs button{flex:1;background:transparent;border:1px solid var(--line);color:var(--mut);padding:6px;border-radius:6px;font-size:12px}
+.tabs button.on{color:var(--ink);border-color:var(--gold)}
+.endturn{width:100%;margin-top:10px}
+.act .proj{display:block;font-size:11px;color:var(--good);margin-top:2px;font-family:var(--mono)}
+.actinfo{margin-top:10px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:12.5px;min-height:92px}
+.actinfo .h{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:6px}
+.actinfo .h:first-child{margin-top:0}
+.brief{font-size:12.5px;background:var(--panel2);border-left:3px solid var(--gold);padding:7px 10px;border-radius:6px;margin-bottom:10px}
+.brief:empty{display:none}
+.explain{font-size:11.5px;color:var(--mut);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+#toasts{position:fixed;top:70px;right:18px;z-index:80;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#201a0c;border:1px solid var(--gold);color:var(--ink);padding:10px 14px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:tin .35s ease-out;max-width:300px;font-size:13px}
+.toast b{display:block;color:var(--gold);font-family:var(--disp);font-size:16px}
+.toast .k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--gold)}
+@keyframes tin{from{opacity:0;transform:translateX(30px)}to{opacity:1}}
+.achgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:10px}
+.ach{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px;font-size:12px}
+.ach b{display:block;font-size:14px;font-family:var(--disp)}
+.ach.on{border-color:var(--gold);background:rgba(227,178,79,.09)}
+.ach.off{opacity:.55}
+.ach .ic{font-size:18px;float:right}
+.cyc{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;font-size:13px;margin:8px 0}
+.cyc span{color:var(--mut);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.stbox{font-size:13px}
+.stbox .hd{display:flex;justify-content:space-between;align-items:baseline}
+.stbox .hd h3{font-size:22px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:3px 10px;font-size:12.5px;margin-top:8px}
+.kv span{color:var(--mut)}
+.kv b{font-family:var(--mono);font-weight:500}
+.feed{max-height:290px;overflow:auto;font-size:12.5px}
+.feed div{padding:7px 0;border-top:1px solid var(--line)}
+.feed div:first-child{border-top:0}
+.feed .t{font-family:var(--mono);font-size:10px;color:var(--gold);margin-right:6px}
+.dlist .row{display:grid;grid-template-columns:12px 1fr 52px 60px;gap:8px;align-items:center;padding:4px 0;font-size:12.5px}
+.dot{width:10px;height:10px;border-radius:50%}
+.out{opacity:.4;text-decoration:line-through}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.issuelist{font-size:12px}
+.issuelist .row{display:grid;grid-template-columns:1fr 70px 46px;gap:6px;padding:3px 0;align-items:center}
+
+/* ---------- Modal ---------- */
+#modal{position:fixed;inset:0;background:rgba(5,8,14,.78);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;backdrop-filter:blur(3px)}
+.mbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;max-width:640px;width:100%;max-height:92vh;overflow:auto;padding:22px 22px 18px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.mbox.wide{max-width:900px}
+.mbox h2{font-size:27px;margin:6px 0 10px;line-height:1.1}
+.mbox p{margin:0 0 12px}
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.choice{background:var(--panel2);border:1px solid var(--line);color:var(--ink);text-align:left;padding:11px 13px;border-radius:9px;font-size:14px}
+.choice:hover:not(:disabled){border-color:var(--gold)}
+.choice:disabled{opacity:.4;cursor:not-allowed}
+.choice small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.fx{font-family:var(--mono);font-size:12px;background:var(--panel2);border-radius:8px;padding:9px 11px;margin-top:10px;line-height:1.7}
+table.rt{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+table.rt td,table.rt th{padding:5px 6px;border-top:1px solid var(--line);text-align:left}
+table.rt th{font-family:var(--mono);font-size:10px;color:var(--mut);font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.ennight{display:grid;grid-template-columns:1fr 280px;gap:16px}
+.bigev{font-family:var(--disp);font-size:52px;font-weight:900;line-height:1}
+.calls{max-height:330px;overflow:auto;font-size:12.5px}
+.calls div{padding:4px 0;border-top:1px solid var(--line);animation:pop .3s}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1}}
+.vpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:10px}
+.vp{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px;cursor:pointer;color:var(--ink);text-align:left}
+.vp:hover{border-color:var(--gold)}
+.vp b{display:block;font-size:14px}
+.vp small{color:var(--mut);font-size:11.5px;display:block}
+@media (max-width:980px){
+  .main{grid-template-columns:1fr}
+  .setgrid{grid-template-columns:1fr}
+  .below{grid-template-columns:1fr}
+  .stance{grid-template-columns:1fr}
+  .ennight{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<section id="title">
+  <div class="tbox"><div class="tbar"><button class="ghost sm" id="btnLb">🏆 Leaderboard</button><button class="ghost sm" id="btnProfile">👤 Guest</button></div>
+    <div class="kicker">A single-player campaign strategy game</div>
+    <div class="logo">STUMP<br><span>2028</span></div>
+    <div class="stripe"></div>
+    <div class="tag">Win the nomination. Pick a running mate. Survive October. Take the White House.</div>
+    <div class="setgrid">
+      <div class="opt"><label>Campaign length</label><div class="seg" id="optMode"></div></div>
+      <div class="opt"><label>Difficulty</label><div class="seg" id="optDiff"></div></div>
+      <div class="opt"><label>National climate</label><div class="seg" id="optEnv"></div></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="big" id="btnNew">Choose your candidate →</button>
+      <button class="big alt" id="btnH2H">⚔ Head-to-head draft</button>
+      <button class="ghost hidden" id="btnResume">Resume saved campaign</button>
+      <button class="ghost" id="btnHow">How to play</button>
+      <button class="ghost" id="btnAch">Achievements</button>
+    </div>
+    <p class="disc">This is a simulation, not a forecast. The candidates are real people, picked from names widely discussed as possible 2028 contenders as of November 2026. Their in-game ratings, starting positions and everything that happens to them are made up for the game. None of it is a claim about anyone's record, character or plans. You can play either party. State baselines use the 2024 presidential margins. The primary calendar is a simplified projection.</p>
+  </div>
+</section>
+
+<!-- PICK -->
+<section id="pick" class="hidden">
+  <div class="kicker">Step 1 · Choose your candidate</div>
+  <h1 style="font-size:38px;margin-top:6px">Who's running?</h1>
+  <div class="ptabs"><button id="tabD">Democrats</button><button id="tabR">Republicans</button></div>
+  <div class="cards" id="cards"></div>
+  <div id="oppPick" class="opt hidden" style="margin-top:16px"><label>General-election opponent</label><div class="seg" id="optOpp" style="flex-direction:row;flex-wrap:wrap"></div></div>
+  <div class="stancebox">
+    <div class="kicker">Step 2 · Set your platform</div>
+    <h2 style="font-size:24px;margin:6px 0 2px">Where do you stand?</h2>
+    <p class="mut" style="margin:0 0 10px">The dashed box is the candidate's default. Positions are free to change now. Once the campaign launches, every shift costs credibility. Primary voters reward your party's base and general-election voters reward the middle, so plan for both.</p>
+    <div id="stanceEd"></div>
+  </div>
+  <div style="display:flex;gap:10px;margin:20px 0 40px">
+    <button class="ghost" id="btnBack">← Back</button>
+    <button class="big" id="btnLaunch" disabled>Launch campaign</button>
+  </div>
+</section>
+
+<!-- DRAFT -->
+<section id="draft" class="hidden"><div id="draftIn"></div></section>
+
+<!-- GAME -->
+<section id="game" class="hidden">
+  <div class="top">
+    <div class="who"><button class="menubtn" id="btnMenu" title="Menu">☰ Menu</button><span class="chip" id="tParty"></span><b id="tName"></b><span class="mut" id="tDate"></span></div>
+    <div class="res">
+      <div class="r" title="Action points: what you can do this turn. 4 + your staff level, refilled every turn."><span>Actions</span><b id="rAP"></b></div>
+      <div class="r" title="Money pays for ads, offices, staff and events. You earn passive income every turn."><span>War chest</span><b id="rMoney"></b></div>
+      <div class="r" title="Below 30, gaffe risk doubles and debates suffer. +18 a turn on its own; Rest gives +30."><span>Stamina</span><b id="rStam"></b></div>
+      <div class="r" title="Flip-flops and broken commitments lower it. Below 50 it drags down your support everywhere."><span>Credibility</span><b id="rCred"></b></div>
+      <div class="r" title="Lifts you in every state at once (≈0.45 pts of margin per point in the general). Fades 15% a turn."><span>Momentum</span><b id="rMom"></b></div>
+      <div class="r" title="Each point costs ≈0.06 pts everywhere and makes some events go worse. Cools 1.5 a turn."><span>Scandal heat</span><b id="rHeat"></b></div>
+      <div class="r" title="Staff = extra AP. Prep = debate readiness. Oppo = opposition-research files you can release."><span>Staff</span><b id="rStaff"></b></div>
+    </div>
+  </div>
+  <div class="main">
+    <div>
+      <div class="pnl">
+        <div class="phasebar">
+          <div><div class="kicker" id="phaseK"></div><h2 id="phaseT"></h2></div>
+          <div class="mut" id="phaseSub" style="max-width:380px;text-align:right;font-size:12.5px"></div>
+        </div>
+        <div class="brief" id="brief"></div>
+        <div id="map"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="below">
+        <div class="pnl" id="pollPnl"></div>
+        <div class="pnl"><h2>Campaign wire</h2><div class="feed" id="feed"></div></div>
+      </div>
+    </div>
+    <div class="side">
+      <div class="pnl stbox" id="statePnl"></div>
+      <div class="pnl">
+        <div class="tabs" id="actTabs"></div>
+        <div class="acts" id="acts"></div>
+        <div class="actinfo" id="actInfo"></div>
+        <button class="big endturn" id="btnEnd">End turn →</button>
+      </div>
+      <div class="pnl"><h2>Your platform</h2><div class="issuelist" id="platform"></div>
+        <button class="ghost" style="width:100%;margin-top:8px;padding:8px" id="btnStances">Adjust positions…</button></div>
+    </div>
+  </div>
+</section>
+
+<div id="toasts"></div>
+<div id="modal" class="hidden"><div class="mbox" id="mbox"></div></div>
+
+<script>
+/* =========================================================
+   DATA
+   ========================================================= */
+// abbr: [name, EV, 2024 margin (+R / -D), region, gridX, gridY]
+const SRAW={AK:['Alaska',3,13.1,'W',0,0],ME:['Maine',4,-7,'NE',11,0],WI:['Wisconsin',10,0.9,'RUST',6,1],VT:['Vermont',3,-31.5,'NE',10,1],NH:['New Hampshire',4,-2.8,'NE',11,1],
+WA:['Washington',12,-18.2,'W',1,2],ID:['Idaho',4,36.5,'PL',2,2],MT:['Montana',4,20,'PL',3,2],ND:['North Dakota',3,36.5,'PL',4,2],MN:['Minnesota',10,-4.2,'RUST',5,2],IL:['Illinois',19,-10.9,'RUST',6,2],MI:['Michigan',15,1.4,'RUST',7,2],NY:['New York',28,-12.6,'NE',9,2],MA:['Massachusetts',11,-25.2,'NE',10,2],
+OR:['Oregon',8,-14.3,'W',1,3],NV:['Nevada',6,3.1,'SW',2,3],WY:['Wyoming',3,45.8,'PL',3,3],SD:['South Dakota',3,29.2,'PL',4,3],IA:['Iowa',6,13.2,'RUST',5,3],IN:['Indiana',11,19,'RUST',6,3],OH:['Ohio',17,11.2,'RUST',7,3],PA:['Pennsylvania',19,1.7,'RUST',8,3],NJ:['New Jersey',14,-5.9,'NE',9,3],CT:['Connecticut',7,-14.5,'NE',10,3],RI:['Rhode Island',4,-13.8,'NE',11,3],
+CA:['California',54,-20.1,'W',1,4],UT:['Utah',6,21.6,'SW',2,4],CO:['Colorado',10,-11,'SW',3,4],NE:['Nebraska',5,20.5,'PL',4,4],MO:['Missouri',10,18.4,'PL',5,4],KY:['Kentucky',8,30.5,'S',6,4],WV:['West Virginia',4,41.9,'S',7,4],VA:['Virginia',13,-5.8,'S',8,4],MD:['Maryland',10,-28.5,'NE',9,4],DE:['Delaware',3,-14.7,'NE',10,4],
+AZ:['Arizona',11,5.5,'SW',2,5],NM:['New Mexico',5,-6,'SW',3,5],KS:['Kansas',6,16.2,'PL',4,5],AR:['Arkansas',6,30.6,'S',5,5],TN:['Tennessee',11,29.7,'S',6,5],NC:['North Carolina',16,3.2,'S',7,5],SC:['South Carolina',9,18,'S',8,5],DC:['D.C.',3,-83,'NE',9,5],
+OK:['Oklahoma',7,34.3,'S',4,6],LA:['Louisiana',8,22,'S',5,6],MS:['Mississippi',6,22.9,'S',6,6],AL:['Alabama',9,30.5,'S',7,6],GA:['Georgia',16,2.2,'S',8,6],
+HI:['Hawaii',4,-23.1,'W',0,7],TX:['Texas',40,13.7,'SW',4,7],FL:['Florida',30,13.1,'S',9,7]};
+const S={};for(const k in SRAW){const a=SRAW[k];S[k]={k,n:a[0],ev:a[1],l:a[2],r:a[3],x:a[4],y:a[5]};}
+const SK=Object.keys(S);
+const BG=['PA','MI','WI','GA','AZ','NV','NC'];
+
+const ISSUES=[
+ {k:'economy',n:'Cost of Living & Trade',tilt:0,sal:1.0,o:['Crack down on price-gouging, build public housing, wealth tax','Expanded child tax credit, housing subsidies, tariff relief','Zoning reform and targeted tax relief, tariffs case by case','Cut taxes and regulation, keep strategic tariffs','Broad tariffs to rebuild industry, deep spending cuts']},
+ {k:'ai',n:'AI, Tech & Jobs',tilt:-0.3,sal:0.55,o:['Strict AI licensing, automation tax to fund displaced workers','Federal AI safety rules plus guaranteed retraining','Light-touch safety standards, public-private retraining','Pro-innovation: override state AI laws, minimal federal rules','No new AI rules at all, take on Big Tech censorship']},
+ {k:'health',n:'Health Care',tilt:-0.3,sal:0.6,o:['Medicare for All','Public option plus drug-price caps','Extend ACA subsidies, require price transparency','Market-based plans, HSAs, more state flexibility','Roll back ACA rules, deregulate insurance']},
+ {k:'immig',n:'Immigration & Border',tilt:0.3,sal:0.6,o:['Citizenship for most undocumented, scale back ICE','Earned legalization plus border technology','Bipartisan deal: border security plus Dreamers','Finish the wall, expand detention, limit asylum','Mass deportations, end birthright citizenship']},
+ {k:'foreign',n:'War & Foreign Policy',tilt:0,sal:0.4,o:['Diplomacy first, cut the defense budget','Rebuild alliances, conditions on military aid','Steady deterrence alongside allies','Peace through strength, bigger defense budget','Maximum pressure, strike first if threatened']},
+ {k:'integrity',n:'Democracy & Corruption',tilt:0,sal:0.5,o:['Expand the Supreme Court, end the filibuster','Ethics overhaul, ban stock trading, voting-rights bill','Stock-trading ban, term limits, bipartisan election security','Nationwide voter ID, shrink the federal bureaucracy','Overhaul the civil service, more presidential control of agencies']},
+ {k:'energy',n:'Energy & Climate',tilt:0,sal:0.35,o:['Green New Deal, phase out fossil fuels','Clean-energy tax credits, EV incentives','All of the above: nuclear plus permitting reform','Expand drilling and pipelines','Maximum fossil production, exit climate agreements']},
+ {k:'safety',n:'Crime, Guns & Safety',tilt:0.2,sal:0.4,o:['Assault-weapons ban, shift police funds to services','Universal background checks, community policing','More police funding plus red-flag laws','Tougher sentencing, protect gun rights','National concealed carry, federal troops for high-crime cities']},
+];
+const IK=ISSUES.map(i=>i.k); const II={};ISSUES.forEach(i=>II[i.k]=i);
+const REG={RUST:{economy:1.25,ai:1.35,immig:.85},SW:{immig:1.5,energy:1.2,economy:1.1},S:{safety:1.2,immig:1.1,energy:1.1,health:1.1},NE:{health:1.2,integrity:1.25,energy:.9},W:{energy:1.3,ai:1.2,economy:1.25,immig:1.1},PL:{economy:1.15,energy:1.25,ai:.8}};
+
+// st: nameID, fund, debate, disc  (game abstractions)
+const C={
+ vance:{n:'JD Vance',p:'R',home:'OH',role:'Vice President; former U.S. senator from Ohio',trait:'Sitting VP: starts with primary momentum and an organization already in place',st:[9,8,7,7],pb:3,s:{economy:1,ai:1,health:1,immig:2,foreign:0,integrity:1,energy:1,safety:1}},
+ rubio:{n:'Marco Rubio',p:'R',home:'FL',role:'Secretary of State; former U.S. senator from Florida',trait:'Foreign-policy heavyweight: big bonus when global crises hit',st:[8,7,8,8],fp:1,s:{economy:1,ai:1,health:1,immig:1,foreign:2,integrity:1,energy:1,safety:1}},
+ desantis:{n:'Ron DeSantis',p:'R',home:'FL',role:'Governor of Florida (term ends Jan. 2027)',trait:'Big-state governor: deep Florida base and a policy record to run on',st:[8,7,6,7],s:{economy:1,ai:0,health:1,immig:2,foreign:1,integrity:1,energy:1,safety:2}},
+ haley:{n:'Nikki Haley',p:'R',home:'SC',role:'Former UN ambassador and governor of South Carolina',trait:'Crossover appeal: plays better than most with swing voters',st:[7,7,7,8],sw:1.2,s:{economy:1,ai:1,health:1,immig:1,foreign:2,integrity:0,energy:1,safety:1}},
+ cruz:{n:'Ted Cruz',p:'R',home:'TX',role:'U.S. senator from Texas',trait:'Veteran debater who knows the conservative base well',st:[8,7,9,6],s:{economy:1,ai:2,health:2,immig:2,foreign:1,integrity:1,energy:2,safety:2}},
+ paul:{n:'Rand Paul',p:'R',home:'KY',role:'U.S. senator from Kentucky',trait:'Libertarian lane: devoted small-dollar donors and an independent streak',st:[7,6,7,7],sd:1.5,s:{economy:1,ai:2,health:2,immig:1,foreign:-1,integrity:1,energy:1,safety:1}},
+ newsom:{n:'Gavin Newsom',p:'D',home:'CA',role:'Governor of California (term ends Jan. 2027)',trait:'Fundraising juggernaut with a 54-electoral-vote home base',st:[9,9,8,6],s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:-1,integrity:-1,energy:-1,safety:-1}},
+ shapiro:{n:'Josh Shapiro',p:'D',home:'PA',role:'Governor of Pennsylvania',trait:'Swing-state governor who plays well in the middle',st:[7,8,7,8],sw:1,s:{economy:-1,ai:0,health:-1,immig:0,foreign:0,integrity:-1,energy:0,safety:0}},
+ buttigieg:{n:'Pete Buttigieg',p:'D',home:'MI',role:'Former U.S. Secretary of Transportation',trait:'Media natural: bonus on interviews, podcasts and debates',st:[8,8,9,8],med:1,s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:-1,integrity:-1,energy:-1,safety:-1}},
+ aoc:{n:'Alexandria Ocasio-Cortez',p:'D',home:'NY',role:'U.S. representative from New York',trait:'Grassroots machine: huge small-dollar fundraising and base enthusiasm',st:[9,9,7,6],sd:2.5,pb:1.5,s:{economy:-2,ai:-2,health:-2,immig:-2,foreign:-2,integrity:-2,energy:-2,safety:-1}},
+ kelly:{n:'Mark Kelly',p:'D',home:'AZ',role:'U.S. senator from Arizona; former astronaut and Navy pilot',trait:'Veteran and astronaut: trusted on security, strong in the Sun Belt',st:[7,7,6,8],sw:1,fp:.6,s:{economy:-1,ai:-1,health:-1,immig:0,foreign:0,integrity:-1,energy:0,safety:-1}},
+ harris:{n:'Kamala Harris',p:'D',home:'CA',role:'Former Vice President; 2024 Democratic nominee',trait:'Near-universal name recognition and an existing donor network',st:[9,8,6,7],s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:-1,integrity:-1,energy:-1,safety:-1}},
+ beshear:{n:'Andy Beshear',p:'D',home:'KY',role:'Governor of Kentucky',trait:'Red-state governor: strongest crossover appeal in the field',st:[6,6,7,8],sw:1.5,s:{economy:-1,ai:-1,health:-1,immig:0,foreign:-1,integrity:-1,energy:0,safety:0}},
+ pritzker:{n:'JB Pritzker',p:'D',home:'IL',role:'Governor of Illinois',trait:'Can self-fund: starts with the biggest war chest',st:[7,10,6,7],sf:1,s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:-1,integrity:-2,energy:-1,safety:-1}},
+ whitmer:{n:'Gretchen Whitmer',p:'D',home:'MI',role:'Governor of Michigan (term ends Jan. 2027)',trait:'Midwest governor: strong in the Rust Belt swing states',st:[8,8,7,8],sw:.8,s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:-1,integrity:-1,energy:-1,safety:0}},
+ moore:{n:'Wes Moore',p:'D',home:'MD',role:'Governor of Maryland; Army veteran',trait:'Rising star with a compelling biography and a strong stage presence',st:[7,8,8,8],s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:0,integrity:-1,energy:-1,safety:0}},
+ ossoff:{n:'Jon Ossoff',p:'D',home:'GA',role:'U.S. senator from Georgia',trait:'Swing-state senator and prodigious fundraiser',st:[6,9,7,8],sw:.6,s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:-1,integrity:-1,energy:-1,safety:-1}},
+ khanna:{n:'Ro Khanna',p:'D',home:'CA',role:'U.S. representative from California (Silicon Valley)',trait:'Progressive populist with tech-economy credentials who campaigns in early states',st:[6,7,7,7],med:.3,s:{economy:-2,ai:-1,health:-2,immig:-1,foreign:-2,integrity:-2,energy:-2,safety:-1}},
+ emanuel:{n:'Rahm Emanuel',p:'D',home:'IL',role:'Former Chicago mayor and ambassador to Japan',trait:'Centrist brawler: plays well in the middle, less so with the base',st:[7,7,8,6],sw:1,pb:-1,s:{economy:0,ai:0,health:-1,immig:0,foreign:1,integrity:-1,energy:0,safety:1}},
+ booker:{n:'Cory Booker',p:'D',home:'NJ',role:'U.S. senator from New Jersey',trait:'High-energy orator who once held the Senate floor for a record 25 hours',st:[8,8,8,7],s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:-1,integrity:-1,energy:-1,safety:-1}},
+ youngkin:{n:'Glenn Youngkin',p:'R',home:'VA',role:'Former governor of Virginia',trait:'Won a blue-leaning state with suburban appeal',st:[6,8,7,8],sw:1,s:{economy:1,ai:1,health:1,immig:1,foreign:1,integrity:0,energy:1,safety:1}},
+ kemp:{n:'Brian Kemp',p:'R',home:'GA',role:'Governor of Georgia (term ends Jan. 2027)',trait:'Swing-state governor with a record of beating back primary challenges',st:[6,7,6,8],sw:1,s:{economy:1,ai:1,health:1,immig:1,foreign:1,integrity:0,energy:1,safety:1}},
+ hegseth:{n:'Pete Hegseth',p:'R',home:'TN',role:'Defense Secretary; former Fox News host (reportedly weighing a run)',trait:'Combative Pentagon chief: fires up the base, polarizing with swing voters',st:[8,7,7,6],pb:1,sw:-.8,s:{economy:1,ai:1,health:1,immig:2,foreign:2,integrity:2,energy:2,safety:2}},
+ /* ---- WILDCARDS: unusual campaigns with their own rules and a challenge ---- */
+ cuban:{n:'Mark Cuban',p:'D',home:'TX',role:'Billionaire entrepreneur; former Dallas Mavericks owner',trait:'Self-funding outsider who runs the campaign like a startup',st:[8,10,7,6],sf:1,pb:-1.5,out:1,wc:{tag:'Billionaire outsider',rules:['Starts with a $30M self-funded war chest','Party insiders are wary: −1.5 with primary voters','No political record: weaker detailed-plan debate answers, stronger zingers'],ch:'Win the White House without ever using the Fundraise action.',chk:g=>g.stx.fundUses===0},s:{economy:0,ai:0,health:-1,immig:0,foreign:0,integrity:-1,energy:0,safety:0}},
+ smitha:{n:'Stephen A. Smith',p:'D',home:'NY',role:'ESPN commentator and media personality',trait:'Celebrity commentator with near-total name recognition and a hair-trigger mic',st:[10,7,8,5],med:1.2,pb:-1,out:1,gm:1.5,wc:{tag:'Celebrity commentator',rules:['Huge bonus on podcasts, late night and Sunday shows','Gaffe risk ×1.5: every unscripted moment is a gamble','Starts outside the party establishment: −1 with primary voters'],ch:'Win the White House after making 6+ national media appearances.',chk:g=>g.stx.media>=6},s:{economy:-1,ai:0,health:-1,immig:0,foreign:0,integrity:-1,energy:0,safety:1}},
+ tucker:{n:'Tucker Carlson',p:'R',home:null,role:'Political commentator and podcast host',trait:'Media insurgent who runs against both parties’ establishments',st:[9,7,8,6],med:.8,sw:-1,out:1,cap:3,wc:{tag:'Media insurgent',rules:['No home state: a fully national campaign','Strong media bonus, but establishment staffers stay away: staff capped at 3','Restraint-minded foreign policy that splits the party'],ch:'Win the White House without running a single national attack ad.',chk:g=>g.stx.attacks===0},s:{economy:2,ai:2,health:1,immig:2,foreign:-1,integrity:2,energy:1,safety:2}},
+ trumpjr:{n:'Donald Trump Jr.',p:'R',home:'FL',role:'Businessman; son of President Trump',trait:'Political dynasty heir: the base already knows the name',st:[9,8,6,6],pb:2,sw:-1.2,heat0:5,wc:{tag:'Dynasty heir',rules:['Big head start with primary voters (+2) and early momentum','Swing voters are skeptical: −1.2 in the general','Starts with scandal heat 5: the press is already watching'],ch:'Win the White House without your scandal heat ever reaching 10.',chk:g=>g.stx.maxHeat<10},s:{economy:1,ai:1,health:1,immig:2,foreign:1,integrity:2,energy:2,safety:2}},
+ massie:{n:'Thomas Massie',p:'R',home:'KY',role:'U.S. representative from Kentucky; lost his 2026 primary after breaking with the president',trait:'Libertarian rebel with a devoted grassroots following',st:[5,6,7,8],sd:2,pb:-2,wc:{tag:'Rebel without a party',rules:['The party establishment is hostile: −2 with primary voters','Devoted small-dollar donors (+$1M a turn and stronger online fundraising)','Voters trust him: starts with 85 credibility'],ch:'Win the White House without ever changing a position.',chk:g=>g.stx.flips===0},cred0:85,s:{economy:1,ai:2,health:2,immig:1,foreign:-2,integrity:1,energy:1,safety:2}},
+};
+for(const k in C){C[k].id=k;}
+const VPX={
+ gallego:{n:'Ruben Gallego',p:'D',home:'AZ',perk:'swing'},warnock:{n:'Raphael Warnock',p:'D',home:'GA',perk:'debate'},
+ tscott:{n:'Tim Scott',p:'R',home:'SC',perk:'debate'},hsanders:{n:'Sarah Huckabee Sanders',p:'R',home:'AR',perk:'base'}};
+for(const k in VPX){VPX[k].id=k;}
+const PERK={swing:'Swing appeal: +0.8 in every state',debate:'Strong debater: wins the VP debate more often',fund:'Rainmaker: +$2M a turn',base:'Base energizer: softens the enthusiasm penalty for moderating'};
+
+// Turn calendar
+const CAL=[
+ {ph:'pre',d:'Q1 2027',t:'The Exploratory Phase',sub:'Build a war chest and staff up before the field gets crowded.'},
+ {ph:'pre',d:'Q2 2027',t:'Launch',sub:'Make it official. Early-state groundwork carries forward.',ev:'launch'},
+ {ph:'pre',d:'Q3 2027',t:'Summer Cattle Calls',sub:'State fairs, party dinners and the endless handshake line.'},
+ {ph:'pre',d:'Q4 2027',t:'The First Debates',sub:'A primary debate closes out the quarter.',debate:'primary'},
+ {ph:'pri',d:'January 2028',t:'Iowa Caucuses',sub:'First votes are cast. Expectations matter as much as results.',c:['IA']},
+ {ph:'pri',d:'Late January',t:'New Hampshire Primary',sub:'Granite State voters love to defy Iowa.',c:['NH']},
+ {ph:'pri',d:'February',t:'Nevada & South Carolina',sub:'The first diverse electorates weigh in.',c:['NV','SC']},
+ {ph:'pri',d:'Late February',t:'Michigan Primary',sub:'A Rust Belt test, followed by a debate.',c:['MI'],debate:'primary'},
+ {ph:'pri',d:'March 7',t:'Super Tuesday',sub:'Fourteen states and more than a third of delegates in one night.',c:['AL','AR','CA','CO','ME','MA','MN','NC','OK','TN','TX','UT','VT','VA']},
+ {ph:'pri',d:'Mid-March',t:'The March Gauntlet',sub:'Big delegate prizes in Florida, Illinois, Ohio and Georgia.',c:['AZ','FL','IL','OH','KS','MO','MS','GA','WA','HI','ID','ND','LA']},
+ {ph:'pri',d:'April',t:'The Acela Primaries',sub:'Pennsylvania, New York and the Northeast corridor.',c:['WI','NY','PA','CT','DE','RI','MD','WY']},
+ {ph:'pri',d:'May',t:'Heartland Primaries',sub:'The math tightens. Weak campaigns run out of money.',c:['IN','NE','WV','KY','OR','AK']},
+ {ph:'pri',d:'June',t:'The Final Primaries',sub:'The last delegates of the season are awarded.',c:['NJ','NM','MT','SD','DC']},
+ {ph:'conv',d:'July 2028',t:'The Convention',sub:'Pick a running mate and give the speech of your life.'},
+ {ph:'gen',d:'Late July',t:'The General Begins',sub:'A new map and a new opponent. The middle matters now.'},
+ {ph:'gen',d:'August',t:'Dog Days',sub:'Define yourself, and your opponent, before Labor Day.'},
+ {ph:'gen',d:'Labor Day',t:'The Sprint Starts',sub:'Persuadable voters start paying attention.'},
+ {ph:'gen',d:'Mid-September',t:'First Presidential Debate',sub:'Seventy million people will be watching.',debate:'general'},
+ {ph:'gen',d:'Late September',t:'Early Voting Opens',sub:'Ballots are going out. Field offices start paying off.'},
+ {ph:'gen',d:'Early October',t:'Vice Presidential Debate',sub:'Your running mate takes the stage.',debate:'vp'},
+ {ph:'gen',d:'Mid-October',t:'Second Presidential Debate',sub:'The last time you share a stage.',debate:'general'},
+ {ph:'gen',d:'Late October',t:'October Surprise Season',sub:'Anything can happen, and usually does.'},
+ {ph:'gen',d:'Final Week',t:'The Closing Argument',sub:'Last rallies, last ads, last chances.'},
+];
+const GEN_START=CAL.findIndex(c=>c.ph==='gen');
+const CONV=CAL.findIndex(c=>c.ph==='conv');
+const CLOSE=[['7:00 PM',['GA','IN','KY','SC','VT','VA']],['7:30 PM',['NC','OH','WV']],['8:00 PM',['AL','CT','DE','DC','FL','IL','ME','MD','MA','MS','MO','NH','NJ','OK','PA','RI','TN']],['8:30 PM',['AR']],['9:00 PM',['AZ','CO','KS','LA','MI','MN','NE','NM','NY','ND','SD','TX','WI','WY']],['10:00 PM',['IA','MT','NV','UT']],['11:00 PM',['CA','HI','ID','OR','WA']],['1:00 AM',['AK']]];
+
+/* =========================================================
+   UTILS
+   ========================================================= */
+const $=id=>document.getElementById(id);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const gauss=()=>{let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
+const pickOne=a=>a[Math.floor(Math.random()*a.length)];
+const fmtM=x=>(x<0?'-':'')+'$'+Math.abs(x).toFixed(1)+'M';
+const sgn=x=>(x>=0?'+':'')+x.toFixed(1);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cand=id=>C[id]||VPX[id];
+const homeN=c=>c&&c.home?S[c.home].n:'No home state';
+const stat=(c,i)=>c.st?clamp(c.st[i]+((typeof g!=='undefined'&&g&&g.jit&&g.jit[c.id])?g.jit[c.id][i]:0),3,10):6; // 0 nameID 1 fund 2 debate 3 disc
+const PAL=['#e3b24f','#57c4b8','#c07be0','#e08a4b','#9bd35a','#e06fa6'];
+const partyCol=p=>p==='D'?'var(--D)':'var(--R)';
+const partyHex=p=>p==='D'?'#4b80e2':'#e0544b';
+
+/* =========================================================
+   GAME STATE
+   ========================================================= */
+let SET={mode:'full',diff:'normal',env:'neutral',oppChoice:'random'};
+let g=null;
+let pickParty='D', pickId=null, pickStances=null;
+
+function newGame(){
+  const P=C[pickId];
+  const env=SET.env==='neutral'?0:SET.env==='midterm'?3:gauss()*2.5;
+  g={v:1,mode:SET.mode,diff:SET.diff,party:P.p,cand:pickId,turn:SET.mode==='full'?0:CONV,
+    ap:0,apMax:5,money:0,stamina:100,cred:70,mom:0,heat:0,staff:1,prep:0,oppo:0,pac:0,
+    stances:{...pickStances},salMod:{},pEff:{},gEff:{},org:{},oppEff:{},env,
+    log:[],usedEv:[],flags:{},rivals:[],held:{},pRes:{},del:{},nominee:null,vp:null,oppVp:null,opp:null,oppStances:null,oppMom:0,noise:{},tab:'camp',sel:null,
+    lockStances:false,turnEventDone:false,stx:{fundUses:0,media:0,attacks:0,gaffes:0,pods:0,dinners:0,flips:0,org:0,wild:0,oppoUsed:0,maxHeat:0,debW:0,debT:0,genStart:null},wildN:0};
+  IK.forEach(k=>g.salMod[k]=0);
+  drawCycle();
+  const ot=P.p==='D'?'R':'D';
+  // other-party nominee
+  if(SET.mode==='general'&&SET.oppChoice!=='random') g.opp=SET.oppChoice;
+  else g.opp=weightedPick(Object.values(C).filter(c=>c.p===ot),c=>Math.pow(Math.max(5,stat(c,0)+stat(c,1)+stat(c,2)+(c.pb||0)*1.5),2.4)*(c.wc?0.3:1)).id;
+  g.oppStances={};IK.forEach(k=>g.oppStances[k]=Math.round(rivalStances(g.opp)[k]*0.75*2)/2);
+  // money
+  g.money=stat(P,1)*1.6+(P.sf?(P.wc?30:14):0)+(P.sd||0)*2;
+  g.mom=P.pb||0;g.heat=P.heat0||0;if(P.cred0)g.cred=P.cred0;
+  if(g.mode==='full'){
+    let pool=Object.values(C).filter(c=>c.p===P.p&&c.id!==pickId&&!c.wc).sort((a,b)=>strength(b)-strength(a)+rnd(-4,4)).slice(0,4);
+    const wcs=Object.values(C).filter(c=>c.p===P.p&&c.id!==pickId&&c.wc);if(wcs.length&&Math.random()<0.5)pool.push(pickOne(wcs));
+    g.rivals=pool.map((c,i)=>({id:c.id,active:true,mom:c.pb||0,eff:{},col:PAL[i+1]}));
+    g.del[g.cand]=0; g.rivals.forEach(r=>g.del[r.id]=0);
+    logN('You file paperwork for an exploratory committee. The '+partyName(g.party)+' field takes shape: '+g.rivals.map(r=>C[r.id].n).join(', ')+'.');
+  } else {
+    g.nominee=g.cand; g.money+=10;
+    logN('You have clinched the '+partyName(g.party)+' nomination. '+C[g.opp].n+' will be your opponent in November.');
+  }
+  render();cycleModal(()=>startTurn());
+}
+function strength(c){return stat(c,0)+stat(c,1)*.6+(c.pb||0)*2;}
+function weightedPick(arr,w){const ws=arr.map(w);let t=ws.reduce((a,b)=>a+b,0),r=Math.random()*t;for(let i=0;i<arr.length;i++){r-=ws[i];if(r<=0)return arr[i];}return arr[arr.length-1];}
+const partyName=p=>p==='D'?'Democratic':'Republican';
+const cal=()=>CAL[Math.min(g.turn,CAL.length-1)];
+const ph=()=>cal().ph;
+const isPri=()=>ph()==='pre'||ph()==='pri';
+function logN(t){g.log.unshift({t:CAL[g.turn]?CAL[g.turn].d:'',x:t});if(g.log.length>300)g.log.pop();}
+function save(){if(g&&g.h2h)return;try{localStorage.setItem('stump2028',JSON.stringify(g));}catch(e){}}
+function loadSave(){try{const s=localStorage.getItem('stump2028');return s?JSON.parse(s):null;}catch(e){return null;}}
+function clearSave(){try{localStorage.removeItem('stump2028');}catch(e){}}
+
+/* =========================================================
+   MODEL
+   ========================================================= */
+function hotB(i){return g.cycle&&g.cycle.hot===i?0.3:0;}
+function sal(s,i){return Math.max(0.05,II[i].sal*((REG[S[s].r]||{})[i]||1)+g.salMod[i]+hotB(i));}
+function natSal(i){return Math.max(0.05,II[i].sal+g.salMod[i]+hotB(i));}
+function medG(s,i){return II[i].tilt+clamp(S[s].l/10,-1.5,1.5)*0.55;}
+function medP(s,i){return (g.party==='D'?-1.2:1.2)+clamp(S[s].l/40,-0.4,0.4);}
+function fitG(st,s,own){let f=0;IK.forEach(i=>f-=sal(s,i)*Math.abs(st[i]-medG(s,i))*(own&&own.includes(i)?0.45:1));return f;}
+function enth(st,p,perkBase){const b=p==='D'?-1.3:1.3;let a=0;IK.forEach(i=>a+=Math.abs(st[i]-b));a/=IK.length;return Math.max(0,a-0.6)*4*(perkBase?0.6:1);}
+function appeal(c){return stat(c,0)*.12+stat(c,2)*.08+stat(c,3)*.12+(c.sw||0);}
+function effC(e,ev){return 7*(1-Math.exp(-(e||0)/(3+ev*0.3)));}
+function vpObj(id){return id?cand(id):null;}
+function vpPerk(id){if(!id)return null;const c=cand(id);if(c.perk)return c.perk;if(c.sw)return 'swing';if(stat(c,2)>=8)return 'debate';if(stat(c,1)>=8)return 'fund';return 'base';}
+
+function genMargin(s){
+  const st=S[s],P=C[g.cand],O=C[g.opp];
+  let dM=-st.l+g.env; let m=g.party==='D'?dM:-dM;
+  m+=(fitG(g.stances,s,P.owns)-fitG(g.oppStances,s,O.owns))*0.8;
+  m+=appeal(P)-appeal(O);
+  m+=enth(g.oppStances,O.p,vpPerk(g.oppVp)==='base')-enth(g.stances,P.p,vpPerk(g.vp)==='base');
+  if(P.home===s)m+=3; if(O.home===s)m-=3;
+  if(g.vp&&cand(g.vp).home===s)m+=2; if(g.oppVp&&cand(g.oppVp).home===s)m-=2;
+  if(vpPerk(g.vp)==='swing')m+=0.8; if(vpPerk(g.oppVp)==='swing')m-=0.8;
+  m+=effC(g.gEff[s],st.ev)-effC(g.oppEff[s],st.ev);
+  m+=(g.mom-g.oppMom)*0.45;
+  m-=g.heat*0.06*(P.teflon?0.5:1); m-=Math.max(0,50-g.cred)*0.08;
+  if(g.h2h){m+=(g.oppHeat||0)*0.06*(O.teflon?0.5:1)+Math.max(0,50-(g.oppCred==null?70:g.oppCred))*0.08;}
+  if(g.third&&!g.h2h)m+=g.third.tilt;
+  return m;
+}
+function pollMargin(s){return genMargin(s)+(g.noise[s]||0)+(g.noise._n||0);}
+function natMargin(fn){let t=0,w=0;SK.forEach(s=>{t+=fn(s)*S[s].ev;w+=S[s].ev;});return t/w;}
+
+// ---- Primary ----
+function field(){const f=[{id:g.cand,st:g.stances,eff:g.pEff,mom:g.mom,col:PAL[0],me:true}];g.rivals.filter(r=>r.active).forEach(r=>f.push({id:r.id,st:rivalStances(r.id),eff:r.eff,mom:r.mom,col:r.col}));return f;}
+function pScore(f,s){const c=C[f.id];let sc=stat(c,0)*.35+stat(c,1)*.15+(c.pb||0)*.6;IK.forEach(i=>sc-=sal(s,i)*Math.abs(f.st[i]-medP(s,i))*1.25);sc+=effC(f.eff[s],S[s].ev)*0.8;sc+=f.mom*0.6;if(c.home===s)sc+=6;if(f.me){sc-=g.heat*0.05;sc-=Math.max(0,50-g.cred)*0.06;}return sc;}
+function pShares(s,noise){const fl=field();const sc=fl.map(f=>pScore(f,s)+(noise?gauss()*1.6:0));const mx=Math.max(...sc);const ex=sc.map(x=>Math.exp((x-mx)/3.5));const t=ex.reduce((a,b)=>a+b,0);return fl.map((f,i)=>({id:f.id,col:f.col,sh:ex[i]/t*100}));}
+const delOf=s=>S[s].ev*10;
+const TOTDEL=SK.reduce((a,s)=>a+delOf(s),0);
+const NEED=Math.floor(TOTDEL/2)+1;
+function natPrimary(){const fl=field();const acc={};fl.forEach(f=>acc[f.id]=0);let w=0;SK.forEach(s=>{if(g.held[s])return;pShares(s,false).forEach(x=>acc[x.id]+=x.sh*delOf(s));w+=delOf(s);});if(!w)w=1;return fl.map(f=>({id:f.id,col:f.col,sh:acc[f.id]/w})).sort((a,b)=>b.sh-a.sh);}
+function upcomingStates(n){let out=[];for(let t=g.turn;t<CAL.length&&t<g.turn+n;t++){if(CAL[t].c)out=out.concat(CAL[t].c);}if(!out.length&&ph()==='pre')out=['IA','NH','NV','SC'];return out.filter(s=>!g.held[s]);}
+function targetable(s){if(isPri())return !g.held[s];return true;}
+
+/* =========================================================
+   TURN FLOW
+   ========================================================= */
+function startTurn(){
+  const c=cal();
+  if(c.ph==='conv'){render();runConvention();return;}
+  g.apMax=4+g.staff;
+  g.ap=g.apMax; g.stamina=clamp(g.stamina+18+(C[g.cand].iron?12:0),0,100);
+  // income
+  const P=C[g.cand];let inc=stat(P,1)*0.35+Math.max(0,g.mom)*0.15+(P.sd||0)*0.5;
+  if(c.ph==='gen')inc=2+stat(P,1)*0.45+Math.max(0,g.mom)*0.3+(P.sd||0)*0.4;
+  if(vpPerk(g.vp)==='fund')inc+=2;
+  g.money+=inc;const momBefore=g.mom;
+  // decay
+  const dec=c.ph==='gen'?0.88:0.93;
+  for(const s in g.pEff)g.pEff[s]*=dec; for(const s in g.gEff)g.gEff[s]*=dec; for(const s in g.oppEff)g.oppEff[s]*=dec;
+  g.rivals.forEach(r=>{for(const s in r.eff)r.eff[s]*=dec;});
+  // org adds effort
+  for(const s in g.org){if(c.ph==='gen')g.gEff[s]=(g.gEff[s]||0)+g.org[s]*0.7;else if(!g.held[s])g.pEff[s]=(g.pEff[s]||0)+g.org[s]*0.7;}
+  g.mom*=0.85; g.oppMom*=0.85; g.rivals.forEach(r=>r.mom*=0.85);
+  g.heat=Math.max(0,g.heat-1.5);
+  g.env+=gauss()*0.3;
+  for(const k in g.salMod)g.salMod[k]*=0.9;
+  // super PAC
+  if(g.pac>0){const spend=Math.min(g.pac,6);g.pac-=spend;const tg=isPri()?upcomingStates(2).slice(0,4):competitive(5);tg.forEach(s=>addEff(s,spend/tg.length*1.2));}
+  // poll noise
+  const pq=g.cycle?g.cycle.pollQ[1]:1;g.noise={_n:gauss()*1.0*pq};SK.forEach(s=>g.noise[s]=gauss()*1.6*pq);
+  newsShocks();
+  if(c.ph==='gen'&&g.stx.genStart==null)g.stx.genStart=natMargin(genMargin);
+  briefing(g.lastSnap,inc,momBefore);if(g.turn>0)logN(g.brief.replace(/<[^>]+>/g,''));
+  g.turnEventDone=false;
+  if(!g.sel||!targetable(g.sel))g.sel=isPri()?(upcomingStates(1)[0]||'IA'):'PA';
+  if(g.turn>=1)g.lockStances=true;
+  save();
+  render();
+  setTimeout(()=>runTurnEvent(),250);
+}
+function competitive(n){return SK.map(s=>({s,m:genMargin(s)})).filter(x=>Math.abs(x.m)<10).sort((a,b)=>Math.abs(a.m)-Math.abs(b.m)).slice(0,n).map(x=>x.s);}
+function addEff(s,x){if(isPri())g.pEff[s]=(g.pEff[s]||0)+x;else g.gEff[s]=(g.gEff[s]||0)+x;}
+
+function endTurn(){
+  const c=cal();
+  if(c.ph==='pre'||c.ph==='pri')aiPrimary();
+  if(c.ph==='gen')aiGeneral();
+  const after=()=>{
+    if(c.c){resolveContests(c.c,()=>afterContests());}
+    else afterContests();
+  };
+  if(c.debate)runDebate(c.debate,after); else after();
+}
+function afterContests(){
+  if(g.over)return;
+  g.turn++;
+  if(g.turn>=CAL.length){electionNight();return;}
+  startTurn();
+}
+
+/* ---------- AI ---------- */
+function aiPrimary(){
+  const up=upcomingStates(2);if(!up.length)return;
+  const diffM={easy:.75,normal:1,hard:1.3}[g.diff];
+  g.rivals.filter(r=>r.active).forEach(r=>{
+    const c=C[r.id];let b=(3+stat(c,1)*0.35+Math.max(0,r.mom)*0.25)*diffM;
+    const w=up.map(s=>Math.pow(delOf(s),0.6)*(c.home===s?3:1)*rnd(.6,1.4));const t=w.reduce((a,b)=>a+b,0);
+    up.forEach((s,i)=>r.eff[s]=(r.eff[s]||0)+b*w[i]/t*3);
+  });
+}
+function aiGeneral(){
+  const diffM={easy:.7,normal:1,hard:1.35}[g.diff];
+  const O=C[g.opp];const budget=(7+stat(O,1)*0.3+Math.max(0,g.oppMom)*0.3)*diffM;
+  const cand=SK.map(s=>({s,m:genMargin(s)})).filter(x=>x.m>-9&&x.m<11);
+  const w=cand.map(x=>S[x.s].ev*Math.exp(-Math.abs(x.m-1)/4));const t=w.reduce((a,b)=>a+b,0)||1;
+  cand.forEach((x,i)=>g.oppEff[x.s]=(g.oppEff[x.s]||0)+budget*w[i]/t);
+  if(Math.random()<0.35*diffM){const iss=pickOne(IK);g.mom-=1;logN(C[g.opp].n+' runs a national ad blitz attacking your position on '+II[iss].n.toLowerCase()+'. (Momentum −1)');}
+  if(g.diff==='hard')g.env+=(g.party==='D'?-0.15:0.15);
+}
+
+/* ---------- Primary contests ---------- */
+function resolveContests(list,done){
+  const rows=[];let tonight={};
+  list.forEach(s=>{
+    if(g.held[s])return;
+    const sh=pShares(s,true).sort((a,b)=>b.sh-a.sh);
+    const el=sh.filter(x=>x.sh>=15);const tot=el.reduce((a,b)=>a+b.sh,0);
+    const D=delOf(s);const alloc={};
+    el.forEach(x=>alloc[x.id]=Math.round(D*x.sh/tot));
+    for(const id in alloc){g.del[id]=(g.del[id]||0)+alloc[id];tonight[id]=(tonight[id]||0)+alloc[id];}
+    g.held[s]=true;g.pRes[s]={w:sh[0].id,sh};
+    rows.push({s,sh,alloc});
+  });
+  // achievements
+  if(g.pRes.IA&&list.includes('IA')&&g.pRes.IA.w===g.cand)unlock('iowa');
+  if(list.includes('NH')&&g.pRes.NH.w===g.cand&&g.pRes.IA&&g.pRes.IA.w!==g.cand)unlock('nh');
+  if(list.includes('TX')&&list.includes('CA')){const n=list.filter(s=>g.pRes[s]&&g.pRes[s].w===g.cand).length;if(n>=10)unlock('st');}
+  // momentum
+  const order=Object.keys(tonight).sort((a,b)=>tonight[b]-tonight[a]);
+  const early=list.length<=2;
+  order.forEach((id,i)=>{const d=i===0?(early?3.5:2.5):i===1?(early?0.5:0.5):-1;if(id===g.cand)g.mom+=d;else{const r=g.rivals.find(r=>r.id===id);if(r)r.mom+=d;}});
+  g.rivals.filter(r=>r.active&&!tonight[r.id]).forEach(r=>r.mom-=1.5);
+  if(!tonight[g.cand])g.mom-=1.5;
+  // money for winners
+  if(order[0]===g.cand)g.money+=2+list.length*0.4;
+  // headline
+  const win=order[0];const lead=Object.keys(g.del).sort((a,b)=>g.del[b]-g.del[a])[0];
+  logN((win===g.cand?'You win':C[win].n+' wins')+' the night ('+list.join(', ')+'). Delegate leader: '+(lead===g.cand?'you':C[lead].n)+'.');
+  // dropouts
+  const dropped=[];
+  if(g.turn>=5){
+    const np=natPrimary();
+    g.rivals.filter(r=>r.active).forEach(r=>{const share=(np.find(x=>x.id===r.id)||{sh:0}).sh;const ds=g.del[r.id]/Math.max(1,sumDel());
+      if((share<11&&ds<0.12&&Math.random()<0.6)||(share<6)){r.active=false;dropped.push(r.id);}});
+    if(dropped.length===g.rivals.length&&dropped.length){const keep=dropped.pop();g.rivals.find(r=>r.id===keep).active=true;}
+    dropped.forEach(id=>logN(C[id].n+' suspends their campaign.'));
+  }
+  // other party race
+  if(g.turn===5||g.turn===6)logN('In the '+partyName(C[g.opp].p)+' race, '+C[g.opp].n+' posts a strong early showing.');
+  if(g.turn===8)logN(C[g.opp].n+' sweeps Super Tuesday and becomes the presumptive '+partyName(C[g.opp].p)+' nominee.');
+  // show modal
+  let h='<table class="rt"><tr><th>State</th><th>Winner</th><th>Your share</th><th>Your delegates</th></tr>';
+  rows.forEach(r=>{const me=r.sh.find(x=>x.id===g.cand);h+=`<tr><td>${S[r.s].n}</td><td><span class="dot" style="display:inline-block;background:${r.sh[0].col}"></span> ${r.sh[0].id===g.cand?'<b>You</b>':esc(C[r.sh[0].id].n)} <span class="mut">${r.sh[0].sh.toFixed(0)}%</span></td><td class="mono">${me.sh.toFixed(1)}%</td><td class="mono">${r.alloc[g.cand]||0}</td></tr>`;});
+  h+='</table>';
+  h+=delegateTable();
+  if(dropped.length)h+=`<p class="fx">Dropping out: ${dropped.map(id=>esc(C[id].n)).join(', ')}</p>`;
+  // nomination check
+  const clinch=Object.keys(g.del).find(id=>g.del[id]>=NEED);
+  const lastPri=CAL.slice(g.turn+1).every(c=>!c.c);
+  let next=done;
+  if(clinch||lastPri){
+    const winner=clinch||Object.keys(g.del).sort((a,b)=>g.del[b]-g.del[a])[0];
+    if(winner===g.cand){g.nominee=g.cand;if(C[g.cand].wc)unlock('wcnom');if(clinch&&g.turn<=9)unlock('clinch');next=()=>{logN('You clinch the '+partyName(g.party)+' nomination!');SK.forEach(s=>g.held[s]=true);g.turn=CONV-1;done();};
+      h+=`<p class="fx" style="color:var(--good)">You have ${clinch?'clinched':'won'} the ${partyName(g.party)} nomination!</p>`;}
+    else{next=()=>gameOverPrimary(winner);h+=`<p class="fx" style="color:var(--bad)">${esc(C[winner].n)} has ${clinch?'clinched':'won'} the nomination.</p>`;}
+  }
+  modal({k:cal().d+' · Results',t:cal().t+' results',body:h,wide:true,choices:[{l:'Continue',f:()=>{closeModal();next();}}]});
+}
+function sumDel(){return Object.values(g.del).reduce((a,b)=>a+b,0);}
+function delegateTable(){
+  const ids=[g.cand,...g.rivals.map(r=>r.id)];
+  let h=`<div class="mut" style="margin-top:12px;font-size:12px">Delegates (need ${NEED.toLocaleString()} of ${TOTDEL.toLocaleString()})</div><div class="dlist">`;
+  ids.sort((a,b)=>(g.del[b]||0)-(g.del[a]||0)).forEach(id=>{const r=g.rivals.find(r=>r.id===id);const col=id===g.cand?PAL[0]:r.col;const out=r&&!r.active;
+    h+=`<div class="row ${out?'out':''}"><span class="dot" style="background:${col}"></span><span>${id===g.cand?'<b>You</b> ('+esc(C[id].n)+')':esc(C[id].n)}</span><span class="mono">${(g.del[id]||0).toLocaleString()}</span><span class="bar"><i style="width:${Math.min(100,(g.del[id]||0)/NEED*100)}%;background:${col}"></i></span></div>`;});
+  return h+'</div>';
+}
+function gameOverPrimary(w){
+  g.over=true;clearSave();unlock('lose');recordGame({mode:'campaign',won:false,nominated:false,ev:0,opp_ev:0});
+  modal({k:'Campaign over',t:'You lost the nomination',body:`<p>${esc(C[w].n)} wins the ${partyName(g.party)} nomination with ${(g.del[w]||0).toLocaleString()} delegates. You finish with ${(g.del[g.cand]||0).toLocaleString()}.</p><p class="mut">Tip: early wins compound. Stack effort in Iowa and New Hampshire, keep your positions close to your party's base during the primary, and stay rested. Exhausted candidates make gaffes.</p>`,choices:[{l:'Play again',f:()=>{closeModal();g=null;pickId=null;$('game').classList.add('hidden');$('pick').classList.remove('hidden');drawPick();window.scrollTo(0,0);}},{l:'Main menu',f:()=>{closeModal();g=null;goTitle();}}]});
+}
+
+/* ---------- Convention ---------- */
+function runConvention(){
+  const P=C[g.cand];g.mom*=0.5;
+  if(g.h2hAI){g.vp=g.draftVp[0]||null;g.oppVp=g.draftVp[1]||null;logN('Your drafted ticket heads to the convention'+(g.vp?' with '+cand(g.vp).n+' as running mate.':' without a running mate.'));convSpeech();return;}
+  const pool=[...Object.values(C).filter(c=>c.p===g.party&&c.id!==g.cand),...Object.values(VPX).filter(c=>c.p===g.party)].map(c=>c.id||Object.keys(VPX).find(k=>VPX[k]===c));
+  Object.keys(VPX).forEach(k=>VPX[k].id=k);
+  const opts=pool.filter((v,i,a)=>a.indexOf(v)===i);
+  let h=`<p>You walk into the convention as the ${partyName(g.party)} nominee. First decision: who's on the ticket with you? A running mate gives you a boost in their home state and brings one special perk.</p><div class="vpgrid">`;
+  opts.forEach(id=>{const c=cand(id);const pk=vpPerk(id);const m=c.home?(g.party==='D'?(-S[c.home].l):S[c.home].l):0;
+    h+=`<button class="vp" data-vp="${id}"><b>${esc(c.n)}${c.wc?' 🃏':''}</b><small>${c.home?`${S[c.home].n} (2024: ${m>=0?'your party +':'other party +'}${Math.abs(S[c.home].l).toFixed(0)})`:'No home-state bonus'}</small><small style="color:var(--gold);margin-top:4px">${PERK[pk]}</small></button>`;});
+  h+='</div>';
+  modal({k:'July 2028 · Convention',t:'Choose your running mate',body:h,wide:true,choices:[]});
+  document.querySelectorAll('[data-vp]').forEach(b=>b.onclick=()=>{g.vp=b.dataset.vp;
+    const op=[...Object.values(C).filter(c=>c.p!==g.party&&c.id!==g.opp),...Object.values(VPX).filter(c=>c.p!==g.party)];
+    g.oppVp=weightedPick(op,c=>c.sw?3:1+(stat(c,0)>=8?1:0)).id;
+    logN('You name '+cand(g.vp).n+' as your running mate. '+C[g.opp].n+' picks '+cand(g.oppVp).n+'.');
+    convSpeech();});
+}
+function convSpeech(){
+  modal({k:'Convention · Final night',t:'Your acceptance speech',body:`<p>${esc(cand(g.vp).n)} brings the hall to its feet. Now it's your turn. What's the speech about?</p>`,choices:[
+   {l:'Unity: "I will be a president for all Americans"',s:'Credibility up, bigger bounce with swing voters',f:()=>res(()=>{g.cred+=6;g.mom+=2.5;g.env+=(g.party==='D'?0.5:-0.5);return 'The speech is widely praised as gracious. Swing voters take a second look.';})},
+   {l:'Red meat: an all-out case against the other side',s:'Fires up the base, polarizing',f:()=>res(()=>{g.mom+=3.5;g.heat+=2;g.flags.baseFire=true;return 'The delegates roar. The other side clips your sharpest lines for attack ads.';})},
+   {l:'Biography: your story, your family, your why',s:'Steady bounce, raises small-dollar money',f:()=>res(()=>{g.mom+=2.5;g.money+=6;return 'Many people tear up. Online donations spike overnight.';})},
+  ],after:()=>{g.oppMom+=2;g.money+=15;g.mom*=1;logN('Convention complete. The party apparatus adds $15M to your war chest.');g.turn=CONV+1;startTurn();}});
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+/* ---------- projection helpers (explainability) ---------- */
+function myShare(s){return pShares(s,false).find(x=>x.id===g.cand).sh;}
+function effPts(s,x){
+  if(isPri()){const b=g.pEff[s]||0;const before=myShare(s);g.pEff[s]=b+x;const after=myShare(s);g.pEff[s]=b;return after-before;}
+  const e=g.gEff[s]||0;return effC(e+x,S[s].ev)-effC(e,S[s].ev);}
+function decRate(){return isPri()?0.93:0.88;}
+function turnsUntilVote(s){if(isPri()){const t=CAL.findIndex(c=>c.c&&c.c.includes(s));return Math.max(0,t-g.turn);}return Math.max(0,CAL.length-1-g.turn);}
+function voteLabel(s){return isPri()?(S[s].n+' votes '+(turnsUntilVote(s)===0?'at the end of this turn':'in '+turnsUntilVote(s)+' turn'+(turnsUntilVote(s)>1?'s':''))):'Election Day is '+(turnsUntilVote(s)+1)+' turn'+(turnsUntilVote(s)?'s':'')+' away';}
+function keepPct(s){return Math.round(Math.pow(decRate(),turnsUntilVote(s))*100);}
+function orgStock(s,levels){const k=turnsUntilVote(s);const d=decRate();let t=0;for(let j=1;j<=k;j++)t+=0.7*levels*Math.pow(d,k-j);return t;}
+const unit=()=>isPri()?'pts of primary vote':'pts of margin';
+function impLvl(pts){const k=isPri()?2:1;const a=Math.abs(pts)/k;return a<0.25?0:a<0.7?1:a<1.4?2:a<2.6?3:a<4?4:5;}
+const IMPW=['Negligible','Small','Modest','Solid','Big','Huge'];
+function dots(n){return '●'.repeat(n)+'○'.repeat(5-n);}
+function impact(pts){const n=impLvl(pts);return dots(n)+' '+IMPW[n];}
+function groundLvl(e,ev){const v=effC(e,ev)/7;return Math.round(clamp(v,0,1)*5);}
+const fp=x=>(x>=0?'+':'−')+Math.abs(x).toFixed(1);
+function gaffeP(base){const P=C[g.cand];return (P.gm||1)*base*(1+(8-stat(P,3))*0.25)*(g.stamina<30?2:1)*(g.flags.veterans?0.7:1);}
+function gaffeRoll(base){return Math.random()<gaffeP(base);}
+function spend(ap,money,stam){g.ap-=ap;g.money-=money||0;g.stamina=clamp(g.stamina-(stam||0),0,100);}
+function needState(){if(!g.sel||!targetable(g.sel)){toast('Pick a state on the map first'+(isPri()?' (one that has not voted yet).':'.'));return false;}return true;}
+function selOk(){return g.sel&&targetable(g.sel);}
+function townEff(s){let dist=0;IK.forEach(i=>dist+=Math.abs(g.stances[i]-(isPri()?medP(s,i):medG(s,i))));dist/=IK.length;return 1+clamp(1.6-dist,0,1.4);}
+function adEff(a,s){return a*15/(5+S[s].ev)*(g.flags.data?1.25:1);}
+function nextDebate(){for(let t=g.turn;t<CAL.length;t++)if(CAL[t].debate&&CAL[t].debate!=='vp')return t;return -1;}
+function stateAct(s,x,label){const pts=effPts(s,x);addEff(s,x);return `${label} (${IMPW[impLvl(pts)].toLowerCase()} boost in ${s})`;}
+const MOM_NOTE='Momentum shifts every state at once, so it\'s the best lever when many states are close. It fades about 15% a turn.';
+
+const ACTS={
+ camp:[
+  {id:'rally',n:'Hold a rally',d:'Fire up supporters in the selected state',c:'1 AP · $0.5M · 12 stamina',ok:()=>g.ap>=1&&g.money>=.5&&g.stamina>=12,
+   p:()=>selOk()?`Impact in ${g.sel}: ${impact(effPts(g.sel,2.2))}`:'Select a state',
+   now:()=>`Adds 2.2 effort in ${g.sel||'the selected state'} plus a little momentum (+0.2). Gaffe risk: ${Math.round(gaffeP(.06)*100)}%${g.stamina<30?' (doubled because you\'re exhausted)':''}.`,
+   later:()=>selOk()?`Effort fades ${Math.round((1-decRate())*100)}% a turn. ${voteLabel(g.sel)}, so about ${keepPct(g.sel)}% of this rally will still count then. Best used close to the vote.`:'',
+   f(){if(!needState())return;spend(1,.5,12);let e=2.2,pre='Big crowd in '+S[g.sel].n+'.';if(gaffeRoll(.06)){g.mom-=1.5;g.heat+=2;g.stx.gaffes++;pre=`Your ${S[g.sel].n} rally goes off-script: an awkward line goes viral. (Momentum −1.5)`;e=1.2;}logN(stateAct(g.sel,e,pre));g.mom+=0.2;afterAct();}},
+  {id:'town',n:'Town hall',d:'Take unscripted questions. Works best with mainstream positions.',c:'1 AP · $0.2M · 8 stamina',ok:()=>g.ap>=1&&g.money>=.2&&g.stamina>=8,
+   p:()=>selOk()?`Impact in ${g.sel}: ${impact(effPts(g.sel,townEff(g.sel)))}`:'Select a state',
+   now:()=>selOk()?`Stronger the closer your platform is to ${S[g.sel].n}'s ${isPri()?'primary voters':'swing voters'}. Here your fit is ${townEff(g.sel)>1.9?'great':townEff(g.sel)>1.4?'decent':'poor'}. Cheap and gaffe-free.`:'Effort depends on how well your platform fits the state.',
+   later:()=>selOk()?`Fades like any effort. ${voteLabel(g.sel)}; about ${keepPct(g.sel)}% will still count then.`:'',
+   f(){if(!needState())return;spend(1,.2,8);const e=townEff(g.sel);logN(stateAct(g.sel,e,`Town hall in ${S[g.sel].n}: ${e>1.8?'voters walk away impressed.':'a few tough exchanges, but you hold your own.'}`));afterAct();}},
+  {id:'ads',n:'Buy TV & digital ads',d:'Turn money into effort. Big states cost more.',c:()=>'1 AP · '+(isPri()?'$1–6M':'$2–10M'),ok:()=>g.ap>=1&&g.money>=1,
+   p:()=>selOk()?`${isPri()?'$3M':'$5M'} in ${g.sel}: ${impact(effPts(g.sel,adEff(isPri()?3:5,g.sel)))}`:'Select a state',
+   now:()=>selOk()?`${S[g.sel].n} is ${S[g.sel].ev>20?'an expensive':S[g.sel].ev>9?'a mid-priced':'a cheap'} media market. Small states are cheap to saturate, while California or Texas swallow money. No stamina or gaffe risk.`:'Converts money into effort in one state.',
+   later:()=>selOk()?`Fades like any effort (${keepPct(g.sel)}% left when ${isPri()?'it votes':'votes are cast'}). Effort has a ceiling in every state, so piling on has diminishing returns.`:'',
+   f(){if(!needState())return;const s=g.sel;const ev=S[s].ev;
+    modal({k:'Ad buy',t:'Ad buy in '+S[s].n,body:`<p>Media markets in ${S[s].n} (${ev} EV) are ${ev>20?'expensive':ev>9?'moderately priced':'cheap'}.</p>`,choices:(isPri()?[1,3,6]:[2,5,10]).map(a=>({l:fmtM(a)+' flight',s:`Impact: ${impact(effPts(s,adEff(a,s)))}`,dis:g.money<a,f:()=>{spend(1,a,0);logN(stateAct(s,adEff(a,s),`You launch a ${fmtM(a)} ad flight in ${S[s].n}.`));closeModal();afterAct();}})).concat([{l:'Cancel',f:closeModal}])});}},
+  {id:'office',n:'Open field offices',d:'Permanent organization: adds effort every single turn',c:'1 AP · $1.5M',ok:()=>g.ap>=1&&g.money>=1.5,
+   p:()=>selOk()?`Nothing now · builds to ${dots(impLvl(effPts(g.sel,orgStock(g.sel,1))))} ${IMPW[impLvl(effPts(g.sel,orgStock(g.sel,1)))]}`:'Select a state',
+   now:()=>`Nothing this turn. Field offices are staff, volunteers and door-knocking that build up over time. Each level adds +0.7 effort to ${g.sel||'the state'} at the start of every turn, forever. Levels stack.`,
+   later:()=>selOk()?(isPri()?`${voteLabel(g.sel)}, so an office opened now has ${turnsUntilVote(g.sel)} turns to build up. They also carry into the general election, where they keep producing every turn. Build them early in states you'll fight for twice.`:`With ${turnsUntilVote(g.sel)} turns left, an office opened now still has time to build up. Early in the general, offices beat rallies. In the final week, they barely matter.`):'',
+   f(){if(!needState())return;spend(1,1.5,0);g.org[g.sel]=(g.org[g.sel]||0)+1;g.stx.org++;logN(`You open field offices across ${S[g.sel].n} (level ${g.org[g.sel]}). They will build support there every turn.`);afterAct();}},
+  {id:'local',n:'Local TV interview',d:'Low-risk earned media in the selected state',c:'1 AP · 4 stamina',ok:()=>g.ap>=1&&g.stamina>=4,
+   p:()=>selOk()?`Impact in ${g.sel}: ${impact(effPts(g.sel,1.1))}`:'Select a state',
+   now:()=>'Adds 1.1 effort. Free, cheap on stamina and no gaffe risk. A good filler action.',
+   later:()=>selOk()?`Fades like any effort (${keepPct(g.sel)}% left at the vote).`:'',
+   f(){if(!needState())return;spend(1,0,4);logN(stateAct(g.sel,1.1,`You sit down with local anchors in ${S[g.sel].n}.`));afterAct();}},
+  {id:'surr',n:'Deploy surrogates',d:'Your spouse, allies and running mate fan out',c:'1 AP · $0.8M',ok:()=>g.ap>=1&&g.money>=.8,
+   p:()=>selOk()?`Impact in ${g.sel}: ${impact(effPts(g.sel,1.3))}`:'Select a state',
+   now:()=>`Adds 1.3 effort without costing you any stamina${g.vp&&cand(g.vp).home?`, plus 0.6 in ${cand(g.vp).home} (your running mate's home)`:''}. Use it when you're tired.`,
+   later:()=>selOk()?`Fades like any effort (${keepPct(g.sel)}% left at the vote).`:'',
+   f(){if(!needState())return;spend(1,.8,0);if(g.vp&&cand(g.vp).home)addEff(cand(g.vp).home,0.6);logN(stateAct(g.sel,1.3,`Surrogates blanket ${S[g.sel].n}.`));afterAct();}},
+ ],
+ media:[
+  {id:'fund',n:'Fundraise',d:'Small-dollar, call time or a high-dollar dinner',c:'1 AP',ok:()=>g.ap>=1,track:'fundUses',
+   p:()=>'Raises cash · no votes directly',
+   now:()=>'Raises cash right away. Small-dollar money grows with momentum, call time is steady, and dinners raise the most but add scandal heat.',
+   later:()=>`Money doesn't win votes by itself. It pays for ads, field offices and staff. You also get passive income each turn (more after you're the nominee). Heat fades 1.5 a turn.`,
+   f(){const P=C[g.cand];const f=stat(P,1);if(P.wc&&P.id==='cuban'&&g.stx.fundUses===0)toastMsg('Heads up: fundraising breaks your wildcard challenge.');
+    modal({k:'Fundraising',t:'How do you raise it?',body:'<p>Money buys ads and offices. Where it comes from shapes how voters see you.</p>',choices:[
+     {l:'Online small-dollar push',pre:1,s:`≈ ${fmtM(f*0.35+Math.max(0,g.mom)*0.3+(P.sd||0))} · 4 stamina · grows with momentum`,f:()=>{g.stx.fundUses++;spend(1,0,4);const x=f*0.35+Math.max(0,g.mom)*0.3+(P.sd||0)+rnd(-.5,1);g.money+=x;logN(`Online fundraising brings in ${fmtM(x)}.`);closeModal();afterAct();}},
+     {l:'Call time with donors',s:`≈ ${fmtM(f*0.5)} · no stamina`,f:()=>{g.stx.fundUses++;spend(1,0,0);const x=f*0.5+rnd(-.5,.5);g.money+=x;logN(`Four hours of call time: ${fmtM(x)}.`);closeModal();afterAct();}},
+     {l:'High-dollar dinner',s:`≈ ${fmtM(f*1.0)} · 10 stamina · scandal heat +3`,f:()=>{g.stx.fundUses++;spend(1,0,10);const x=f*1.0+rnd(0,1.5);g.money+=x;g.heat+=3;g.stx.dinners++;logN(`A $10,000-a-plate dinner raises ${fmtM(x)}. Critics complain about access. (Heat +3)`);closeModal();afterAct();}},
+     {l:'Cancel',f:closeModal}]});}},
+  {id:'media',n:'National media',d:'Sunday shows, podcasts, late night',c:'1 AP · 6 stamina',ok:()=>g.ap>=1&&g.stamina>=6,
+   p:()=>'Momentum gamble · every state at once',
+   now:()=>'Moves momentum, which lifts you in every state at once rather than just one. A Sunday show is safe, a podcast is a coin flip with a big payoff, and late night falls in between.',
+   later:()=>MOM_NOTE+' Better late in the campaign than early, because early gains decay before votes are cast.',
+   f(){const P=C[g.cand];const bon=(P.med||0)+stat(P,2)*0.05;const pp=clamp(0.5+bon*0.25-(g.stamina<30?.15:0),0,.95);
+    modal({k:'Earned media',t:'Which booking?',body:'<p>National exposure moves momentum, but every interview is a chance to make a gaffe.</p>',choices:[
+     {l:'Sunday morning show',s:`Safe · momentum +${(0.7+bon*.3).toFixed(1)} · ${Math.round(gaffeP(.04)*100)}% gaffe risk`,f:()=>{g.stx.media++;spend(1,0,6);if(gaffeRoll(.04)){g.mom-=1;g.stx.gaffes++;logN('A Sunday-show answer gets fact-checked all week. (Momentum −1)');}else{g.mom+=0.7+bon*.3;logN(`A solid Sunday-show interview. (Momentum +${(0.7+bon*.3).toFixed(1)})`);}closeModal();afterAct();}},
+     {l:'Three-hour podcast',s:`${Math.round(pp*100)}% chance of +2.4 momentum, otherwise −1.6 and heat`,f:()=>{g.stx.media++;spend(1,0,8);g.stx.pods++;if(Math.random()<pp){g.mom+=2.4;logN('Your podcast appearance racks up 20 million views. (Momentum +2.4)');}else{g.mom-=1.6;g.heat+=1.5;g.stx.gaffes++;logN('A rambling tangent on the podcast turns into a meme. (Momentum −1.6)');}closeModal();afterAct();}},
+     {l:'Late-night comedy show',s:`${Math.round(clamp(0.7+bon*.15,0,.95)*100)}% chance of +1.2, otherwise −0.8`,f:()=>{g.stx.media++;spend(1,0,6);if(Math.random()<0.7+bon*.15){g.mom+=1.2;logN('You trade jokes with the host and come off as a real person. (Momentum +1.2)');}else{g.mom-=0.8;logN('The bit falls flat on late night. (Momentum −0.8)');}closeModal();afterAct();}},
+     {l:'Cancel',f:closeModal}]});}},
+  {id:'speech',n:'Major policy speech',d:'Push an issue up the agenda',c:'1 AP · $0.5M · 6 stamina',ok:()=>g.ap>=1&&g.money>=.5&&g.stamina>=6,
+   p:()=>{const b=IK.slice().sort((a,b)=>Math.abs(g.stances[a]-want(a))-Math.abs(g.stances[b]-want(b)))[0];return 'Best issue for you now: '+II[b].n;},
+   now:()=>'Momentum goes up if your position on the issue is popular with the current electorate and down if it isn\'t. Credibility +1.',
+   later:()=>'The issue becomes more important to voters everywhere (salience +0.2, fading 10% a turn). That keeps helping you in every state where your position fits, which makes it a long-term play.',
+   f(){
+    modal({k:'Policy speech',t:'Which issue?',body:'<p>A speech raises the issue\'s salience everywhere. That helps when your position is close to what the current electorate wants: your party\'s base in the primary, the middle in the general.</p>',choices:IK.map(i=>{const d=Math.abs(g.stances[i]-want(i));const m=(1.2-d)*1.2;return {l:II[i].n,s:`Your position: "${II[i].o[g.stances[i]+2]}" · momentum ${sgn(m)}`,f:()=>{spend(1,.5,6);g.salMod[i]+=0.2;g.mom+=m;g.cred+=1;logN(`You give a major speech on ${II[i].n.toLowerCase()}. (Momentum ${sgn(m)})`);closeModal();afterAct();}};}).concat([{l:'Cancel',f:closeModal}])});}},
+  {id:'attack',n:'National attack ads',d:'Go negative on your top rival',c:'1 AP · $4M',ok:()=>g.ap>=1&&g.money>=4,
+   p:()=>`Drags down ${isPri()?(topRival()?C[topRival().id].n.split(' ').pop():'your rival'):C[g.opp].n.split(' ').pop()} everywhere`,
+   now:()=>'Knocks down your opponent\'s momentum, which lowers them everywhere at once. Heat +1, and in the general a small backlash costs you a little too.',
+   later:()=>'Their momentum recovers 15% a turn, so attacks hit hardest right before votes: the week before a big primary night or in October.',
+   f(){g.stx.attacks++;spend(1,4,0);g.heat+=1;if(isPri()){const r=topRival();if(r){r.mom-=2.2;logN(`Your attack ads hit ${C[r.id].n} hard. (Their momentum −2.2)`);}}else{g.oppMom+=-1.8;g.mom-=0.3;logN(`Your attack ads go after ${C[g.opp].n}. (Their momentum −1.8; small backlash)`);}afterAct();}},
+  {id:'oppo',n:'Opposition research',d:'Dig for ammunition you can use later',c:'1 AP · $1M',ok:()=>g.ap>=1&&g.money>=1,
+   p:()=>'45% chance to find a file',
+   now:()=>'Nothing visible right away. Each dig has a 45% chance of turning up a file.',
+   later:()=>'Files are banked. Release one for a −3 to −3.5 momentum hit on your opponent, use one to defuse a scandal event, or carry one into a debate (+2 to attacks).',
+   f(){spend(1,1,0);if(Math.random()<0.45){g.oppo++;logN('Your oppo team finds something useful. (Oppo files: '+g.oppo+')');}else logN('The oppo dig comes up empty.');afterAct();}},
+  {id:'drop',n:'Release oppo file',d:'Use a file you found',c:'1 AP · uses 1 file',ok:()=>g.ap>=1&&g.oppo>0,
+   p:()=>'Big hit to your opponent\'s momentum',
+   now:()=>'A damaging story breaks about your opponent. Heat +0.5 because reporters suspect you leaked it.',
+   later:()=>'Momentum damage fades 15% a turn, so timing matters. Release before a big contest or late in October.',
+   f(){spend(1,0,0);g.oppo--;g.stx.oppoUsed++;g.heat+=0.5;if(isPri()){const r=topRival();if(r){r.mom-=3.5;logN(`A damaging story about ${C[r.id].n} breaks. (Their momentum −3.5)`);}}else{g.oppMom-=3;logN(`A damaging story about ${C[g.opp].n} dominates the news cycle. (Their momentum −3)`);}afterAct();}},
+ ],
+ hq:[
+  {id:'staff',n:'Hire senior staff',d:'+1 action point every turn (max 4 staff)',c:()=>'1 AP · '+fmtM(2+g.staff*1.5),ok:()=>g.ap>=1&&g.staff<(C[g.cand].cap||4)&&g.money>=2+g.staff*1.5,
+   p:()=>`+${CAL.length-1-g.turn} extra actions over the rest of the game`,
+   now:()=>'Costs an action this turn, so it\'s a net loss in the short run.',
+   later:()=>`From next turn on you get +1 AP every turn. With ${CAL.length-1-g.turn} turns left, that's ${CAL.length-1-g.turn} extra actions. One of the best investments early, almost worthless late.`,
+   f(){spend(1,2+g.staff*1.5,0);g.staff++;logN('You poach a top strategist. Staff level '+g.staff+' (+1 AP from next turn).');afterAct();}},
+  {id:'prep',n:'Debate prep',d:'Mock debates sharpen your next performance (max 3)',c:'1 AP · 5 stamina',ok:()=>g.ap>=1&&g.prep<3&&g.stamina>=5,
+   p:()=>{const t=nextDebate();return t<0?'No debates left':'Next debate: '+CAL[t].d;},
+   now:()=>'Prep level +1. Nothing changes until the debate.',
+   later:()=>'At the next debate, each prep level boosts "lay out your plan" and "zinger" answers. A debate win can swing momentum by up to ±4.5. Prep resets after every debate.',
+   f(){spend(1,0,5);g.prep++;logN('Mock debate session. Prep level '+g.prep+'.');afterAct();}},
+  {id:'rest',n:'Rest & recharge',d:'Recover 30 stamina. Tired candidates make gaffes.',c:'1 AP',ok:()=>g.ap>=1&&g.stamina<100,
+   p:()=>`Stamina ${Math.round(g.stamina)} → ${Math.min(100,Math.round(g.stamina+30))}`,
+   now:()=>'+30 stamina.',
+   later:()=>'Below 30 stamina, your gaffe risk doubles and debate answers suffer. You regain 18 stamina a turn on your own.',
+   f(){spend(1,0,-30);logN('A day off the trail with family.');afterAct();}},
+  {id:'polls',n:'Commission internal poll',d:'Cut through the noise in polling',c:'1 AP · $0.8M',ok:()=>g.ap>=1&&g.money>=.8,
+   p:()=>'Sharper map this turn',
+   now:()=>'Public polls are noisy (about ±1.6 per state). This shrinks that noise by 70%, so the map shows the true race.',
+   later:()=>'Lasts only this turn, because polls are re-sampled next turn. It doesn\'t change any votes. It just helps you spend in the right places.',
+   f(){spend(1,.8,0);SK.forEach(s=>g.noise[s]*=0.3);g.noise._n*=0.3;logN('Your pollster delivers a 50-state internal poll. The map is sharper now.');afterAct();}},
+  {id:'stance',n:'Adjust positions',d:'Shift your platform. Costs credibility.',c:'0 AP',ok:()=>true,
+   p:()=>`Credibility ${Math.round(g.cred)}`,
+   now:()=>'Each step you move a position costs 6 credibility.',
+   later:()=>'Positions decide how well you fit each state\'s voters, every turn, for the rest of the game. Below 50 credibility, you lose support everywhere.',
+   f(){openStanceModal();}},
+ ]};
+function afterAct(){g.stx.maxHeat=Math.max(g.stx.maxHeat,g.heat);checkMid();render();}
+
+function topRival(){return g.rivals.filter(r=>r.active).sort((a,b)=>(g.del[b.id]||0)+b.mom*20-((g.del[a.id]||0)+a.mom*20))[0];}
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+function want(i){return isPri()?(g.party==='D'?-1.2:1.2):II[i].tilt;}
+function play(i,side,mag){mag=mag||1.5;const v=g.stances[i];const cons=side==='L'?v<=-1:side==='R'?v>=1:Math.abs(v)<=1;const sv=side==='L'?-1.5:side==='R'?1.5:0;let d=(1.5-Math.abs(sv-want(i)))*mag*0.8;let t='';
+  if(C[g.cand].fp&&i==='foreign')d+=C[g.cand].fp;
+  if(!cons){g.cred-=4;d-=0.8;t=' Reporters point out it doesn\'t match your platform. (Credibility −4)';}
+  g.mom+=d;return (d>=0.5?'It lands well with the voters who matter right now.':d>-0.3?'The response is mixed.':'It goes over badly with the voters you need right now.')+` (Momentum ${sgn(d)})`+t;}
+function lr(){return g.party==='D'?'L':'R';}
+function stTarget(){return isPri()?pickOne(upcomingStates(2).length?upcomingStates(2):['IA']):pickOne(competitive(6).length?competitive(6):BG);}
+function envInc(x){g.env+=x;} // positive = toward D. Incumbent party is R in this timeline.
+
+const EVENTS=[
+ {id:'hurricane',t:'Hurricane makes landfall',b:st=>`A Category 4 hurricane slams into ${S[st].n}. Hundreds of thousands are without power, and cameras are everywhere.`,st:()=>pickOne(['FL','LA','NC','TX','SC']),c:st=>[
+  {l:'Fly in and hand out supplies',s:'15 stamina · could look like a photo op',f:()=>{g.stamina-=15;addEff(st,1.5);if(Math.random()<.7){g.mom+=1.5;return 'Footage of you hauling water cases goes viral. (Momentum +1.5)';}g.mom-=1;g.heat+=2;return 'Local officials grumble that your motorcade got in the way. (Momentum −1)';}},
+  {l:'Pause campaigning and raise relief money',s:'$0.5M · credibility up',f:()=>{g.money-=.5;g.cred+=3;g.mom+=.5;return 'You raise millions for relief groups. A steady, presidential look. (Credibility +3)';}},
+  {l:'Issue a statement and stay on schedule',f:()=>{if(Math.random()<.5){g.mom-=1.5;return 'Cable panels ask why you didn\'t show up. (Momentum −1.5)';}return 'The storm coverage moves on without you.';}}]},
+ {id:'hotmic',t:'Hot mic',b:()=>`After an event, a microphone you thought was off catches you mocking a local official. The clip has 4 million views and counting.`,c:()=>[
+  {l:'Apologize right away',f:()=>{g.mom-=.5;g.cred+=2;g.heat=Math.max(0,g.heat-1);return 'A quick, sincere apology. The story dies in a day. (Momentum −0.5, credibility +2)';}},
+  {l:'Lean in and make it a joke',s:'Risky',f:()=>{if(Math.random()<stat(C[g.cand],0)/14){g.mom+=2;return 'Your self-deprecating video is a hit. Turns out voters like a candidate with a sense of humor. (Momentum +2)';}g.mom-=2;g.heat+=3;return 'The joke makes it worse. Now there are two clips. (Momentum −2)';}},
+  {l:'Say nothing',f:()=>{if(Math.random()<.5)return 'Somehow, the news cycle moves on.';g.heat+=4;g.mom-=1.5;return 'Your silence becomes the story. (Momentum −1.5, heat +4)';}}]},
+ {id:'ailayoffs',t:'AI layoff shock',b:()=>`A Fortune 100 company announces 40,000 job cuts, citing AI automation. Anxiety spikes across the industrial Midwest, and every candidate is asked for a plan.`,pre:()=>{g.salMod.ai+=.3;},c:()=>[
+  {l:'Call for strict AI rules and an automation tax',f:()=>play('ai','L')},
+  {l:'Propose retraining guarantees and baseline safety standards',f:()=>play('ai','C')},
+  {l:'Warn against red tape that would hand the lead to China',f:()=>play('ai','R')},
+  {l:'Visit laid-off workers in Ohio and Michigan',s:'10 stamina · local effort',f:()=>{g.stamina-=10;if(targetable('OH'))addEff('OH',1.5);if(targetable('MI'))addEff('MI',1.5);g.mom+=.4;return 'You spend a day on the plant floor and at the union hall. (+effort in OH, MI)';}}]},
+ {id:'aisafety',t:'AI system triggers market flash crash',b:()=>`An autonomous trading AI at a major bank sets off a 9% flash crash before regulators halt trading. Congressional hearings are scheduled.`,pre:()=>{g.salMod.ai+=.25;},c:()=>[
+  {l:'Call for a federal AI safety agency with licensing powers',f:()=>play('ai','L')},
+  {l:'Push targeted rules for high-risk uses like finance',f:()=>play('ai','C')},
+  {l:'Blame the bank, not the technology, and warn against overreaction',f:()=>play('ai','R')}]},
+ {id:'billionaire',t:'A billionaire comes calling',b:()=>`A tech billionaire offers to fund a $60M super PAC for you, on one condition: you publicly oppose any new federal AI regulation.`,c:()=>[
+  {l:'Take the deal',s:'Super PAC spends for you over several turns · heat up · your AI position may shift',f:()=>{g.pac+=24;g.heat+=4;let t='The super PAC launches with a huge first buy.';if(g.stances.ai<1){g.stances.ai=1;g.cred-=7;t+=' You publicly change your AI position. (Credibility −7)';}return t+' (Heat +4)';}},
+  {l:'Turn it down publicly and fundraise off it',f:()=>{g.money+=3;g.mom+=1;g.cred+=2;return '"Not for sale" becomes your best email subject line of the year. (+$3M, momentum +1)';}},
+  {l:'Turn it down quietly',f:()=>'Nothing happens. Some of your aides wish you had taken the money.'}]},
+ {id:'union',t:'Union endorsement on the table',b:()=>`A major industrial union will endorse you if you commit to keeping tariffs on imported cars and steel.`,c:()=>[
+  {l:'Make the commitment',s:'Organization in MI, OH, PA, WI · free-trade donors pull back',f:()=>{['MI','OH','PA','WI'].forEach(s=>{if(targetable(s))g.org[s]=(g.org[s]||0)+0.7;});g.money-=1.5;g.mom+=.5;return 'The union\'s door-knockers go to work for you across the Rust Belt. A few donors stop returning calls. (−$1.5M)';}},
+  {l:'Decline: "I don\'t make promises for endorsements"',f:()=>{g.cred+=2;return 'Editorial boards approve. Union halls shrug. (Credibility +2)';}}]},
+ {id:'deepfake',t:'Deepfake attack',b:()=>`A realistic AI-generated video of you saying things you never said spreads on social media. It already has 12 million views.`,c:()=>[
+  {l:'Rapid-response team',s:'$1.5M',dis:()=>g.money<1.5,f:()=>{g.money-=1.5;return 'Your team gets it debunked and labeled within hours. Damage contained.';}},
+  {l:'Make it a cause: call for a federal deepfake law',f:()=>{g.salMod.integrity+=.1;g.salMod.ai+=.1;if(g.stances.ai<=0){g.mom+=1.2;return 'You turn the attack into a message about protecting elections. (Momentum +1.2)';}g.mom+=.3;g.cred-=2;return 'Some point out that you oppose most tech regulation. (Credibility −2)';}},
+  {l:'Ignore it',f:()=>{if(Math.random()<.45)return 'It fizzles out.';g.mom-=2.5;g.heat+=3;return 'A third of voters who saw it now believe it was real. (Momentum −2.5)';}}]},
+ {id:'leak',t:'Staff group chat leaks',b:st=>`Screenshots from a staff group chat that mock ${S[st].n} voters as "hopeless" leak to a reporter.`,st:()=>stTarget(),c:st=>[
+  {l:'Fire the staffers involved',f:()=>{g.mom-=.5;g.cred+=1;return 'Swift action. The story fades. (Momentum −0.5)';}},
+  {l:'Go to '+S[st].n+' and apologize in person',s:'1 AP · 10 stamina',dis:()=>g.ap<1,f:()=>{g.ap-=1;g.stamina-=10;addEff(st,1.5);g.mom+=.3;return 'You hold a diner meet-and-greet. Locals appreciate it. (+effort)';}},
+  {l:'Defend your team: "It was a private joke"',f:()=>{if(Math.random()<.3){g.mom+=.5;return 'Somehow, your base rallies around you.';}g.heat+=5;g.mom-=2;return 'The story runs for a week. (Momentum −2, heat +5)';}}]},
+ {id:'inflation',t:'Hot inflation report',b:()=>`Consumer prices jump 0.7% in a month, driven by groceries, rent and electricity. Prices are the only thing anyone wants to talk about.`,pre:()=>{g.salMod.economy+=.25;envInc(.6);},c:()=>[
+  {l:'Go after price-gouging corporations and push housing aid',f:()=>play('economy','L')},
+  {l:'Unveil a practical plan: zoning reform and targeted tax relief',f:()=>play('economy','C')},
+  {l:'Blame government spending and call for tax cuts',f:()=>play('economy','R')}]},
+ {id:'recession',t:'Recession warning',b:()=>`GDP shrinks for a second straight quarter. Economists say the "R-word" on every channel, and voters blame the party in the White House.`,pre:()=>{envInc(1.0);g.salMod.economy+=.2;},c:()=>[
+  {l:'Big stimulus: checks, infrastructure, child care',f:()=>play('economy','L',1.2)},
+  {l:'Steady hand: a bipartisan relief package',f:()=>play('economy','C',1.2)},
+  {l:'Supply-side: cut taxes and red tape now',f:()=>play('economy','R',1.2)}]},
+ {id:'jobs',t:'Blowout jobs report',b:()=>`The economy adds 410,000 jobs and unemployment falls. The White House takes a victory lap.`,pre:()=>{envInc(-0.7);},c:()=>[
+  {l:'"Good news for workers, but families still can\'t afford rent"',f:()=>{g.mom+=.6;return 'A smart pivot back to costs. (Momentum +0.6)';}},
+  {l:'Question whether the numbers are real',f:()=>{if(isPri()){g.mom+=.5;g.heat+=1;return 'Some of your base likes it. Economists cringe. (Momentum +0.5)';}g.mom-=1.2;g.heat+=2;g.cred-=2;return 'Fact-checkers pounce. (Momentum −1.2, credibility −2)';}},
+  {l:'Say nothing and stay on your message',f:()=>'You stay out of it.'}]},
+ {id:'border',t:'Border surge headlines',b:()=>`Record crossings at a section of the southern border dominate cable news for a week. Border-state governors are demanding federal help.`,pre:()=>{g.salMod.immig+=.3;},c:()=>[
+  {l:'Push for a legalization path and humane processing',f:()=>play('immig','L')},
+  {l:'Endorse a bipartisan border-plus-Dreamers deal',f:()=>play('immig','C')},
+  {l:'Call for mass deportations and finishing the wall',f:()=>play('immig','R')},
+  {l:'Visit the border in Arizona',s:'1 AP · 10 stamina',dis:()=>g.ap<1,f:()=>{g.ap-=1;g.stamina-=10;if(targetable('AZ'))addEff('AZ',2);g.mom+=.5;return 'You walk the border with ranchers and Border Patrol agents. (+effort in AZ)';}}]},
+ {id:'mideast',t:'War widens overseas',b:()=>`Fighting in the Middle East escalates sharply. U.S. bases are targeted and oil passes $110 a barrel.`,pre:()=>{g.salMod.foreign+=.35;g.salMod.energy+=.1;},c:()=>[
+  {l:'Demand an immediate ceasefire and diplomacy',f:()=>play('foreign','L')},
+  {l:'Stand with allies and avoid wider escalation',f:()=>play('foreign','C')},
+  {l:'Call for overwhelming retaliation',f:()=>play('foreign','R')}]},
+ {id:'taiwan',t:'Taiwan Strait standoff',b:()=>`China starts a naval "inspection" blockade around Taiwan. Chip stocks crash and the world watches Washington.`,pre:()=>{g.salMod.foreign+=.3;g.salMod.ai+=.1;},c:()=>[
+  {l:'Urge restraint and direct talks with Beijing',f:()=>play('foreign','L')},
+  {l:'Rally allies and send a measured show of force',f:()=>play('foreign','C')},
+  {l:'Vow to break the blockade by force if needed',f:()=>play('foreign','R')}]},
+ {id:'scotus',t:'Supreme Court bombshell',b:()=>`The Supreme Court hands down a 6–3 ruling that sharply expands presidential power over independent agencies.`,pre:()=>{g.salMod.integrity+=.25;},c:()=>[
+  {l:'Condemn it and call for Court reform',f:()=>play('integrity','L')},
+  {l:'Propose bipartisan ethics and term-limit reforms',f:()=>play('integrity','C')},
+  {l:'Hail it as a win against an unelected bureaucracy',f:()=>play('integrity','R')}]},
+ {id:'premiums',t:'Health premiums spike',b:()=>`Insurers announce average premium increases of 22% for next year. Families are getting the letters right now.`,pre:()=>{g.salMod.health+=.3;},c:()=>[
+  {l:'Make the case for Medicare for All',f:()=>play('health','L')},
+  {l:'Extend subsidies and require price transparency',f:()=>play('health','C')},
+  {l:'Offer market reforms, HSAs and more state flexibility',f:()=>play('health','R')}]},
+ {id:'datacenter',t:'Power bills revolt',b:()=>`Residents in Virginia, Georgia and Arizona are furious that electric bills jumped 30% as AI data centers soak up the grid.`,pre:()=>{g.salMod.energy+=.15;g.salMod.ai+=.1;},c:()=>[
+  {l:'Call for a moratorium on new data centers',f:()=>play('ai','L')},
+  {l:'Make tech companies pay for their own power',s:'Popular middle ground',f:()=>{['VA','GA','AZ'].forEach(s=>{if(targetable(s))addEff(s,.8);});g.mom+=1;return 'A rare idea with broad support. (+effort in VA, GA, AZ; momentum +1)';}},
+  {l:'Defend data centers as jobs engines',f:()=>{g.money+=2;return play('ai','R',1)+' Tech donors notice. (+$2M)';}}]},
+ {id:'campus',t:'Campus unrest',b:()=>`Protests and counter-protests at several major universities turn chaotic. Video of clashes leads every newscast.`,pre:()=>{g.salMod.safety+=.2;},c:()=>[
+  {l:'Meet with student organizers and defend protest rights',f:()=>play('safety','L',1.2)},
+  {l:'Defend free speech and condemn violence and hate on all sides',f:()=>play('safety','C',1.2)},
+  {l:'Call for arrests and cuts to federal funding',f:()=>play('safety','R',1.2)}]},
+ {id:'crime',t:'Crime wave in a major city',b:()=>`A spike in carjackings and shootings in a major city becomes a national story. Its mayor is asking for help.`,pre:()=>{g.salMod.safety+=.25;},c:()=>[
+  {l:'Push gun-safety laws and violence-intervention programs',f:()=>play('safety','L')},
+  {l:'Fund more police along with red-flag laws',f:()=>play('safety','C')},
+  {l:'Offer to send in federal law enforcement',f:()=>play('safety','R')}]},
+ {id:'interfere',t:'Foreign interference report',b:()=>`Intelligence officials report that a foreign government is running a bot network targeting the 2028 election, and that it has probed state voting systems.`,pre:()=>{g.salMod.integrity+=.15;},c:()=>[
+  {l:'Call for emergency election-security funding',f:()=>{g.mom+=.8;g.cred+=2;return 'Election officials in both parties welcome it. (Momentum +0.8, credibility +2)';}},
+  {l:'Suggest the system may already be compromised',f:()=>{if(isPri()){g.mom+=1.2;g.heat+=1;return 'It energizes some of your base. (Momentum +1.2)';}g.mom-=2;g.heat+=2;g.cred-=3;return 'Swing voters recoil at talk of a rigged system. (Momentum −2)';}},
+  {l:'Reassure voters that the system is secure',f:()=>{g.cred+=1;return 'A calm response. (Credibility +1)';}}]},
+ {id:'port',t:'Port strike',b:()=>`Dockworkers walk off the job at East and Gulf Coast ports. Shelves start emptying and the price of everything is in the headlines again.`,pre:()=>{g.salMod.economy+=.15;},c:()=>[
+  {l:'Stand with the workers',f:()=>play('economy','L',1.1)},
+  {l:'Offer to bring both sides to the table',s:'8 stamina',f:()=>{g.stamina-=8;g.cred+=2;g.mom+=.6;return 'You look like the adult in the room. (Credibility +2)';}},
+  {l:'Call for federal powers to end the strike',f:()=>play('economy','R',1.1)}]},
+ {id:'podcast',t:'The biggest podcast in America',b:()=>`The No. 1 podcast in the country invites you on for an unscripted three-hour conversation. Its audience is mostly young men who skip the news.`,c:()=>[
+  {l:'Do it',s:'High variance',f:()=>{const p=.45+stat(C[g.cand],2)*.03+(C[g.cand].med||0)*.15;if(Math.random()<p){g.mom+=2.8;return 'It becomes the most-watched episode of the year, and voters see a side of you they hadn\'t. (Momentum +2.8)';}g.mom-=2;g.heat+=2;return 'Hour two goes off the rails. The clips are brutal. (Momentum −2)';}},
+  {l:'Decline',f:()=>{g.mom-=.4;return 'The host spends 20 minutes calling you scared. (Momentum −0.4)';}}]},
+ {id:'celeb',t:'Celebrity endorsement',b:()=>`One of the biggest pop stars in the world offers to endorse you on Instagram and appear at a rally.`,c:()=>[
+  {l:'Accept with enthusiasm',f:()=>{if(Math.random()<.8){g.mom+=1.5;g.money+=1.5;return 'Voter registrations spike and the rally sells out. (Momentum +1.5, +$1.5M)';}g.heat+=2;return 'An old controversy about the star becomes your problem. (Heat +2)';}},
+  {l:'Politely keep your distance',f:()=>'You keep the focus on your message.'}]},
+ {id:'resurface',t:'Old statement resurfaces',b:i=>`Opposition researchers find a clip from 2014 in which you take the opposite position on ${II[i].n.toLowerCase()}.`,st:()=>pickOne(IK),c:i=>[
+  {l:'Own it: "I changed my mind, and here\'s why"',f:()=>{g.cred+=1;g.mom-=.5;return 'Voters respect the honesty, mostly. (Momentum −0.5, credibility +1)';}},
+  {l:'Explain the context',f:()=>{if(Math.random()<stat(C[g.cand],3)/11)return 'Your explanation holds up. The story fades.';g.mom-=1.5;g.cred-=2;return 'The explanation sounds like an excuse. (Momentum −1.5)';}},
+  {l:'Change the subject by releasing your own oppo',s:'Uses 1 oppo file',dis:()=>g.oppo<1,f:()=>{g.oppo--;if(isPri()){const r=topRival();if(r)r.mom-=2.5;}else g.oppMom-=2;g.heat+=1;return 'The news cycle turns to your opponent.';}}]},
+ {id:'feud',t:'Civil war in campaign HQ',b:()=>`Your data team and your veteran strategists are leaking against each other. The Politico headline: "Campaign in Chaos?"`,c:()=>[
+  {l:'Side with the data team',s:'Ads 25% more effective from now on',f:()=>{g.flags.data=true;g.mom-=.3;return 'The veterans leave. Targeting gets sharper.';}},
+  {l:'Side with the veterans',s:'Fewer gaffes from now on',f:()=>{g.flags.veterans=true;g.mom-=.3;return 'The data people quit. Your message discipline improves.';}},
+  {l:'Fire both factions and start over',s:'−2 AP this turn',f:()=>{g.ap=Math.max(0,g.ap-2);g.heat=Math.max(0,g.heat-3);g.cred+=2;return 'A painful reboot, but the leaks stop. (Credibility +2)';}}]},
+ {id:'viral',t:'You went viral (the good kind)',b:()=>`An unscripted exchange with a voter racks up 30 million views. Donations are pouring in.`,pre:()=>{g.money+=4;g.mom+=1;},c:()=>[
+  {l:'Pour it into ads right away',s:'−$4M, effort spread across key states',dis:()=>g.money<4,f:()=>{g.money-=4;const t=isPri()?upcomingStates(2).slice(0,4):competitive(4);t.forEach(s=>addEff(s,1.5));return 'New ads run in '+t.join(', ')+'.';}},
+  {l:'Hire staff with it',s:'+1 staff (if below 4)',dis:()=>g.staff>=4||g.money<3,f:()=>{g.money-=3;g.staff++;return 'You add a senior operative. (Staff '+g.staff+')';}},
+  {l:'Bank it for later',f:()=>'The war chest grows. (+$4M already added)'}]},
+ {id:'deadline',t:'Fundraising deadline at midnight',b:()=>`The quarterly FEC deadline is tonight. Your digital team wants to send 14 increasingly urgent emails.`,c:()=>[
+  {l:'Send all 14 ("FINAL NOTICE: Your membership…")',f:()=>{const x=stat(C[g.cand],1)*0.5+2;g.money+=x;g.cred-=1;return `+${fmtM(x)}. Your supporters are a little annoyed. (Credibility −1)`;}},
+  {l:'One honest ask',f:()=>{g.money+=1.5;return '+$1.5M.';}}]},
+ {id:'internal',t:'Pollster sounds the alarm',b:st=>`Your pollster flags a slide in ${S[st].n}: "We're bleeding there and nobody's noticed."`,st:()=>stTarget(),c:st=>[
+  {l:'Rush money and staff there',s:'$2M',dis:()=>g.money<2,f:()=>{g.money-=2;addEff(st,2.5);return 'Resources are redeployed to '+S[st].n+'. (+2.5 effort)';}},
+  {l:'Send surrogates',f:()=>{addEff(st,1);return 'Your allies hold a dozen events. (+1 effort)';}},
+  {l:'Trust the plan',f:()=>{if(isPri())g.pEff[st]=(g.pEff[st]||0)*.8;else g.oppEff[st]=(g.oppEff[st]||0)+1;return 'You stay the course.';}}]},
+ {id:'heckler',t:'Heckler in the front row',b:()=>`At a rally, a heckler has been shouting at you for five minutes. Every camera is pointed at you.`,c:()=>[
+  {l:'Engage directly',f:()=>{if(Math.random()<stat(C[g.cand],3)/11){g.mom+=1.5;return 'You turn the confrontation into your best moment of the week. (Momentum +1.5)';}g.mom-=1.5;g.heat+=2;return 'You lose your cool on camera. (Momentum −1.5)';}},
+  {l:'Invite them on stage',s:'Big gamble',f:()=>{if(Math.random()<.5){g.mom+=2.5;return 'An unexpectedly human conversation. It leads the evening news. (Momentum +2.5)';}g.mom-=2;return 'They grab the mic and won\'t give it back. (Momentum −2)';}},
+  {l:'Let security handle it',f:()=>'Nothing happens.'}]},
+ {id:'blizzard',when:()=>g.turn>=2&&g.turn<=4,t:'Iowa blizzard',b:()=>`A blizzard cancels three days of your Iowa events right before the caucuses.`,c:()=>[
+  {l:'Switch to telephone town halls',f:()=>{addEff('IA',1);return 'Thousands dial in. (+1 effort in IA)';}},
+  {l:'Brave the roads anyway',s:'20 stamina',f:()=>{g.stamina-=20;addEff('IA',2.5);if(Math.random()<.85){g.mom+=1;return 'Iowans love it. (+2.5 effort, momentum +1)';}g.heat+=1;return 'Your bus slides into a ditch. Thankfully nobody\'s hurt, but it\'s the story of the day.';}},
+  {l:'Shift resources to New Hampshire',f:()=>{addEff('NH',2);return '(+2 effort in NH)';}}]},
+ {id:'adblitz',when:()=>isPri()&&g.rivals.some(r=>r.active),t:'Rival ad blitz',b:()=>`${C[topRival().id].n}'s super PAC drops $15M on ads attacking you in the next contests.`,pre:()=>{upcomingStates(2).forEach(s=>g.pEff[s]=(g.pEff[s]||0)*.8);},c:()=>[
+  {l:'Answer with your own ads',s:'$3M',dis:()=>g.money<3,f:()=>{g.money-=3;upcomingStates(2).forEach(s=>addEff(s,.8));return 'You punch back on the airwaves.';}},
+  {l:'Stay positive: "I\'m not going to tear anyone down"',f:()=>{if(Math.random()<.55){g.mom+=1;return 'Primary voters reward the high road. (Momentum +1)';}return 'Nobody notices.';}},
+  {l:'Hit back hard in a speech',f:()=>{topRival().mom-=1.5;g.heat+=1;return 'Your rival takes a hit too. (Rival momentum −1.5)';}}]},
+ {id:'elder',when:()=>isPri(),t:'A party elder\'s offer',b:i=>`A revered elder statesperson of your party offers a high-profile endorsement, if you make their signature cause, ${II[i].n.toLowerCase()}, a centerpiece and adopt the base's position.`,st:()=>pickOne(IK),c:i=>[
+  {l:'Accept and adopt the position',f:()=>{const tgt=g.party==='D'?-2:2;let t='';if(g.stances[i]!==tgt){const d=Math.abs(g.stances[i]-tgt);g.stances[i]=tgt;g.cred-=3*d;t=` Your position on ${II[i].n} shifts. (Credibility −${3*d})`;}g.mom+=2.5;return 'The endorsement makes headlines. (Momentum +2.5)'+t;}},
+  {l:'Decline respectfully',f:()=>'You keep your own platform.'}]},
+ {id:'deal',when:()=>g.turn>=6&&isPri()&&g.rivals.filter(r=>r.active).length>=2,t:'A backroom offer',b:()=>{const r=weakRival();return `${C[r.id].n} is running out of money. Their team says they'll drop out and endorse you in exchange for a cabinet post.`;},c:()=>[
+  {l:'Make the deal',s:'They endorse you · heat +2',f:()=>{const r=weakRival();r.active=false;g.mom+=2;g.heat+=2;logN(C[r.id].n+' drops out and endorses you.');return C[r.id].n+' endorses you. Their supporters start coming your way. (Momentum +2)';}},
+  {l:'No deals',f:()=>{g.cred+=1;return 'Clean hands. (Credibility +1)';}}]},
+ {id:'vpposts',when:()=>!!g.vp&&!isPri(),t:'Running mate\'s old posts',b:()=>`Old social media posts from ${cand(g.vp).n} have resurfaced. Some are cringeworthy. Two are genuinely offensive.`,c:()=>[
+  {l:'Stand by your running mate',f:()=>{if(Math.random()<.5)return 'It blows over.';g.heat+=4;g.mom-=1.5;return 'The story drags on. (Momentum −1.5, heat +4)';}},
+  {l:'Have them apologize on camera',f:()=>{g.mom-=.5;g.cred+=1;return 'A contrite apology. The story ends. (Momentum −0.5)';}}]},
+ {id:'surpriseOpp',when:()=>g.turn>=CAL.length-3&&!isPri(),t:'October surprise',b:()=>`A major newspaper is about to publish an investigation into ${C[g.opp].n}'s financial dealings. They're asking you for comment.`,c:()=>[
+  {l:'Pile on hard',f:()=>{g.oppMom-=2.5;g.heat+=1;return 'Your attacks keep the story going. (Opponent momentum −2.5)';}},
+  {l:'Stay above it: "Voters can judge for themselves"',f:()=>{g.oppMom-=1.5;g.cred+=2;return 'The story does its damage without your fingerprints. (Credibility +2)';}}]},
+ {id:'surpriseMe',when:()=>g.turn>=CAL.length-3&&!isPri(),t:'October surprise — aimed at you',b:()=>`A leaked document raises questions about a former business partner of yours. It's thin, but it's everywhere.`,c:()=>[
+  {l:'Full transparency: release everything',f:()=>{g.cred+=3;g.mom-=.5;return 'The documents show nothing improper. (Credibility +3)';}},
+  {l:'Call it a smear and attack the source',f:()=>{if(Math.random()<.55){g.mom+=.5;return 'Your base rallies around you.';}g.heat+=4;g.mom-=2;return 'Stonewalling looks bad. (Momentum −2, heat +4)';}}]},
+ {id:'governor',when:()=>!isPri(),t:'A popular ally offers to help',b:()=>`A popular ${partyName(g.party)} official in a swing state offers to spend the week campaigning with you. You can only pick one state.`,c:()=>{const two=competitive(6).sort(()=>Math.random()-.5).slice(0,2);if(two.length<2)two.push('PA','MI');return two.slice(0,2).map(s=>({l:'Campaign together in '+S[s].n,f:()=>{addEff(s,2.5);g.stamina-=5;return 'Big crowds in '+S[s].n+'. (+2.5 effort)';}}));}},
+ {id:'energy',t:'Gas hits $5',b:()=>`Gas prices average $5 a gallon nationwide for the first time since 2022.`,pre:()=>{g.salMod.energy+=.3;g.salMod.economy+=.1;envInc(.4);},c:()=>[
+  {l:'Use it to make the case for clean energy independence',f:()=>play('energy','L')},
+  {l:'All of the above: nuclear, permitting reform and a gas-tax holiday',f:()=>play('energy','C')},
+  {l:'Drill, open pipelines, cut red tape',f:()=>play('energy','R')}]},
+];
+function weakRival(){return g.rivals.filter(r=>r.active).sort((a,b)=>(g.del[a.id]||0)+a.mom*10-((g.del[b.id]||0)+b.mom*10))[0];}
+
+function runTurnEvent(){
+  if(!g||g.turnEventDone||g.over||$('game').classList.contains('hidden'))return;
+  g.turnEventDone=true;
+  if(cal().ev==='launch'){launchEvent();return;}
+  // wildcard: rare and big (max 3 per game)
+  const wpool=WILD.filter(e=>!g.usedEv.includes(e.id)&&(!e.when||e.when()));
+  if(g.turn>=1&&g.wildN<3&&wpool.length&&Math.random()<0.14){g.wildN++;g.stx.wild++;showEvent(pickOne(wpool),true);return;}
+  const pool=EVENTS.filter(e=>!g.usedEv.includes(e.id)&&(!e.when||e.when()));
+  if(!pool.length){render();return;}
+  showEvent(pickOne(pool),false);
+  // busy news week: sometimes a second event
+  if(Math.random()<0.25)pendingAfter=()=>{const p2=EVENTS.filter(e=>!g.usedEv.includes(e.id)&&(!e.when||e.when()));if(p2.length){showEvent(pickOne(p2),false,true);}};
+}
+function showEvent(e,wild,second){
+  g.usedEv.push(e.id);
+  const st=e.st?e.st():null;
+  const body=e.b(st);
+  if(e.pre)e.pre();
+  const ch=e.c(st);
+  modal({k:cal().d+(wild?' · 🃏 Wildcard':second?' · Busy news week (2 of 2)':' · Breaking'),t:e.t,body:`<p>${esc(body)}</p>`,choices:ch.map(c=>({l:c.l,s:c.s,dis:c.dis?c.dis():false,f:()=>res(c.f)}))});
+  checkMid();
+}
+function launchEvent(){
+  const P=C[g.cand];
+  modal({k:'Q2 2027 · Announcement',t:'Where do you launch?',body:`<p>It's official: you're running for President of the United States. Where you announce sends the first message.</p>`,choices:[
+   {l:P.home?'Hometown rally in '+S[P.home].n:'A rally in the heartland',s:'Momentum and a home-state base',f:()=>res(()=>{g.mom+=1.5;addEff(P.home||'OH',2);return 'Twenty thousand people and a marching band. A strong first image. (Momentum +1.5)';})},
+   {l:'A diner in Iowa, then New Hampshire',s:'Early-state effort',f:()=>res(()=>{addEff('IA',2);addEff('NH',2);return 'Retail politics from day one. (+2 effort in IA and NH)';})},
+   {l:'South Carolina church and town square',s:'Early-state effort, plus credibility with core voters',f:()=>res(()=>{addEff('SC',2.5);addEff('NV',1);g.cred+=2;return 'A message about faith, family and work. (+effort in SC, NV)';})},
+   {l:'Livestream announcement video',s:'Cheap and raises money',f:()=>res(()=>{g.money+=3.5;g.mom+=.5;return 'The video gets 9 million views and raises $3.5M in 24 hours.';})},
+  ]});
+}
+function res(fn){const out=fn();g.cred=clamp(g.cred,0,100);g.stamina=clamp(g.stamina,0,100);g.heat=Math.max(0,g.heat);g.mom=clamp(g.mom,-12,12);
+  modal({k:'Outcome',t:'What happened',body:`<p>${esc(out)}</p>`,choices:[{l:'Continue',f:()=>{closeModal();render();if(pendingAfter){const a=pendingAfter;pendingAfter=null;a();}}}]});}
+let pendingAfter=null;
+
+/* =========================================================
+   DEBATES
+   ========================================================= */
+function runDebate(kind,done){
+  if(kind==='vp'){
+    if(!g.vp||!g.oppVp){logN('No vice-presidential debate this cycle: '+(g.vp?'your opponent has':'you have')+' no running mate.');done();return;}
+    const mine=cand(g.vp),theirs=cand(g.oppVp);
+    let a=stat(mine,2)+(vpPerk(g.vp)==='debate'?3:0)+rnd(-3,3), b=stat(theirs,2)+(vpPerk(g.oppVp)==='debate'?3:0)+rnd(-3,3);
+    const d=clamp((a-b)*0.35,-2.5,2.5);g.mom+=d;g.oppMom-=d*.5;
+    const t=d>0.4?`${mine.n} wins the VP debate in snap polls.`:d<-0.4?`${theirs.n} gets the better of ${mine.n} in the VP debate.`:'The VP debate is a draw that changes few minds.';
+    logN(t+' (Momentum '+sgn(d)+')');
+    modal({k:'VP debate',t:'The undercard',body:`<p>${esc(t)}</p><p class="fx">Momentum ${sgn(d)}</p>`,choices:[{l:'Continue',f:()=>{closeModal();done();}}]});
+    return;
+  }
+  const opp=kind==='general'?C[g.opp]:C[(topRival()||{id:g.opp}).id];
+  const top=IK.slice().sort((a,b)=>natSal(b)-natSal(a)+rnd(-.25,.25)).slice(0,3);
+  let q=0,total=0,lines=[];
+  const P=C[g.cand];
+  const ask=()=>{
+    if(q>=3){finish();return;}
+    const i=top[q];
+    const qs=[`"Families are struggling. What specifically would you do about ${II[i].n.toLowerCase()}?"`,`"Your opponents say your position on ${II[i].n.toLowerCase()} is out of touch. Respond."`,`"Voters at home want a straight answer on ${II[i].n.toLowerCase()}. Where exactly do you stand?"`];
+    modal({k:(kind==='general'?'Presidential debate':'Primary debate')+` · Question ${q+1} of 3`,t:II[i].n,body:`<p class="mut">The moderator turns to you:</p><p style="font-family:var(--disp);font-size:19px">${qs[q]}</p><p class="mut" style="font-size:12px">Your position: ${esc(II[i].o[g.stances[i]+2])}. Prep level: ${g.prep}. Opponent on stage: ${esc(opp.n)}.</p>`,choices:[
+      {l:'Lay out your plan in detail',s:'Rewards preparation and a popular position',f:()=>answer('plan',i)},
+      {l:'Pivot to your core message',s:'Safe, modest payoff',f:()=>answer('pivot',i)},
+      {l:'Go on the attack',s:'Big swings either way · better with oppo files',f:()=>answer('attack',i)},
+      {l:'Land a prepared zinger',s:'Needs prep · can become the moment of the night',f:()=>answer('zing',i)}]});
+  };
+  const answer=(type,i)=>{
+    const dist=Math.abs(g.stances[i]-want(i));let sc;
+    if(type==='plan')sc=stat(P,2)*.45+g.prep*1.1+(1.5-dist)*2+rnd(-2,2)-(P.out?1.5:0);
+    else if(type==='pivot')sc=3+stat(P,3)*.15+rnd(-1,1);
+    else if(type==='attack'){sc=stat(P,2)*.5+rnd(-5,5)+(g.oppo>0?2:0);if(sc<1.5)g.heat+=2;}
+    else sc=stat(P,0)*.25+g.prep*1.4+rnd(-4,5)+(P.out?1:0);
+    if(g.stamina<30)sc-=1.5;
+    const os=stat(opp,2)*.45+rnd(-2,3)+1.5;
+    const net=sc-os;total+=net;
+    const verdict=net>2?'You win the exchange decisively.':net>0?'You edge the exchange.':net>-2?`${opp.n} gets the better of that one.`:`That answer goes badly. Expect to see it in an attack ad.`;
+    lines.push(`Q${q+1} (${II[i].n}): ${verdict}`);
+    q++;
+    modal({k:'Debate',t:verdict,body:'',choices:[{l:q<3?'Next question':'See the post-debate spin',f:ask}]});
+  };
+  const finish=()=>{
+    g.prep=0;
+    const d=clamp(total*0.35,-4.5,4.5);g.stx.debT++;if(d>0.5)g.stx.debW++;
+    g.mom+=d;if(kind==='general')g.oppMom-=d*.6;else{const r=topRival();if(r)r.mom-=d*.5;}
+    const hl=d>2?'Snap polls say you won the debate decisively.':d>0.5?'You win the debate on points.':d>-0.5?'Pundits call the debate a draw.':d>-2?'Snap polls give the debate to '+opp.n+'.':'A rough night. You lost the debate badly.';
+    logN(hl+' (Momentum '+sgn(d)+')');
+    modal({k:'Post-debate',t:hl,body:`<div class="fx">${lines.map(esc).join('<br>')}<br><br>Momentum ${sgn(d)}</div>`,choices:[{l:'Continue',f:()=>{closeModal();done();}}]});
+  };
+  modal({k:kind==='general'?'Presidential debate':'Primary debate',t:kind==='general'?`You vs. ${opp.n}`:'The primary debate stage',body:`<p>${kind==='general'?'The two nominees take the stage. Three questions, three chances to move the race.':'The candidates line up under the lights. The frontrunner, '+esc(opp.n)+', is your main foil tonight.'}</p><p class="mut">Prep level: ${g.prep}/3 · Stamina: ${Math.round(g.stamina)}</p>`,choices:[{l:'Take the stage',f:ask}]});
+}
+
+/* =========================================================
+   ELECTION NIGHT
+   ========================================================= */
+function computeFinal(){const pq=g.cycle?g.cycle.pollQ[1]:1;const natErr=gauss()*2.0*pq;const fin={};SK.forEach(s=>fin[s]=genMargin(s)+natErr+gauss()*2.2*pq);return fin;}
+function electionNight(finOverride){
+  const fin=finOverride||computeFinal();const ME=(g.h2h&&g.net==='local')?C[g.cand].n:'You';
+  let me=0,them=0,called=[];
+  const P=C[g.cand],O=C[g.opp];
+  render();
+  modal({k:'Tuesday, November 7, 2028',t:'Election Night',wide:true,body:`<div class="ennight"><div><div id="enMap"></div></div><div><div class="kicker">Electoral votes · 270 to win</div><div style="display:flex;justify-content:space-between;align-items:flex-end;margin:8px 0"><div><div class="bigev" id="enMe" style="color:${partyHex(g.party)}">0</div><div class="mut">${esc(ME)}</div></div><div style="text-align:right"><div class="bigev" id="enThem" style="color:${partyHex(O.p)}">0</div><div class="mut">${esc(O.n)}</div></div></div><div class="evbar" id="enBar"><div class="mid"></div></div><div class="kicker" id="enClock" style="margin-top:10px">Polls closing…</div><div class="calls" id="enCalls"></div></div></div>`,choices:[{l:'Skip to results ⏩',f:()=>{fast=true;}}]});
+  let fast=false;
+  const done={};
+  const drawMap=()=>{$('enMap').innerHTML=mapSVG(s=>done[s]?colFor(fin[s]*(g.party==='D'?1:-1),true):'#232c40',s=>done[s]?'#fff':'#5d6780');};
+  drawMap();
+  let gi=0;
+  const step=()=>{
+    if(!$('enClock')){if(gi<CLOSE.length){while(gi<CLOSE.length){CLOSE[gi++][1].forEach(s=>{done[s]=true;if(fin[s]>0)me+=S[s].ev;else them+=S[s].ev;});}}finale();return;}
+    if(gi>=CLOSE.length){finale();return;}
+    const [clk,list]=CLOSE[gi++];$('enClock').textContent=clk+' ET';const dt=fast?15:260;
+    list.sort((a,b)=>Math.abs(fin[b])-Math.abs(fin[a])).forEach((s,j)=>setTimeout(()=>{
+      done[s]=true;if(fin[s]>0)me+=S[s].ev;else them+=S[s].ev;if(!$('enCalls'))return;
+      const close=Math.abs(fin[s])<2;
+      const div=document.createElement('div');div.innerHTML=`<span class="mono" style="color:${fin[s]>0?partyHex(g.party):partyHex(O.p)}">■</span> ${close?'<b>Too close… </b>':''}<b>${S[s].n}</b> (${S[s].ev}) → ${fin[s]>0?esc(ME):esc(O.n)} <span class="mut mono">${sgn(Math.abs(fin[s]))}</span>`;
+      $('enCalls').prepend(div);$('enMe').textContent=me;$('enThem').textContent=them;
+      $('enBar').innerHTML=`<div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="flex:1"></div><div style="width:${them/538*100}%;background:${partyHex(O.p)}"></div><div class="mid"></div>`;
+      drawMap();
+    },j*dt));
+    setTimeout(step,list.length*dt+(fast?60:700));
+  };
+  setTimeout(step,700);
+  const finale=()=>{
+    g.over=true;clearSave();
+    const pv=natMargin(s=>fin[s]);
+    if(g.h2h){h2hFinale(me,them,pv,fin);return;}
+    recordGame({mode:g.h2hAI?'h2h_ai':g.mode==='full'?'campaign':'general',won:me>=270,nominated:true,ev:me,opp_ev:them});if(g.h2hAI&&me>=270){unlock('h2hwin');if(g.spent<50)unlock('steal');}const won=me>=270;const tie=me===269;
+    const oth=g.third?g.third.pct:2.4;const myPV=(100-oth)/2+pv/2,thPV=(100-oth)/2-pv/2;finalAch(me,them,pv,fin);
+    let head,txt;
+    if(tie){head='269–269: a tie';txt='The election goes to the House of Representatives. Constitutional lawyers have a very busy winter ahead.';}
+    else if(won){head=me>=350?'A landslide!':me>=300?'A decisive victory':'You win the White House';txt=`Shortly after 1 AM, the networks call it: you will be the next President of the United States. ${esc(O.n)} concedes by phone.`;}
+    else{head=them>=350?'Wiped out':'Defeat';txt=`${esc(O.n)} wins the presidency. You give a gracious concession speech to a tearful crowd.`;}
+    const flips=SK.filter(s=>(fin[s]>0)!==((g.party==='D'?-S[s].l:S[s].l)>0));
+    modal({k:'Final result',t:head,wide:true,body:`<p>${txt}</p><div class="evnums" style="font-size:18px;margin:10px 0"><span style="color:${partyHex(g.party)}">You ${me} EV · ${myPV.toFixed(1)}%</span><span style="color:${partyHex(O.p)}">${esc(O.n)} ${them} EV · ${thPV.toFixed(1)}%</span></div><div class="evbar"><div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="flex:1"></div><div style="width:${them/538*100}%;background:${partyHex(O.p)}"></div><div class="mid"></div></div>${mapSVG(s=>colFor(fin[s]*(g.party==='D'?1:-1),true),()=>'#fff')}<p class="fx">States that flipped from 2024: ${flips.length?flips.map(s=>S[s].k).join(', '):'none'}<br>Ticket: ${esc(P.n)} / ${esc(cand(g.vp).n)} · Final war chest: ${fmtM(g.money)} · Credibility ${Math.round(g.cred)}${g.third?` · Independent candidate: ${oth.toFixed(1)}%`:''}<br>Achievements unlocked this game: ${(g.stx.newAch||[]).length}</p>`,choices:[{l:'View achievements',f:showAch},{l:'Run again',f:()=>{closeModal();g=null;pickId=null;$('game').classList.add('hidden');$('pick').classList.remove('hidden');drawPick();window.scrollTo(0,0);}},{l:'Main menu',f:()=>{closeModal();g=null;goTitle();}}]});
+  };
+}
+
+/* =========================================================
+   CYCLE RANDOMNESS
+   ========================================================= */
+const BASE_CAL=CAL.map(c=>({c:c.c,t:c.t,sub:c.sub}));
+function applyCal(v){
+  CAL.forEach((c,i)=>{c.c=BASE_CAL[i].c;c.t=BASE_CAL[i].t;c.sub=BASE_CAL[i].sub;});
+  const sw=(a,b)=>{const x={c:CAL[a].c,t:CAL[a].t,sub:CAL[a].sub};CAL[a].c=CAL[b].c;CAL[a].t=CAL[b].t;CAL[a].sub=CAL[b].sub;CAL[b].c=x.c;CAL[b].t=x.t;CAL[b].sub=x.sub;};
+  if(v==='sc')sw(4,6);       // South Carolina & Nevada go first
+  if(v==='mi')sw(5,7);       // Michigan jumps to second
+  if(v==='nh')sw(4,5);       // New Hampshire goes first
+}
+const ECON=[['Booming',-1.3,'Strong growth is a tailwind for the party in the White House.'],['Steady',0,'Nothing unusual. The economy is not the whole story this time.'],['Sputtering',1.0,'Slow growth and high prices are a headwind for the party in the White House.'],['Recession scare',2.0,'Layoffs are spreading. Voters want change from the party in power.']];
+const CALV={std:'Standard: Iowa, then New Hampshire',sc:'Shake-up: Nevada and South Carolina vote first',mi:'Shake-up: Michigan moves up to second',nh:'Shake-up: New Hampshire goes first'};
+function drawCycle(){
+  const cy={};
+  cy.econ=weightedPick([0,1,2,3],i=>[1,2,1.5,0.8][i]);
+  cy.hot=pickOne(IK);
+  cy.pollQ=pickOne([['Gold standard',0.6],['Typical',1],['Shaky',1.4],['Badly off',1.8]]);
+  cy.cal=weightedPick(['std','sc','mi','nh'],v=>v==='std'?2:1);
+  g.jit={};Object.keys(C).concat(Object.keys(VPX)).forEach(id=>{g.jit[id]=[0,1,2,3].map(()=>Math.random()<0.3?(Math.random()<0.5?-1:1):0);});
+  g.env+=ECON[cy.econ][1]+gauss()*0.6;
+  g.cycle=cy;g.calVar=cy.cal;applyCal(cy.cal);
+  // rivals get small random stance drift this cycle
+  g.rstance={};Object.keys(C).forEach(id=>{g.rstance[id]={};IK.forEach(i=>{let v=C[id].s[i];if(Math.random()<0.15)v=clamp(v+(Math.random()<0.5?-1:1),-2,2);g.rstance[id][i]=v;});});
+}
+function rivalStances(id){return (g.rstance&&g.rstance[id])||C[id].s;}
+function cycleModal(next){
+  const cy=g.cycle,P=C[g.cand];const lbl=['Name recognition','Fundraising','Debate','Discipline'];
+  const myJ=g.jit[g.cand].map((d,i)=>d?`${lbl[i]} ${d>0?'+1':'−1'}`:null).filter(Boolean);
+  modal({k:'Every campaign is different',t:'The 2028 cycle',body:`<p>Before you start, here is what this cycle looks like. These were rolled at random for this game.</p><div class="cyc">
+    <span>Economy</span><div><b>${ECON[cy.econ][0]}.</b> ${ECON[cy.econ][2]}</div>
+    <span>Issue of the cycle</span><div><b>${II[cy.hot].n}.</b> It matters more to voters everywhere all game. Check where you stand on it.</div>
+    <span>Primary calendar</span><div>${CALV[cy.cal]}</div>
+    <span>Polling quality</span><div><b>${cy.pollQ[0]}.</b> ${cy.pollQ[1]<1?'Polls are close to the truth.':cy.pollQ[1]>1.3?'Expect surprises on election night. Internal polls are worth more.':'Normal polling error.'}</div>
+    <span>Your form</span><div>${myJ.length?myJ.join(', ')+' compared with your usual ratings.':'Your ratings are right at their usual levels.'}</div>
+    <span>Wildcards</span><div>Rare, game-changing events can strike at any time. Independent candidates, market crashes, Supreme Court vacancies…</div></div>`,choices:[{l:'Let\'s go',f:()=>{closeModal();next();}}]});
+}
+
+/* ---------- news shocks: small random swings every turn ---------- */
+const SHOCK_UP=['catches fire after a viral town-hall moment','surges after a widely praised interview','lands a major union endorsement','posts a record fundraising haul'];
+const SHOCK_DN=['stumbles after a bad interview','is hit by a staff shake-up','faces questions over a campaign finance filing','draws criticism for a botched answer on the trail'];
+function newsShocks(){
+  if(Math.random()<0.4){
+    if(isPri()){const act=g.rivals.filter(r=>r.active);if(!act.length)return;const r=pickOne(act);const up=Math.random()<0.5;const d=rnd(1.5,3.2)*(up?1:-1);r.mom+=d;logN(`${C[r.id].n} ${pickOne(up?SHOCK_UP:SHOCK_DN)}. (Their momentum ${sgn(d)})`);}
+    else if(ph()==='gen'){const up=Math.random()<0.5;const d=rnd(1,2.5)*(up?1:-1);g.oppMom+=d;logN(`${C[g.opp].n} ${pickOne(up?SHOCK_UP:SHOCK_DN)}. (Their momentum ${sgn(d)})`);}
+  }
+  if(Math.random()<0.25){const i=pickOne(IK);g.salMod[i]+=0.15;logN(`News cycle: ${II[i].n.toLowerCase()} is suddenly everywhere. (Issue weight up)`);}
+}
+
+/* ---------- turn briefing: what changed and why ---------- */
+function snapshot(){if(isPri()){const np=natPrimary();return {pri:true,sh:(np.find(x=>x.id===g.cand)||{sh:0}).sh,rank:np.findIndex(x=>x.id===g.cand)+1};}
+  return {pri:false,nm:natMargin(pollMargin)};}
+function briefing(prev,inc,momBefore){
+  const now=snapshot();let parts=[`${fmtM(inc)} in passive income`];
+  if(Math.abs(momBefore)>0.4)parts.push(momBefore>0?'your momentum cooled a bit':'the bad press is fading');
+  if(prev&&prev.pri===now.pri){
+    if(now.pri){const d=now.sh-prev.sh;parts.push(`primary polls ${d>1.5?'trending up ↑':d<-1.5?'slipping ↓':'holding steady →'} (you're ${['','1st','2nd','3rd','4th','5th','6th'][now.rank]||now.rank+'th'})`);}
+    else{const d=now.nm-prev.nm;parts.push(`national polls ${d>0.8?'moving your way ↑':d<-0.8?'moving against you ↓':'roughly steady →'}`);}
+  }
+  const n=Object.keys(g.org).filter(s=>targetable(s)).length;
+  g.brief='<b>Since last turn:</b> '+parts.join(' · ')+'.'+(n?` Field offices kept working in ${n} state${n>1?'s':''}.`:'');
+  g.lastSnap=now;
+}
+
+/* =========================================================
+   WILDCARDS (rare, big)
+   ========================================================= */
+const WILD=[
+ {id:'third',when:()=>ph()==='gen'&&!g.third&&!g.h2h,t:'WILDCARD: An independent enters the race',b:()=>`A self-funding billionaire with no party ties launches an independent bid, promising to "blow up both parties." Early polls have them near 8%.`,c:()=>[
+  {l:'Attack them as a spoiler',s:'Shrinks them, adds heat',f:()=>{g.third={pct:rnd(3,6),tilt:rnd(-1.2,0.6)};g.heat+=1.5;return `The spoiler message works, partly. They settle around ${g.third.pct.toFixed(0)}%. `;}},
+  {l:'Court their voters with an anti-establishment pitch',s:'Could flip their voters toward you',f:()=>{g.third={pct:rnd(5,9),tilt:rnd(-0.8,1.6)};g.cred-=2;return `You pitch yourself as the real outsider. They poll at ${g.third.pct.toFixed(0)}%.  (Credibility −2)`;}},
+  {l:'Ignore them',f:()=>{g.third={pct:rnd(5,11),tilt:rnd(-1.8,1.3)};return `They grow to ${g.third.pct.toFixed(0)}%. Nobody knows whose voters they'll take. `;}}]},
+ {id:'vacancy',t:'WILDCARD: Supreme Court vacancy',b:()=>`A Supreme Court justice unexpectedly announces their retirement. The confirmation fight instantly becomes the biggest story in the country.`,pre:()=>{g.salMod.integrity+=.5;g.salMod.health+=.2;},c:()=>[
+  {l:'Release a list of potential nominees in your mold',f:()=>{g.mom+=1.5;return 'Your base is electrified. The court is now a top issue. (Momentum +1.5)';}},
+  {l:'Call for a bipartisan, consensus nominee',f:()=>{g.cred+=3;g.mom+=(isPri()?-1:1);return 'Swing voters like it; activists grumble. (Credibility +3)';}}]},
+ {id:'crash',t:'WILDCARD: Stock market crash',b:()=>`Markets fall 18% in four days amid a credit panic. 401(k)s are shredded and voters blame whoever is in charge.`,pre:()=>{envInc(1.4);g.salMod.economy+=.4;},c:()=>[
+  {l:'Propose an emergency relief plan',f:()=>play('economy','C',1.4)},
+  {l:'Blame Wall Street greed',f:()=>play('economy','L',1.4)},
+  {l:'Blame regulators and Washington spending',f:()=>play('economy','R',1.4)}]},
+ {id:'blackout',t:'WILDCARD: Cyberattack blackout',b:()=>`A cyberattack blamed on a foreign state knocks out power to 30 million people across the Northeast for three days.`,pre:()=>{g.salMod.foreign+=.35;g.salMod.ai+=.2;g.salMod.energy+=.2;},c:()=>[
+  {l:'Vow a massive response against those responsible',f:()=>play('foreign','R',1.3)},
+  {l:'Rally allies and invest in grid security',f:()=>play('foreign','C',1.3)},
+  {l:'Call for calm and an international investigation',f:()=>play('foreign','L',1.3)}]},
+ {id:'outbreak',t:'WILDCARD: Outbreak cancels events',b:()=>`A fast-spreading respiratory virus leads health officials to discourage large gatherings for several weeks.`,pre:()=>{g.ap=Math.max(1,g.ap-1);g.salMod.health+=.35;},c:()=>[
+  {l:'Go fully virtual and lead by example',s:'$1M',f:()=>{g.money-=1;g.cred+=2;return 'You lose a step on the trail but look responsible. (−1 AP this turn, credibility +2)';}},
+  {l:'Keep holding rallies',f:()=>{if(Math.random()<.5){g.mom+=1;return 'Your crowds keep showing up. (Momentum +1)';}g.heat+=4;g.mom-=1.5;return 'Health officials criticize you by name. (Momentum −1.5, heat +4)';}}]},
+ {id:'exit',when:()=>isPri()&&g.rivals.filter(r=>r.active).length>=2&&g.turn>=2,t:'WILDCARD: A rival quits',b:()=>{const r=pickOne(g.rivals.filter(r=>r.active));g.flags.exitId=r.id;return `${C[r.id].n} unexpectedly suspends their campaign. Their donors and voters are up for grabs.`;},pre:null,c:()=>[
+  {l:'Chase their donors',s:'Money',f:()=>{const r=g.rivals.find(r=>r.id===g.flags.exitId);r.active=false;logN(C[r.id].n+' suspends their campaign.');const x=rnd(3,7);g.money+=x;return `You scoop up their donor network: +${fmtM(x)}.`;}},
+  {l:'Chase their voters',s:'Momentum',f:()=>{const r=g.rivals.find(r=>r.id===g.flags.exitId);r.active=false;logN(C[r.id].n+' suspends their campaign.');g.mom+=2;return 'Their supporters start coming your way. (Momentum +2)';}}]},
+ {id:'elder',t:'WILDCARD: A former president hits the trail',b:()=>`A beloved former president from your party announces they will campaign for you in person.`,c:()=>[
+  {l:'Send them to the swing states',f:()=>{const t=isPri()?upcomingStates(2).slice(0,3):competitive(3);t.forEach(s=>addEff(s,2));return 'Huge crowds in '+t.join(', ')+'. (+2 effort each)';}},
+  {l:'Put them in a national ad',s:'$2M',f:()=>{g.money-=2;g.mom+=2.2;return 'The ad is everywhere. (Momentum +2.2)';}}]},
+ {id:'scandalOpp',when:()=>ph()==='gen',t:'WILDCARD: Opponent\'s campaign in crisis',b:()=>`${C[g.opp].n}'s top fundraiser is under federal investigation, and their campaign manager just quit.`,pre:()=>{g.oppMom-=2.5;},c:()=>[
+  {l:'Hammer them on it nonstop',f:()=>{g.oppMom-=1.5;g.heat+=1;return 'Their bad week becomes a bad month. (Opponent momentum −4 total)';}},
+  {l:'Let it play out on its own',f:()=>{g.cred+=2;return 'You stay above it. (Opponent momentum −2.5, your credibility +2)';}}]},
+];
+
+/* =========================================================
+   ACHIEVEMENTS
+   ========================================================= */
+const ACH=[
+ ['win','🏛','Commander in Chief','Win the White House.'],
+ ['landslide','🌊','Landslide','Win 350 or more electoral votes.'],
+ ['squeaker','📸','Photo Finish','Win with 270–279 electoral votes.'],
+ ['tie','⚖️','Constitutional Crisis','End election night in a 269–269 tie.'],
+ ['evpv','🧮','Electoral Math','Win the Electoral College while losing the popular vote.'],
+ ['sweep','🗺','Coast to Coast','Carry 40 or more states.'],
+ ['mapbreak','🔨','Map Breaker','Carry a state the other party won by 10+ points in 2024.'],
+ ['underdog','🥊','Comeback Kid','Win after trailing nationally by 3+ when the general began.'],
+ ['hard','💀','Against the Odds','Win the presidency on Hard.'],
+ ['both','🤝','Big Tent','Win the presidency as both a Democrat and a Republican.'],
+ ['collector','👔','Hall of Presidents','Win the presidency with 4 different candidates.'],
+ ['iowa','🌽','Corn Fed','Win the Iowa caucuses.'],
+ ['nh','🏔','Granite Rebound','Lose Iowa but win New Hampshire.'],
+ ['st','⚡','Super Tuesday Sweep','Win 10 or more Super Tuesday states.'],
+ ['clinch','🏁','Early Clinch','Clinch the nomination before April.'],
+ ['debate','🎙','Debate Champ','Win every debate you take part in (at least 3).'],
+ ['clean','🧼','Squeaky Clean','Win the presidency without your scandal heat ever topping 6.'],
+ ['grass','🌱','People-Powered','Win the presidency without holding a single high-dollar dinner.'],
+ ['broke','💸','Left It on the Field','Win the presidency with less than $2M left.'],
+ ['ground','🚪','Ground Game','Build 12 field-office levels in one campaign.'],
+ ['pods','🎧','Podcast Circuit','Do 3 podcast interviews in one campaign.'],
+ ['gaffe','🤦','Gaffe Machine','Make 3 gaffes in one campaign.'],
+ ['weather','🌬','Weathervane','Shift your positions 6+ steps in one campaign.'],
+ ['chaos','🃏','Chaos Agent','Face 3 wildcard events in one campaign.'],
+ ['oppo','🗂','Oppo Shop','Release 3 opposition files in one campaign.'],
+ ['lose','🗓','See You in 2032','Lose a primary. It happens to the best of them.'],
+ ['h2hwin','🥇','Head-to-Head Champ','Win a head-to-head draft election.'],
+ ['steal','💰','Bargain Hunter','Win a head-to-head election after spending under half your draft budget.'],
+ ['wcwin','🃏','Wildcard President','Win the White House with a wildcard candidate.'],
+ ['chall','🎯','Challenge Accepted','Win while completing a wildcard candidate\'s challenge.'],
+ ['wcnom','🎪','Crashing the Party','Win a nomination as a wildcard candidate.'],
+];
+function achStore(){try{return JSON.parse(localStorage.getItem('stump2028_ach')||'{}');}catch(e){return {};}}
+function achSave(o){try{localStorage.setItem('stump2028_ach',JSON.stringify(o));}catch(e){}}
+let ACH_SESSION={};
+function unlock(id){if(g&&g.h2h&&g.net==='local'&&g.side===1)return;const st=achStore();st.un=st.un||{};if(st.un[id]||ACH_SESSION[id])return;st.un[id]=Date.now();ACH_SESSION[id]=1;achSave(st);const a=ACH.find(x=>x[0]===id);if(!a)return;bkAch(id);
+  if(g&&g.stx){g.stx.newAch=(g.stx.newAch||[]);g.stx.newAch.push(id);}
+  const d=document.createElement('div');d.className='toast';d.innerHTML=`<div class="k">ACHIEVEMENT UNLOCKED</div><b>${a[1]} ${esc(a[2])}</b>${esc(a[3])}`;$('toasts').appendChild(d);setTimeout(()=>{d.style.transition='opacity .5s';d.style.opacity='0';setTimeout(()=>d.remove(),600);},4500);}
+function achCount(){const st=achStore();return Object.keys(st.un||{}).length;}
+function checkMid(){if(!g||!g.stx)return;const x=g.stx;
+  if(x.org>=12)unlock('ground');if(x.pods>=3)unlock('pods');if(x.gaffes>=3)unlock('gaffe');if(x.flips>=6)unlock('weather');if(x.wild>=3)unlock('chaos');if(x.oppoUsed>=3)unlock('oppo');}
+function showAch(){const st=achStore();const un=st.un||{};
+  modal({k:'Achievements',t:`${Object.keys(un).length} of ${ACH.length} unlocked`,wide:true,body:`<p class="mut">Saved in this browser across games.</p><div class="achgrid">${ACH.map(a=>`<div class="ach ${un[a[0]]?'on':'off'}"><span class="ic">${un[a[0]]?a[1]:'🔒'}</span><b>${esc(a[2])}</b>${esc(a[3])}</div>`).join('')}</div>`,choices:[{l:'Close',f:closeModal}]});}
+function finalAch(me,them,pv,fin){
+  const st=achStore();const won=me>=270;
+  if(me===269)unlock('tie');
+  if(!won)return;
+  unlock('win');if(me>=350)unlock('landslide');if(me<280)unlock('squeaker');if(pv<0)unlock('evpv');
+  const states=SK.filter(s=>fin[s]>0);if(states.filter(s=>s!=='DC').length>=40)unlock('sweep');
+  if(states.some(s=>(g.party==='D'?S[s].l:-S[s].l)>=10))unlock('mapbreak');
+  if(g.stx.genStart!=null&&g.stx.genStart<=-3)unlock('underdog');
+  if(g.diff==='hard')unlock('hard');
+  if(g.stx.maxHeat<=6)unlock('clean');if(g.stx.dinners===0)unlock('grass');if(g.money<2)unlock('broke');
+  if(g.stx.debW===g.stx.debT&&g.stx.debT>=3)unlock('debate');
+  const PP=C[g.cand];if(PP.wc){unlock('wcwin');if(PP.wc.chk(g))unlock('chall');}
+  const s2=achStore();s2.parties=s2.parties||{};s2.parties[g.party]=1;s2.wins=s2.wins||{};s2.wins[g.cand]=1;achSave(s2);
+  if(s2.parties.D&&s2.parties.R)unlock('both');if(Object.keys(s2.wins).length>=4)unlock('collector');
+}
+
+/* =========================================================
+   PROFILES, ACCOUNTS & LEADERBOARD (Supabase when configured)
+   ========================================================= */
+const CFG=window.STUMP_CONFIG||{};
+const BK={sb:null,user:null,profile:null};
+function bkConfigured(){return !!(CFG.supabaseUrl&&CFG.supabaseAnonKey&&!/YOUR_/i.test(CFG.supabaseUrl+CFG.supabaseAnonKey));}
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
+async function bkInit(){
+  updateProfileBtn();
+  if(!bkConfigured())return;
+  try{
+    if(!window.supabase)await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
+    BK.sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
+    const {data}=await BK.sb.auth.getSession();
+    await bkSetUser(data&&data.session?data.session.user:null);
+    BK.sb.auth.onAuthStateChange((_e,sess)=>{const u=sess?sess.user:null;if((u&&u.id)!==(BK.user&&BK.user.id))bkSetUser(u);});
+  }catch(e){console.warn('Supabase init failed',e);}
+  updateProfileBtn();
+}
+async function bkSetUser(u){
+  BK.user=u;BK.profile=null;
+  if(u){try{const {data}=await BK.sb.from('profiles').select('*').eq('id',u.id).maybeSingle();BK.profile=data||null;}catch(e){}
+    if(!BK.profile)setTimeout(promptUsername,400);else syncAch();}
+  updateProfileBtn();
+}
+function LP(){try{return JSON.parse(localStorage.getItem('stump2028_profile')||'null')||{name:'Guest',games:[]};}catch(e){return {name:'Guest',games:[]};}}
+function LPsave(p){try{localStorage.setItem('stump2028_profile',JSON.stringify(p));}catch(e){}}
+function displayName(){return BK.profile?BK.profile.username:LP().name;}
+function updateProfileBtn(){const b=$('btnProfile');if(!b)return;b.textContent=BK.profile?'👤 '+BK.profile.username:(bkConfigured()&&!BK.user?'👤 Sign in':'👤 '+LP().name);}
+function recordGame(r){
+  if(!g)return;
+  const row={mode:r.mode,candidate:C[g.cand]?C[g.cand].n:'',party:g.party,difficulty:g.diff||'normal',won:!!r.won,nominated:r.nominated!==false,ev:Math.round(r.ev||0),opp_ev:Math.round(r.opp_ev||0),opponent:C[g.opp]?C[g.opp].n:(r.opponent||''),created_at:new Date().toISOString()};
+  const p=LP();p.games=[row].concat(p.games||[]).slice(0,60);LPsave(p);
+  if(BK.sb&&BK.user&&BK.profile){const {created_at,...ins}=row;BK.sb.from('games').insert(ins).then(({error})=>{if(error)console.warn(error);});}
+}
+async function syncAch(){if(!BK.sb||!BK.user)return;try{
+  const {data}=await BK.sb.from('achievements').select('ach_id');const remote=new Set((data||[]).map(x=>x.ach_id));
+  const st=achStore();st.un=st.un||{};remote.forEach(id=>{if(!st.un[id])st.un[id]=Date.now();});achSave(st);
+  const missing=Object.keys(st.un).filter(id=>!remote.has(id)).map(id=>({ach_id:id}));
+  if(missing.length)await BK.sb.from('achievements').upsert(missing,{onConflict:'user_id,ach_id',ignoreDuplicates:true});
+  $('btnAch').textContent='Achievements ('+achCount()+'/'+ACH.length+')';
+}catch(e){console.warn(e);}}
+function bkAch(id){if(BK.sb&&BK.user&&BK.profile)BK.sb.from('achievements').upsert([{ach_id:id}],{onConflict:'user_id,ach_id',ignoreDuplicates:true}).then(()=>{});}
+function statsOf(games){const x={games:games.length,wins:0,pres:0,best:0,h2hW:0,h2hL:0,noms:0};games.forEach(r=>{if(r.won)x.wins++;if(r.won&&(r.mode==='campaign'||r.mode==='general'))x.pres++;if(r.nominated&&r.mode==='campaign')x.noms++;if(r.won)x.best=Math.max(x.best,r.ev||0);if(r.mode&&r.mode.startsWith('h2h')){if(r.won)x.h2hW++;else x.h2hL++;}});return x;}
+const MODE_N={campaign:'Full campaign',general:'General only',h2h_ai:'H2H vs AI',h2h_local:'H2H pass-and-play',h2h_online:'H2H online'};
+async function showProfile(){
+  let games=LP().games||[];
+  if(BK.sb&&BK.user){try{const {data}=await BK.sb.from('games').select('*').eq('user_id',BK.user.id).order('created_at',{ascending:false}).limit(60);if(data)games=data;}catch(e){}}
+  const x=statsOf(games);
+  const signed=!!(BK.user&&BK.profile);
+  let h=`<div class="cyc"><span>Player</span><div><b>${esc(displayName())}</b>${signed?' <span class="mut">(signed in)</span>':bkConfigured()?' <span class="mut">(guest: sign in to save your record online)</span>':' <span class="mut">(saved in this browser)</span>'}</div>
+  <span>Record</span><div>${x.games} games · ${x.wins} wins · <b>${x.pres}</b> presidencies · ${x.noms} nominations won</div>
+  <span>Head-to-head</span><div>${x.h2hW}–${x.h2hL}</div><span>Best map</span><div>${x.best?x.best+' electoral votes':'—'}</div>
+  <span>Achievements</span><div>${achCount()} of ${ACH.length}</div></div>`;
+  h+=`<div class="kicker" style="margin-top:12px">Recent games</div><table class="rt"><tr><th>Mode</th><th>Candidate</th><th>vs</th><th>Result</th></tr>${games.slice(0,8).map(r=>`<tr><td>${MODE_N[r.mode]||r.mode}</td><td>${esc(r.candidate||'')}</td><td>${esc(r.opponent||'')}</td><td class="${r.won?'pos':'neg'}">${r.won?'Won':(r.nominated===false?'Lost primary':'Lost')}${r.ev?' · '+r.ev+' EV':''}</td></tr>`).join('')||'<tr><td colspan="4" class="mut">No games yet.</td></tr>'}</table>`;
+  if(!bkConfigured())h+=`<p class="mut" style="font-size:12px;margin-top:10px">Online accounts and the global leaderboard are available on the full website version of STUMP.</p>`;
+  const ch=[];
+  if(bkConfigured()&&!BK.user)ch.push({l:'Sign in / create account',s:'Save your record and appear on the leaderboard',f:showSignIn});
+  if(!signed)ch.push({l:'Change display name',f:()=>{modal({k:'Profile',t:'Display name',body:`<input id="inName" class="tin" maxlength="20" value="${esc(LP().name)}">`,choices:[{l:'Save',f:()=>{const p=LP();p.name=($('inName').value||'Guest').trim().slice(0,20)||'Guest';LPsave(p);updateProfileBtn();showProfile();}},{l:'Cancel',f:showProfile}]});}});
+  ch.push({l:'Leaderboard',f:showLeaderboard});
+  if(signed)ch.push({l:'Sign out',f:async()=>{await BK.sb.auth.signOut();BK.user=null;BK.profile=null;updateProfileBtn();closeModal();}});
+  ch.push({l:'Close',f:closeModal});
+  modal({k:'Profile',t:'Your record',wide:true,body:h,choices:ch});
+}
+function showSignIn(){
+  modal({k:'Account',t:'Sign in to STUMP',body:`<p>Enter your email and we'll send you a one-time sign-in link. No password needed. New here? This also creates your account.</p><input id="inEmail" class="tin" type="email" placeholder="you@example.com"><p class="mut" id="siMsg" style="font-size:12px;margin-top:8px"></p>`,choices:[
+    {l:'Email me a sign-in link',f:async()=>{const em=($('inEmail').value||'').trim();if(!/^\S+@\S+\.\S+$/.test(em)){$('siMsg').textContent='Enter a valid email.';$('mch').dataset.used='';return;}
+      const {error}=await BK.sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.href.split('#')[0]}});
+      modal({k:'Account',t:error?'Something went wrong':'Check your email',body:`<p>${error?esc(error.message):'We sent a sign-in link to <b>'+esc(em)+'</b>. Open it on this device and you\'ll come back here signed in.'}</p>`,choices:[{l:'OK',f:closeModal}]});}},
+    ...(CFG.googleAuth?[{l:'Continue with Google',f:()=>BK.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0]}})}]:[]),
+    {l:'Cancel',f:closeModal}]});
+}
+function promptUsername(msg){
+  modal({k:'Welcome',t:'Pick a username',body:`<p>This is how you'll appear on the leaderboard (3–20 letters, numbers or underscores).</p><input id="inUser" class="tin" maxlength="20" value="${esc((LP().name&&LP().name!=='Guest')?LP().name.replace(/\W/g,'_'):'')}"><p class="neg" style="font-size:12px">${esc(msg||'')}</p>`,choices:[{l:'Save username',f:async()=>{
+    const u=($('inUser').value||'').trim();if(!/^\w{3,20}$/.test(u)){promptUsername('Use 3–20 letters, numbers or underscores.');return;}
+    const {data,error}=await BK.sb.from('profiles').insert({id:BK.user.id,username:u}).select().maybeSingle();
+    if(error){promptUsername(/duplicate|unique/i.test(error.message)?'That username is taken.':error.message);return;}
+    BK.profile=data||{id:BK.user.id,username:u};updateProfileBtn();
+    // upload this browser's game history once
+    const local=(LP().games||[]).slice(0,60).map(({created_at,...r})=>r);if(local.length)await BK.sb.from('games').insert(local);
+    syncAch();closeModal();toastMsg('Signed in as '+u);}}]});
+}
+async function showLeaderboard(){
+  if(!BK.sb){modal({k:'Leaderboard',t:'Global leaderboard',body:'<p>The leaderboard lives on the full website version of STUMP, where players have accounts. This copy saves your record in your browser. Open your profile to see it.</p>',choices:[{l:'My profile',f:showProfile},{l:'Close',f:closeModal}]});return;}
+  const draw=async(tab)=>{
+    let q=BK.sb.from('leaderboard').select('*').limit(25);
+    q=tab==='h2h'?q.order('h2h_wins',{ascending:false}).order('h2h_losses',{ascending:true}):q.order('presidencies',{ascending:false}).order('best_ev',{ascending:false,nullsFirst:false});
+    const {data,error}=await q;
+    const rows=(data||[]).map((r,i)=>tab==='h2h'?`<tr><td>${i+1}</td><td>${esc(r.username)}</td><td class="mono">${r.h2h_wins}–${r.h2h_losses}</td><td class="mono">${r.games}</td></tr>`:`<tr><td>${i+1}</td><td>${esc(r.username)}</td><td class="mono">${r.presidencies}</td><td class="mono">${r.best_ev||'—'}</td><td class="mono">${r.games}</td></tr>`).join('');
+    const head=tab==='h2h'?'<tr><th>#</th><th>Player</th><th>H2H W–L</th><th>Games</th></tr>':'<tr><th>#</th><th>Player</th><th>Presidencies</th><th>Best EV</th><th>Games</th></tr>';
+    modal({k:'Leaderboard',t:tab==='h2h'?'Head-to-head champions':'Most presidencies won',wide:true,body:error?`<p class="neg">${esc(error.message)}</p>`:`<table class="rt">${head}${rows||'<tr><td colspan="5" class="mut">No games yet. Be the first!</td></tr>'}</table>`,choices:[{l:tab==='h2h'?'Show presidencies':'Show head-to-head',f:()=>draw(tab==='h2h'?'pres':'h2h')},{l:'Close',f:closeModal}]});
+  };draw('pres');
+}
+
+/* =========================================================
+   HEAD-TO-HEAD: AUCTION DRAFT
+   ========================================================= */
+const STATN=['Name recognition','Fundraising','Debate','Discipline'];
+const TRAITS={swing:['Crossover appeal','+1 point with voters in every state'],sd:['Small-dollar army','+$2M extra income every turn'],teflon:['Teflon','Scandal heat hurts you half as much'],ground:['Ground-game machine','Start with field offices (level 2) in three swing states'],media:['Media natural','Big bonus on podcasts, late night and Sunday shows'],iron:['Iron constitution','+12 stamina every turn'],staff:['Veteran campaign team','Start with 3 senior staff (+2 AP every turn)'],oppo:['Oppo war room','Start with 3 opposition-research files']};
+const DVP=[{id:'dvp1',n:'Gov. Linda Brandt',home:'PA',perk:'swing'},{id:'dvp2',n:'Sen. Maria Ocampo',home:'AZ',perk:'debate'},{id:'dvp3',n:'Gov. Tom Hale',home:'WI',perk:'swing'},{id:'dvp4',n:'Gen. Ray Dorsey',home:'NC',perk:'base'},{id:'dvp5',n:'Rep. Nadia Kerr',home:'MI',perk:'fund'},{id:'dvp6',n:'Mayor Luis Ortega',home:'NV',perk:'debate'}];
+DVP.forEach(v=>{VPX[v.id]={...v,p:'X'};});
+const AINAMES={D:['Sen. Maya Thornton','Gov. Daniel Reyes','Sen. Erin Castellano','Gov. Marcus Bell'],R:['Gov. Jack Harlan','Sen. Claire Whitaker','Gov. Wade Brennan','Sen. Holly Marsh']};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildLots(){
+  const L=[];
+  shuffle([0,1,2,3]).forEach(i=>L.push({t:'stat',i,v:9,n:STATN[i]+': 9',d:'Elite rating. Replaces your default of 5.'}));
+  const i7=pickOne([0,1,2,3]);L.push({t:'stat',i:i7,v:7,n:STATN[i7]+': 7',d:'Strong rating. Replaces your default of 5.'});
+  shuffle(['PA','MI','WI','GA','AZ','NC','FL','TX','OH','NV','VA']).slice(0,3).forEach(s=>L.push({t:'home',s,n:'Home state: '+S[s].n,d:`+3 points in ${S[s].n} (${S[s].ev} EV). One home state per candidate.`}));
+  [[30,'$30M war chest'],[15,'$15M war chest']].forEach(([v,n])=>L.push({t:'money',v,n,d:'Starting cash for ads, offices and staff.'}));
+  shuffle(Object.keys(TRAITS)).slice(0,2).forEach(k=>L.push({t:'trait',k,n:'Trait: '+TRAITS[k][0],d:TRAITS[k][1]}));
+  const v=pickOne(DVP);L.push({t:'vp',id:v.id,n:'Running mate: '+v.n,d:`Home ${S[v.home].n}. ${PERK[v.perk]}. One running mate per ticket.`});
+  const iss=pickOne(IK);L.push({t:'own',i:iss,n:'Owns the issue: '+II[iss].n,d:'Voters trust you on it: being off-center on this issue costs you less than half as much.'});
+  return shuffle(L);
+}
+function newRoster(){return {stats:[5,5,5,5],home:null,money:0,traits:[],vp:null,owns:[],spent:0,won:[]};}
+function lotAllowed(R,lot){if(lot.t==='home')return !R.home;if(lot.t==='vp')return !R.vp;if(lot.t==='stat')return R.stats[lot.i]<lot.v;if(lot.t==='trait')return !R.traits.includes(lot.k);if(lot.t==='own')return !R.owns.includes(lot.i);return true;}
+function applyLot(R,lot,price){R.spent+=price;R.won.push(lot.n+' ('+price+')');
+  if(lot.t==='stat')R.stats[lot.i]=Math.max(R.stats[lot.i],lot.v);if(lot.t==='home')R.home=lot.s;if(lot.t==='money')R.money+=lot.v;if(lot.t==='trait')R.traits.push(lot.k);if(lot.t==='vp')R.vp=lot.id;if(lot.t==='own')R.owns.push(lot.i);}
+function aiBid(R,lot,budget,lotsLeft){
+  if(!lotAllowed(R,lot))return 0;
+  const T=lot.t;const base=T==='stat'?(lot.v===9?20:11):T==='home'?({PA:20,MI:16,GA:16,NC:15,AZ:14,WI:13,FL:12,TX:10,OH:9,NV:9,VA:10}[lot.s]||10):T==='money'?(lot.v===30?17:9):T==='trait'?({swing:19,sd:10,teflon:9,ground:14,media:9,iron:7,staff:15,oppo:7}[lot.k]||9):T==='vp'?12:(7+II[lot.i].sal*8);
+  let v=base*rnd(0.75,1.25);if(lot.t==='stat'&&lot.i===1)v*=1.1;
+  const pace=Math.max(5,budget*2.4/Math.max(1,lotsLeft));const reserve=Math.max(0,(lotsLeft-1)*3);
+  return Math.max(0,Math.min(Math.round(v),Math.round(pace),budget-reserve));
+}
+let D=null; // draft state
+function startDraft(mode,names,parties){
+  W=null;
+  D={mode,names,parties,lots:buildLots(),i:0,budgets:[100,100],rosters:[newRoster(),newRoster()],bids:[null,null],last:null,done:false};
+  closeModal();$('title').classList.add('hidden');$('pick').classList.add('hidden');$('game').classList.add('hidden');$('draft').classList.remove('hidden');window.scrollTo(0,0);
+  drawDraft();
+}
+function rosterHTML(R,b,name,party,me){
+  const tr=R.traits.map(k=>TRAITS[k][0]);
+  return `<div class="dside ${me?'me':''}"><div class="dhd"><span class="chip" style="background:${partyHex(party)}">${party==='D'?'DEM':'GOP'}</span> <b>${esc(name)}</b><span class="mono dbud">${b} left</span></div>
+  ${R.stats.map((v,i)=>`<div class="statrow"><span>${STATN[i]}</span><span class="bar"><i style="width:${v*10}%"></i></span><span class="mono">${v}</span></div>`).join('')}
+  <div class="kv"><span>Home state</span><b>${R.home?S[R.home].n:'—'}</b><span>War chest bonus</span><b>${R.money?'$'+R.money+'M':'—'}</b><span>Running mate</span><b>${R.vp?esc(cand(R.vp).n):'—'}</b><span>Traits</span><b>${tr.length?esc(tr.join(', ')):'—'}</b><span>Owned issues</span><b>${R.owns.length?esc(R.owns.map(i=>II[i].n).join(', ')):'—'}</b></div></div>`;
+}
+function drawDraft(){
+  if(!D)return;const lot=D.lots[D.i];const me=D.mode==='online'?NET.side:0;
+  let h=`<div class="kicker">Head-to-head draft · ${D.mode==='ai'?'vs AI':D.mode==='local'?'pass-and-play':'online'}</div><h1 class="dtitle">Build your candidate</h1>`;
+  h+=`<p class="mut" style="max-width:760px">Each side has <b>100 political capital</b>. Every lot goes to the higher sealed bid, and the winner pays what they bid. Ties go to whoever has more capital left. Anything you don't win stays at the default (5 for every rating). Then you set your platform and fight the general election against what the other side built.</p>`;
+  if(D.done){h+=`<div class="dlot"><h2>Draft complete</h2><p>${D.last?esc(D.last):''}</p></div>`;}
+  else{
+    h+=`<div class="dlot"><div class="kicker">Lot ${D.i+1} of ${D.lots.length}</div><h2>${esc(lot.n)}</h2><p>${esc(lot.d)}</p>${D.last?`<p class="fx">${esc(D.last)}</p>`:''}<div id="bidArea"></div><div class="mut" style="font-size:12px;margin-top:10px">Coming up: ${D.lots.slice(D.i+1,D.i+4).map(l=>esc(l.n)).join(' · ')||'last lot!'}</div></div>`;
+  }
+  h+=`<div class="dsides">${rosterHTML(D.rosters[0],D.budgets[0],D.names[0],D.parties[0],me===0)}${rosterHTML(D.rosters[1],D.budgets[1],D.names[1],D.parties[1],me===1)}</div>`;
+  $('draftIn').innerHTML=h;
+  if(D.done){if(!$('draftIn').dataset.post){}return;}
+  const ba=$('bidArea');
+  const inp=(id,side)=>{const ok=lotAllowed(D.rosters[side],lot);return ok?`<input id="${id}" class="tin bidin" type="${D.mode==='local'?'password':'number'}" inputmode="numeric" min="0" max="${D.budgets[side]}" placeholder="0–${D.budgets[side]}">`:`<div class="mut" style="font-size:12px">${esc(D.names[side])} can't use this lot (already has one). Auto-bid 0.</div>`;};
+  if(D.mode==='ai'){ba.innerHTML=`<div class="bidrow">${inp('bid0',0)}<button class="big" id="btnBid">Place bid</button><button class="ghost" id="btnPass">Pass</button></div>`;
+    const go=v=>{const a=aiBid(D.rosters[1],lot,D.budgets[1],D.lots.length-D.i);resolveLot([v,a]);};
+    $('btnBid').onclick=()=>go(readBid('bid0',0));$('btnPass').onclick=()=>go(0);if($('bid0'))$('bid0').focus();}
+  else if(D.mode==='local'){ba.innerHTML=`<p class="mut" style="font-size:12px">Sealed bids: each player types a bid while the other looks away.</p><div class="bidrow"><label>${esc(D.names[0])} ${inp('bid0',0)}</label><label>${esc(D.names[1])} ${inp('bid1',1)}</label><button class="big" id="btnBid">Reveal bids</button></div>`;
+    $('btnBid').onclick=()=>resolveLot([readBid('bid0',0),readBid('bid1',1)]);}
+  else{const mine=D.bids[NET.side];
+    ba.innerHTML=mine!=null?`<p>Your sealed bid${typeof mine==='number'?' of <b>'+mine+'</b>':''} is in. Waiting for ${esc(D.names[1-NET.side])}…</p>`:`<div class="bidrow">${inp('bidMe',NET.side)}<button class="big" id="btnBid">Submit sealed bid</button><button class="ghost" id="btnPass">Pass</button></div>`;
+    if(mine==null){const sub=v=>{NET.pendingBid=D.i;if(NET.side===1){D.bids[1]='sealed';drawDraft();}netSend({t:'bid',side:NET.side,amt:v,i:D.i});};$('btnBid').onclick=()=>sub(readBid('bidMe',NET.side));$('btnPass').onclick=()=>sub(0);}}
+}
+function readBid(id,side){const el=$(id);if(!el)return 0;let v=parseInt(el.value,10);if(!isFinite(v)||v<0)v=0;return Math.min(v,D.budgets[side]);}
+function resolveLot(b){
+  const lot=D.lots[D.i];b=b.map((v,i)=>lotAllowed(D.rosters[i],lot)?Math.min(Math.max(0,v|0),D.budgets[i]):0);
+  let w;if(b[0]===0&&b[1]===0)w=-1;else if(b[0]!==b[1])w=b[0]>b[1]?0:1;else w=D.budgets[0]!==D.budgets[1]?(D.budgets[0]>D.budgets[1]?0:1):(Math.random()<.5?0:1);
+  if(w>=0){D.budgets[w]-=b[w];applyLot(D.rosters[w],lot,b[w]);D.last=`${D.names[w]} wins "${lot.n}" for ${b[w]} (bids: ${D.names[0]} ${b[0]} · ${D.names[1]} ${b[1]}).`;}
+  else D.last=`Nobody bid on "${lot.n}". It goes unsold.`;
+  D.i++;D.bids=[null,null];
+  if(D.i>=D.lots.length){D.done=true;}
+  if(D.mode==='online'){netSend({t:'draft',D});}
+  drawDraft();
+  if(D.done)setTimeout(()=>platformStep(),600);
+}
+/* ---- platform step (stances) ---- */
+function stanceEditor(stances,el){
+  let h='<div class="axis"><span>◀ Progressive</span><span>Conservative ▶</span></div>';
+  IK.forEach(i=>{h+=`<div class="stance" style="grid-template-columns:150px 1fr"><div class="nm">${II[i].n}</div><div class="five">${II[i].o.map((o,j)=>`<button data-i="${i}" data-v="${j-2}" class="${stances[i]===j-2?'on':''}">${esc(o)}</button>`).join('')}</div></div>`;});
+  el.innerHTML=h;el.querySelectorAll('.five button').forEach(b=>b.onclick=()=>{stances[b.dataset.i]=+b.dataset.v;stanceEditor(stances,el);});
+}
+function defaultStances(p){const o={};IK.forEach(i=>o[i]=p==='D'?-1:1);return o;}
+function platformStep(){
+  const humans=D.mode==='ai'?[0]:D.mode==='local'?[0,1]:[NET.side];
+  const st=[defaultStances(D.parties[0]),defaultStances(D.parties[1])];
+  const ask=k=>{
+    if(k>=humans.length){finishDraft(st);return;}
+    const side=humans[k];
+    const show=()=>{modal({k:'Your platform',t:esc(D.names[side])+': where do you stand?',wide:true,body:`<p class="mut">You're going straight to the general election, so the middle matters. Drift too far from your base, though, and turnout suffers. Positions are locked once the campaign starts (changes cost credibility).</p><div id="stEd"></div>`,choices:[{l:'Lock in platform',f:()=>{if(D.mode==='online'){modal({k:'Head-to-head',t:'Waiting for your opponent…',body:`<p>${esc(D.names[1-side])} is still setting their platform.</p>`,choices:[]});netSend({t:'ready',side,stances:st[side]});}else ask(k+1);}}]});stanceEditor(st[side],$('stEd'));};
+    if(D.mode==='local'&&k>0)passScreen(side,show,'Set your platform in secret.');else show();
+  };ask(0);
+}
+function buildCand(id,name,party,R,stances){
+  const c={id,n:name,p:party,home:R.home,role:'Drafted candidate',trait:'',st:R.stats.slice(),s:{...stances},owns:R.owns.slice(),h2hc:1};
+  if(R.traits.includes('swing'))c.sw=1;if(R.traits.includes('sd'))c.sd=5;if(R.traits.includes('teflon'))c.teflon=1;if(R.traits.includes('media'))c.med=1.2;if(R.traits.includes('iron'))c.iron=1;
+  return c;
+}
+function rosterExtras(R){const x={money:R.money,staff:R.traits.includes('staff')?3:1,oppo:R.traits.includes('oppo')?3:0,org:{}};if(R.traits.includes('ground'))shuffle(BG).slice(0,3).forEach(s=>x.org[s]=2);return x;}
+function finishDraft(st){
+  if(D.mode==='ai'){startH2HvsAI(st[0]);return;}
+  if(D.mode==='local'){startTwoPlayer('local',st);return;}
+  // online: host gathers readiness in netHost
+}
+function startH2HvsAI(myStances){
+  const R0=D.rosters[0],R1=D.rosters[1];
+  const aiSt={};const base=Object.values(C).filter(c=>c.p===D.parties[1]&&!c.wc);const tpl=pickOne(base).s;IK.forEach(i=>aiSt[i]=clamp(Math.round(tpl[i]*0.7+(Math.random()<.2?(Math.random()<.5?-1:1):0)),-2,2));
+  C.h2h0=buildCand('h2h0',D.names[0],D.parties[0],R0,myStances);C.h2h1=buildCand('h2h1',D.names[1],D.parties[1],R1,aiSt);
+  pickId='h2h0';pickStances={...myStances};const keep={mode:SET.mode,opp:SET.oppChoice};SET.mode='general';SET.oppChoice='h2h1';
+  $('draft').classList.add('hidden');$('game').classList.remove('hidden');window.scrollTo(0,0);
+  newGame();SET.mode=keep.mode;SET.oppChoice=keep.opp;
+  g.h2hAI=true;g.jit.h2h0=[0,0,0,0];g.jit.h2h1=[0,0,0,0];g.draftVp=[R0.vp,R1.vp];g.spent=R0.spent;
+  const x0=rosterExtras(R0),x1=rosterExtras(R1);g.money+=x0.money-10;g.staff=x0.staff;g.oppo=x0.oppo;Object.assign(g.org,x0.org);
+  for(const s in x1.org)g.oppEff[s]=(g.oppEff[s]||0)+5;if(x1.money)g.oppMom+=x1.money/15;if(x1.staff>1)g.oppMom+=1;
+  g.log=[];logN(`Draft complete. You spent ${R0.spent} capital; ${D.names[1]} spent ${R1.spent}. The general election begins.`);
+  D=null;render();
+}
+
+/* =========================================================
+   HEAD-TO-HEAD: TWO-PLAYER ENGINE (pass-and-play & online)
+   ========================================================= */
+let W=null;const H={base:null,w0:null,subs:[null,null]};
+const H_SHARED=new Set(['h2h','net','mode','diff','turn','env','salMod','cycle','jit','rstance','rivals','held','pRes','del','over','nominee','calVar','third','cands','vpx','lastDebate','names']);
+const H_OPP={opp:'cand',oppStances:'stances',oppMom:'mom',oppEff:'eff',oppVp:'vp',oppHeat:'heat',oppCred:'cred'};
+function facade(i){return new Proxy({},{
+  get(_,k){if(k==='side')return i;if(typeof k!=='string')return undefined;if(k==='gEff'||k==='pEff')return W.sides[i].eff;if(k in H_OPP)return W.sides[1-i][H_OPP[k]];if(H_SHARED.has(k))return W[k];return W.sides[i][k];},
+  set(_,k,v){if(k==='gEff'||k==='pEff'){W.sides[i].eff=v;return true;}if(k in H_OPP){W.sides[1-i][H_OPP[k]]=v;return true;}if(H_SHARED.has(k)){W[k]=v;return true;}W.sides[i][k]=v;return true;}});}
+function makeSide(id,R){const c=C[id];const x=rosterExtras(R);return {cand:id,party:c.p,stances:{...c.s},money:12+x.money+stat(c,1)*1.6,ap:0,apMax:5,stamina:100,cred:70,mom:0,heat:0,staff:x.staff,prep:0,oppo:x.oppo,pac:0,eff:{},org:x.org,vp:R.vp,log:[],usedEv:[],flags:{},noise:{},tab:'camp',sel:'PA',lockStances:true,turnEventDone:false,stx:{fundUses:0,media:0,attacks:0,gaffes:0,pods:0,dinners:0,flips:0,org:0,wild:0,oppoUsed:0,maxHeat:0,debW:0,debT:0,genStart:null},wildN:0,brief:'',lastSnap:null,debScore:null,done:false,spent:R.spent,lastInc:0};}
+function startTwoPlayer(net,st){
+  C.h2h0=buildCand('h2h0',D.names[0],D.parties[0],D.rosters[0],st[0]);C.h2h1=buildCand('h2h1',D.names[1],D.parties[1],D.rosters[1],st[1]);
+  const sal={};IK.forEach(k=>sal[k]=0);
+  W={h2h:true,net,mode:'h2h',diff:'normal',turn:GEN_START,env:gauss()*1.2,salMod:sal,cycle:{econ:1,hot:pickOne(IK),pollQ:['Typical',1],cal:'std'},jit:{},rstance:{},rivals:[],held:{},pRes:{},del:{},over:false,nominee:'h2h0',calVar:'std',third:null,cands:{h2h0:C.h2h0,h2h1:C.h2h1},lastDebate:null,names:D.names.slice(),sides:[]};
+  W.sides=[makeSide('h2h0',D.rosters[0]),makeSide('h2h1',D.rosters[1])];
+  W.sides.forEach((S,i)=>S.log.push({t:CAL[GEN_START].d,x:`Draft complete. ${D.names[0]} spent ${D.rosters[0].spent} capital and ${D.names[1]} spent ${D.rosters[1].spent}. ${D.names[0]} (${D.parties[0]}) vs ${D.names[1]} (${D.parties[1]}). Issue of the cycle: ${II[W.cycle.hot].n}.`}));
+  applyCal('std');D=null;
+  h2hWorldStart();
+  $('draft').classList.add('hidden');
+  if(net==='local')passScreen(0,()=>h2hPlay(0),'The general election begins!');
+  else{H.w0=JSON.parse(JSON.stringify(W));H.subs=[null,null];netBroadcastState();h2hPlay(NET.side);}
+}
+function h2hWorldStart(){
+  W.sides.forEach(S=>{for(const s in S.eff)S.eff[s]*=0.88;S.mom*=0.85;S.heat=Math.max(0,S.heat-1.5);});
+  W.env+=gauss()*0.3;for(const k in W.salMod)W.salMod[k]*=0.9;
+  let news=null;if(Math.random()<0.3){const i=pickOne(IK);W.salMod[i]+=0.15;news=`News cycle: ${II[i].n.toLowerCase()} is suddenly everywhere.`;}
+  W.sides.forEach((S,i)=>{g=facade(i);const P=C[S.cand];const momBefore=S.mom/0.85;
+    S.apMax=4+S.staff;S.ap=S.apMax;S.stamina=clamp(S.stamina+18+(P.iron?12:0),0,100);
+    const inc=2+stat(P,1)*0.45+Math.max(0,S.mom)*0.3+(P.sd||0)*0.4+(vpPerk(S.vp)==='fund'?2:0);S.money+=inc;
+    for(const s in S.org)S.eff[s]=(S.eff[s]||0)+S.org[s]*0.7;
+    S.noise={_n:gauss()};SK.forEach(s=>S.noise[s]=gauss()*1.6);S.turnEventDone=false;S.debScore=null;S.done=false;
+    if(news)S.log.unshift({t:CAL[W.turn].d,x:news});
+    briefing(S.lastSnap,inc,momBefore);if(W.turn>GEN_START)S.log.unshift({t:CAL[W.turn].d,x:S.brief.replace(/<[^>]+>/g,'')});
+    S.log=S.log.slice(0,40);
+  });
+}
+function h2hPlay(i){
+  g=facade(i);H.base={env:W.env,sal:{...W.salMod},oppMom:W.sides[1-i].mom};
+  closeModal();$('title').classList.add('hidden');$('pick').classList.add('hidden');$('draft').classList.add('hidden');$('game').classList.remove('hidden');
+  if(!targetable(g.sel))g.sel='PA';render();window.scrollTo(0,0);
+  setTimeout(()=>runTurnEvent(),300);
+}
+function h2hSideDone(){
+  const i=g.side;
+  const fin=()=>{W.sides[i].done=true;
+    if(W.net==='local'){if(i===0)passScreen(1,()=>h2hPlay(1));else h2hResolve();}
+    else{const d={env:W.env-H.base.env,oppMom:W.sides[1-i].mom-H.base.oppMom,sal:{}};IK.forEach(k=>d.sal[k]=(W.salMod[k]||0)-(H.base.sal[k]||0));
+      const S=JSON.parse(JSON.stringify(W.sides[i]));S.mom=S.mom;W.sides[1-i].mom=H.base.oppMom;
+      waitScreen();netSend({t:'done',side:i,S,delta:d,turn:W.turn});}
+  };
+  if(cal().debate==='general')h2hDebate(fin);else fin();
+}
+function waitScreen(){modal({k:'Head-to-head',t:'Turn submitted',body:`<p>Waiting for ${esc(W.names[1-NET.side])} to finish their turn…</p><p class="mut" style="font-size:12px">Room ${esc(NET.code)}</p>`,choices:[]});}
+function h2hDebate(done){
+  const P=C[g.cand];const top=IK.slice().sort((a,b)=>natSal(b)-natSal(a)+rnd(-.25,.25)).slice(0,3);let q=0,total=0;const lines=[];
+  const ask=()=>{if(q>=3){g.prep=0;W.sides[g.side].debScore=total;modal({k:'Debate',t:'Your answers are in',body:`<div class="fx">${lines.map(esc).join('<br>')}</div><p class="mut">Who won is revealed when both candidates have answered.</p>`,choices:[{l:'Continue',f:()=>{closeModal();done();}}]});return;}
+    const i=top[q];
+    modal({k:`Presidential debate · Question ${q+1} of 3`,t:II[i].n,body:`<p style="font-family:var(--disp);font-size:19px">"Where exactly do you stand on ${II[i].n.toLowerCase()}, and why should voters trust you over ${esc(C[g.opp].n)}?"</p><p class="mut" style="font-size:12px">Your position: ${esc(II[i].o[g.stances[i]+2])} · Prep ${g.prep}</p>`,choices:[
+      {l:'Lay out your plan in detail',s:'Rewards preparation and a popular position',f:()=>ans('plan',i)},{l:'Pivot to your core message',s:'Safe, modest',f:()=>ans('pivot',i)},
+      {l:'Go on the attack',s:'High variance · better with oppo files',f:()=>ans('attack',i)},{l:'Land a prepared zinger',s:'Needs prep',f:()=>ans('zing',i)}]});};
+  const ans=(type,i)=>{const dist=Math.abs(g.stances[i]-want(i));let sc;
+    if(type==='plan')sc=stat(P,2)*.45+g.prep*1.1+(1.5-dist)*2+rnd(-2,2)+((P.owns||[]).includes(i)?1.5:0);else if(type==='pivot')sc=3+stat(P,3)*.15+rnd(-1,1);
+    else if(type==='attack'){sc=stat(P,2)*.5+rnd(-5,5)+(g.oppo>0?2:0);if(sc<1.5)g.heat+=2;}else sc=stat(P,0)*.25+g.prep*1.4+rnd(-4,5);
+    if(g.stamina<30)sc-=1.5;total+=sc;lines.push(`Q${q+1} (${II[i].n}): ${sc>5?'a strong answer':sc>2.5?'a solid answer':'a shaky answer'}`);q++;ask();};
+  ask();
+}
+function h2hResolve(){
+  const c=CAL[W.turn];W.lastDebate=null;
+  if(c.debate==='general'){const a=W.sides[0].debScore||0,b=W.sides[1].debScore||0;const d=clamp((a-b)*0.35,-4.5,4.5);W.sides[0].mom+=d;W.sides[1].mom-=d;W.lastDebate={kind:'Presidential debate',d,turn:W.turn};}
+  if(c.debate==='vp'){const v0=W.sides[0].vp,v1=W.sides[1].vp;if(v0&&v1){const a=stat(cand(v0),2)+(vpPerk(v0)==='debate'?3:0)+rnd(-3,3),b=stat(cand(v1),2)+(vpPerk(v1)==='debate'?3:0)+rnd(-3,3);const d=clamp((a-b)*.35,-2.5,2.5);W.sides[0].mom+=d;W.sides[1].mom-=d;W.lastDebate={kind:'VP debate',d,turn:W.turn};}}
+  if(W.lastDebate){const d=W.lastDebate.d;W.sides.forEach((S,i)=>{const mine=i===0?d:-d;S.log.unshift({t:c.d,x:`${W.lastDebate.kind}: ${Math.abs(d)<0.5?'a draw':(mine>0?'you won':W.names[1-i]+' won')}. (Momentum ${sgn(mine)})`});if(c.debate==='general'){S.stx.debT++;if(mine>0.5)S.stx.debW++;}});}
+  W.sides.forEach(S=>{S.mom=clamp(S.mom,-12,12);S.cred=clamp(S.cred,0,100);S.stx.maxHeat=Math.max(S.stx.maxHeat,S.heat);});
+  W.turn++;
+  if(W.turn>=CAL.length){h2hElection();return;}
+  h2hWorldStart();
+  if(W.net==='local')showDebateResult(0,()=>passScreen(0,()=>h2hPlay(0)));
+  else{netBroadcastState();showDebateResult(NET.side,()=>h2hPlay(NET.side));}
+}
+function showDebateResult(side,next){
+  const L=W.lastDebate;if(!L||L.turn!==W.turn-1){next();return;}
+  const d=side===0?L.d:-L.d;const nm=W.net==='local'?(L.d>0?W.names[0]:W.names[1]):(d>0?'You':W.names[1-side]);
+  modal({k:L.kind,t:Math.abs(L.d)<0.5?'Pundits call it a draw':`${nm} won the ${L.kind.toLowerCase()}`,body:`<p class="fx">${W.net==='local'?`${esc(W.names[0])} momentum ${sgn(L.d)} · ${esc(W.names[1])} momentum ${sgn(-L.d)}`:`Your momentum ${sgn(d)}`}</p>`,choices:[{l:'Continue',f:()=>{closeModal();next();}}]});
+}
+function h2hElection(){
+  g=facade(0);const fin=computeFinal();
+  if(W.net==='online'){netSend({t:'final',fin,W:slimW()});}
+  if(W.net==='online'&&NET.side===1){const nf={};for(const s in fin)nf[s]=-fin[s];g=facade(1);$('game').classList.remove('hidden');electionNight(nf);}
+  else{$('game').classList.remove('hidden');closeModal();electionNight(fin);}
+}
+function h2hFinale(me,them,pv,fin){
+  const i=g.side;const won=me>=270,tie=me===269;
+  const wname=tie?null:(won?C[g.cand].n:C[g.opp].n);
+  if(W.net==='online'){recordGame({mode:'h2h_online',won,ev:me,opp_ev:them});if(won){unlock('h2hwin');if(W.sides[i].spent<50)unlock('steal');}}
+  else{recordGame({mode:'h2h_local',won:i===0?won:!won,ev:i===0?me:them,opp_ev:i===0?them:me});}
+  modal({k:'Final result',t:tie?'269–269: a tie!':`${wname} wins the White House`,wide:true,body:`<div class="evnums" style="font-size:18px;margin:10px 0"><span style="color:${partyHex(g.party)}">${esc(C[g.cand].n)} ${me} EV</span><span style="color:${partyHex(C[g.opp].p)}">${esc(C[g.opp].n)} ${them} EV</span></div><div class="evbar"><div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="flex:1"></div><div style="width:${them/538*100}%;background:${partyHex(C[g.opp].p)}"></div><div class="mid"></div></div>${mapSVG(s=>colFor(fin[s]*(g.party==='D'?1:-1),true),()=>'#fff')}<p class="fx">Draft capital spent: ${esc(W.names[0])} ${W.sides[0].spent} · ${esc(W.names[1])} ${W.sides[1].spent}</p>`,choices:[{l:'Rematch (new draft)',f:()=>{closeModal();openH2H();}},{l:'Main menu',f:()=>{closeModal();W=null;g=null;goTitle();}}]});
+}
+function passScreen(side,next,note){
+  $('modal').classList.add('opaque');
+  modal({k:'Pass-and-play',t:`Pass the device to ${W?W.names[side]:D.names[side]}`,body:`<p>${esc(note||'')} ${esc(W?W.names[1-side]:D.names[1-side])}: no peeking!</p>`,choices:[{l:`I'm ${W?W.names[side]:D.names[side]}. Start my turn`,f:()=>{$('modal').classList.remove('opaque');closeModal();next();}}]});
+}
+
+/* =========================================================
+   ONLINE ROOMS (Supabase Realtime; BroadcastChannel fallback)
+   ========================================================= */
+const NET={code:null,side:null,send:null,ch:null,last:null,peer:false,timer:null,names:[null,null],parties:[null,null]};
+function netOpen(code,onMsg){
+  NET.code=code;
+  if(BK.sb){const ch=BK.sb.channel('stump-'+code,{config:{broadcast:{self:false}}});ch.on('broadcast',{event:'m'},({payload})=>onMsg(payload));ch.subscribe();NET.send=p=>ch.send({type:'broadcast',event:'m',payload:p});NET.ch=ch;}
+  else if(window.BroadcastChannel){const bc=new BroadcastChannel('stump-'+code);bc.onmessage=e=>onMsg(e.data);NET.send=p=>bc.postMessage(p);NET.ch=bc;}
+  else{toast('Online play is not available in this browser.');}
+}
+function netClose(){try{if(NET.ch){if(NET.ch.close)NET.ch.close();else if(BK.sb)BK.sb.removeChannel(NET.ch);}}catch(e){}NET.ch=null;clearInterval(NET.timer);}
+function slimW(){const w=JSON.parse(JSON.stringify(W));w.sides.forEach(S=>S.log=S.log.slice(0,30));return w;}
+function netSend(m){
+  m.from=NET.side;
+  if(m.t==='draft'){m={...m,D:{...m.D,bids:m.D.bids.map(b=>b==null?null:'sealed')}};m.from=0;}
+  if(NET.side===0){if(['draft','state','welcome'].includes(m.t))NET.last=m;if(NET.send)NET.send(m);if(m.t==='bid'||m.t==='ready'||m.t==='done')hostMsg(m);}
+  else{if(NET.send)NET.send(m);}
+}
+function netBroadcastState(){netSend({t:'state',W:slimW()});}
+function roomCode(){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<5;i++)s+=a[Math.floor(Math.random()*a.length)];return s;}
+function hostRoom(name,party){
+  netClose();NET.side=0;NET.names=[name,null];NET.parties=[party,party==='D'?'R':'D'];NET.peer=false;const code=roomCode();netOpen(code,hostMsg);
+  modal({k:'Online head-to-head',t:'Room '+code,body:`<p>Send this code to your opponent. They choose <b>Online → Join a room</b> and enter it.</p><div class="bigcode">${code}</div><p class="mut" style="font-size:12px">${BK.sb?'Connected through the STUMP server.':'Note: on this page, online rooms only connect between tabs in the same browser. Real online play needs the full website version.'}</p><p id="roomMsg">Waiting for an opponent to join…</p>`,choices:[{l:'Cancel',f:()=>{netClose();closeModal();}}]});
+}
+function hostMsg(m){
+  if(!m||NET.side!==0)return;
+  if(m.t==='hello'&&m.from===1){if(!NET.peer){NET.peer=true;NET.names[1]=m.name;}netSend({t:'welcome',names:NET.names,parties:NET.parties});
+    if(!D&&!W){setTimeout(()=>{startDraft('online',NET.names.slice(),NET.parties.slice());netSend({t:'draft',D});},500);}else if(NET.last)NET.send(NET.last);return;}
+  if(m.t==='sync'){if(NET.last&&NET.send)NET.send(NET.last);return;}
+  if(m.t==='bid'&&D&&!D.done&&m.i===D.i){D.bids[m.side]=m.amt;if(m.side===0)drawDraft();if(D.bids[0]!=null&&D.bids[1]!=null)resolveLot(D.bids.slice());else netSend({t:'draft',D});return;}
+  if(m.t==='ready'&&D&&D.done){D.ready=D.ready||[null,null];D.ready[m.side]=m.stances;if(D.ready[0]&&D.ready[1])startTwoPlayer('online',D.ready);return;}
+  if(m.t==='done'&&W&&m.turn===W.turn){H.subs[m.side]={S:m.S,delta:m.delta};
+    if(H.subs[0]&&H.subs[1]){const base=H.w0||W;const nw=JSON.parse(JSON.stringify(base));nw.sides=[H.subs[0].S,H.subs[1].S];
+      [0,1].forEach(i=>{const d=H.subs[i].delta;nw.sides[1-i].mom+=d.oppMom;nw.env+=d.env;for(const k in d.sal)nw.salMod[k]=(nw.salMod[k]||0)+d.sal[k];});
+      W=nw;H.subs=[null,null];h2hResolve();H.w0=JSON.parse(JSON.stringify(W));}
+    return;}
+}
+function guestMsg(m){
+  if(!m||m.from!==0)return;
+  if(m.t==='welcome'){NET.peer=true;clearInterval(NET.timer);NET.names=m.names;NET.parties=m.parties;const el=$('roomMsg');if(el)el.textContent='Connected! The draft is starting…';return;}
+  if(m.t==='draft'){if(W)return;const wasDone=D&&D.done;const same=D&&D.i===m.D.i&&!m.D.done;const myBid=D?D.bids[1]:null;D=m.D;if(same&&myBid!=null&&D.bids[1]==null)D.bids[1]=myBid;
+    if($('draft').classList.contains('hidden')){closeModal();$('title').classList.add('hidden');$('game').classList.add('hidden');$('draft').classList.remove('hidden');}
+    if(NET.pendingBid!=null&&D.i>NET.pendingBid)NET.pendingBid=null;
+    if(!(same&&$('bidMe')&&$('bidMe').value))drawDraft();if(D.done&&!wasDone)setTimeout(()=>platformStep(),600);return;}
+  if(m.t==='state'){const nw=m.W;if(W&&nw.turn<=W.turn)return;Object.assign(C,nw.cands);applyCal('std');W=nw;D=null;showDebateResult(1,()=>h2hPlay(1));return;}
+  if(m.t==='final'){W=m.W;Object.assign(C,W.cands);const nf={};for(const s in m.fin)nf[s]=-m.fin[s];g=facade(1);closeModal();$('draft').classList.add('hidden');$('game').classList.remove('hidden');electionNight(nf);return;}
+}
+function joinRoom(name,code){
+  netClose();NET.side=1;NET.names=[null,name];code=code.toUpperCase().trim();netOpen(code,guestMsg);
+  const hello=()=>NET.send&&NET.send({t:'hello',name,from:1});hello();NET.timer=setInterval(()=>{if(!NET.peer)hello();else if((!$('modal').classList.contains('hidden')&&/Waiting/.test($('mbox').textContent))||NET.pendingBid!=null)NET.send({t:'sync',from:1});},2500);
+  modal({k:'Online head-to-head',t:'Joining room '+esc(code),body:`<p id="roomMsg">Connecting…</p><p class="mut" style="font-size:12px">${BK.sb?'':'On this page, rooms only connect between tabs in the same browser.'}</p>`,choices:[{l:'Cancel',f:()=>{netClose();closeModal();}}]});
+}
+
+/* ---- head-to-head menu ---- */
+function openH2H(){
+  const nm=displayName();
+  modal({k:'Head-to-head',t:'Draft a candidate, then beat the other one',wide:true,body:`<p>Bid in an auction for ratings, a home state, money, traits, a running mate and issues voters trust you on. Then fight the general election against whatever the other side built.</p>`,choices:[
+    {l:'🤖 vs AI rival',s:'Draft against the computer, then campaign against its candidate',f:()=>h2hSetup('ai')},
+    {l:'🪑 Pass-and-play',s:'Two players, one device. Take turns.',f:()=>h2hSetup('local')},
+    {l:'🌐 Online: host a room',s:'Get a code to send to a friend',f:()=>h2hSetup('host')},
+    {l:'🌐 Online: join a room',s:'Enter a friend\'s code',f:()=>h2hSetup('join')},
+    {l:'Cancel',f:closeModal}]});
+}
+function h2hSetup(kind){
+  const nm=displayName()==='Guest'?'Player 1':displayName();
+  const partyPick=`<div class="seg" style="flex-direction:row;margin-top:6px" id="ppick"><button data-p="D" class="on">Democrat</button><button data-p="R">Republican</button></div>`;
+  let body='',go;
+  if(kind==='ai'){body=`<label class="lbl">Your candidate's name</label><input id="n0" class="tin" maxlength="24" value="${esc(nm)}"><label class="lbl">Your party</label>${partyPick}`;go=()=>{const p=selP();startDraft('ai',[val('n0','Player 1'),pickOne(AINAMES[p==='D'?'R':'D'])],[p,p==='D'?'R':'D']);};}
+  if(kind==='local'){body=`<label class="lbl">Player 1 name</label><input id="n0" class="tin" maxlength="24" value="${esc(nm)}"><label class="lbl">Player 1 party</label>${partyPick}<label class="lbl">Player 2 name</label><input id="n1" class="tin" maxlength="24" value="Player 2">`;go=()=>{const p=selP();startDraft('local',[val('n0','Player 1'),val('n1','Player 2')],[p,p==='D'?'R':'D']);};}
+  if(kind==='host'){body=`<label class="lbl">Your name</label><input id="n0" class="tin" maxlength="24" value="${esc(nm)}"><label class="lbl">Your party</label>${partyPick}`;go=()=>hostRoom(val('n0','Host'),selP());}
+  if(kind==='join'){body=`<label class="lbl">Your name</label><input id="n0" class="tin" maxlength="24" value="${esc(nm)}"><label class="lbl">Room code</label><input id="rc" class="tin" maxlength="5" style="text-transform:uppercase;letter-spacing:.3em;font-family:var(--mono)" placeholder="ABCDE">`;go=()=>{const c=val('rc','');if(c.length<5){toast('Enter the 5-character room code.');return;}joinRoom(val('n0','Guest'),c);};}
+  modal({k:'Head-to-head',t:{ai:'vs AI rival',local:'Pass-and-play',host:'Host an online room',join:'Join an online room'}[kind],body,choices:[{l:'Continue',f:go},{l:'Back',f:openH2H}]});
+  document.querySelectorAll('#ppick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#ppick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');});
+}
+function val(id,d){const e=$(id);return e&&e.value.trim()?e.value.trim().slice(0,24):d;}
+function selP(){const b=document.querySelector('#ppick button.on');return b?b.dataset.p:'D';}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function colFor(dM,solid){ // dM = margin in D terms
+  const t=clamp(Math.abs(dM)/18,0,1);const base=dM>0?[75,128,226]:[224,84,75];const mid=[226,218,200];
+  const k=solid?0.35+0.65*t:t;const mix=mid.map((m,i)=>Math.round(m+(base[i]-m)*k));
+  if(Math.abs(dM)<1&&!solid)return 'rgb(206,196,170)';return `rgb(${mix.join(',')})`;}
+function mapSVG(fill,txt,selected){
+  const W=56;let h=`<svg viewBox="0 0 ${12*W} ${8*W}" xmlns="http://www.w3.org/2000/svg">`;
+  SK.forEach(s=>{const st=S[s];const x=st.x*W,y=st.y*W;const f=fill(s);
+    h+=`<g class="tile" data-s="${s}"><rect x="${x+2}" y="${y+2}" width="${W-4}" height="${W-4}" rx="7" fill="${f}" stroke="${selected===s?'#e3b24f':'rgba(0,0,0,.25)'}" stroke-width="${selected===s?3:1}"/><text x="${x+W/2}" y="${y+W/2+1}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="600" fill="${txt(s)}">${s}</text><text x="${x+W/2}" y="${y+W/2+15}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="${txt(s)}" opacity=".75">${st.ev}</text></g>`;});
+  return h+'</svg>';
+}
+function textOn(rgb){const m=rgb.match(/\d+/g);if(!m)return '#fff';const [r,gg,b]=m.map(Number);return (r*.299+gg*.587+b*.114)>150?'#1a1a1a':'#fff';}
+function render(){
+  if(!g)return;
+  const P=C[g.cand],c=cal();
+  $('tParty').textContent=partyName(g.party).toUpperCase();$('tParty').style.background=partyHex(g.party);
+  $('tName').textContent=P.n+(g.vp?' / '+cand(g.vp).n:'');$('tDate').textContent='· '+c.d;
+  $('rAP').textContent=g.ap+'/'+g.apMax;$('rMoney').textContent=fmtM(g.money);
+  $('rStam').textContent=Math.round(g.stamina);$('rStam').className=g.stamina<30?'neg':'';
+  $('rCred').textContent=Math.round(g.cred);$('rCred').className=g.cred<50?'neg':'';
+  $('rMom').textContent=sgn(g.mom);$('rMom').className=g.mom>=0?'pos':'neg';
+  $('rHeat').textContent=Math.round(g.heat);$('rHeat').className=g.heat>8?'neg':'';
+  $('rStaff').textContent=g.staff+' · prep '+g.prep+' · oppo '+g.oppo;
+  $('phaseK').textContent={pre:'Invisible primary',pri:'Primary season',conv:'Convention',gen:'General election'}[c.ph]+' · Turn '+(g.turn+1)+' of '+CAL.length;
+  $('phaseT').textContent=c.t+(c.c?` — ${c.c.length} contest${c.c.length>1?'s':''} this turn`:'');
+  $('phaseSub').textContent=c.sub+(c.debate?' 🎙 Debate at end of turn.':'')+(c.c?' Votes are cast when you end the turn.':'');
+  $('brief').innerHTML=g.brief||'';
+  g.stx.maxHeat=Math.max(g.stx.maxHeat,g.heat);
+  // map
+  let fill,txt;
+  if(isPri()){
+    fill=s=>{if(g.held[s]){const w=g.pRes[s].w;return w===g.cand?PAL[0]:(g.rivals.find(r=>r.id===w)||{col:'#666'}).col;}
+      const sh=pShares(s,false).sort((a,b)=>b.sh-a.sh);const up=upcomingStates(1).includes(s);return up?sh[0].col+'ee':sh[0].col+'80';};
+    txt=s=>(g.held[s]||upcomingStates(1).includes(s))?'#111':'#fff';
+    const fl=field();
+    $('legend').innerHTML=fl.map(f=>`<span><i style="background:${f.col}"></i>${f.me?'You':esc(C[f.id].n)}</span>`).join('')+'<span class="mut">· Solid = already voted · Bright = votes this turn · Faint = projected leader</span>';
+  } else {
+    fill=s=>colFor(pollMargin(s)*(g.party==='D'?1:-1));txt=s=>textOn(fill(s));
+    $('legend').innerHTML=`<span><i style="background:${partyHex(g.party)}"></i>You lead</span><span><i style="background:rgb(206,196,170)"></i>Toss-up</span><span><i style="background:${partyHex(C[g.opp].p)}"></i>${esc(C[g.opp].n)} leads</span><span class="mut">· Polls have noise. An internal poll sharpens them.</span>`;
+  }
+  $('map').innerHTML=mapSVG(fill,txt,g.sel);
+  document.querySelectorAll('#map .tile').forEach(t=>t.onclick=()=>{g.sel=t.dataset.s;render();});
+  renderPolls();renderState();renderActs();renderPlatform();
+  $('feed').innerHTML=g.log.map(l=>`<div><span class="t">${esc(l.t)}</span>${esc(l.x)}</div>`).join('');
+}
+function renderPolls(){
+  let h='';
+  if(isPri()){
+    const np=natPrimary();
+    h=`<h2>${partyName(g.party)} primary</h2><div class="mut" style="font-size:12px">National primary poll (remaining states)</div><div class="dlist">`+np.map(x=>`<div class="row"><span class="dot" style="background:${x.col}"></span><span>${x.id===g.cand?'<b>You</b>':esc(C[x.id].n)}</span><span class="mono">${x.sh.toFixed(1)}%</span><span class="bar"><i style="width:${x.sh}%;background:${x.col}"></i></span></div>`).join('')+'</div>';
+    if(sumDel()>0)h+=delegateTable();
+    h+=`<div class="mut" style="font-size:12px;margin-top:10px">Other party's frontrunner: <b style="color:var(--ink)">${esc(C[g.opp].n)}</b></div>`;
+  } else {
+    let me=0,th=0,tu=0;SK.forEach(s=>{const m=pollMargin(s);if(m>2)me+=S[s].ev;else if(m<-2)th+=S[s].ev;else tu+=S[s].ev;});
+    const nm=natMargin(pollMargin);const und=Math.max(0,8-(g.turn-GEN_START)*0.9);
+    const mp=50-und/2+nm/2-1,tp=50-und/2-nm/2-1;
+    h=`<h2>General election polls</h2><div class="evnums"><span style="color:${partyHex(g.party)}">You ${me}</span><span class="mut">Toss-up ${tu}</span><span style="color:${partyHex(C[g.opp].p)}">${th} ${esc(C[g.opp].n)}</span></div><div class="evbar"><div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="width:${tu/538*100}%;background:rgb(206,196,170)"></div><div style="flex:1;background:${partyHex(C[g.opp].p)}"></div><div class="mid"></div></div><div class="mut" style="font-size:11px">Electoral votes by poll lead (±2 counts as a toss-up) · 270 to win</div>
+    <div class="kv" style="margin-top:10px"><span>National popular vote</span><b>${mp.toFixed(1)}% – ${tp.toFixed(1)}%</b><span>Opponent momentum</span><b>${sgn(g.oppMom)}</b><span>Running mates</span><b>${g.vp?esc(cand(g.vp).n):'—'} vs ${g.oppVp?esc(cand(g.oppVp).n):'—'}</b>${g.pac>0?`<span>Super PAC funds left</span><b>${fmtM(g.pac)}</b>`:''}${g.third?`<span>Independent candidate</span><b>~${g.third.pct.toFixed(0)}% in polls</b>`:''}${g.cycle?`<span>Issue of the cycle</span><b>${II[g.cycle.hot].n}</b>`:''}</div>`;
+    const tight=competitive(7);h+=`<div class="mut" style="font-size:12px;margin-top:10px">Closest states: ${tight.map(s=>`<b style="color:var(--ink)">${s}</b> ${sgn(pollMargin(s))}`).join(' · ')}</div>`;
+  }
+  $('pollPnl').innerHTML=h;
+}
+function renderState(){
+  const s=g.sel;if(!s){$('statePnl').innerHTML='';return;}
+  const st=S[s];const lean=st.l>0?'R+'+st.l.toFixed(1):'D+'+(-st.l).toFixed(1);
+  let h=`<div class="hd"><h3>${st.n}</h3><span class="mono">${st.ev} EV</span></div><div class="mut" style="font-size:12px">2024 result: ${lean}${isPri()?' · '+delOf(s)+' delegates':''}</div><div class="kv">`;
+  if(isPri()){
+    if(g.held[s]){const r=g.pRes[s];h+=`<span>Result</span><b>${r.w===g.cand?'You won':esc(C[r.w].n)+' won'}</b><span>Your share</span><b>${r.sh.find(x=>x.id===g.cand).sh.toFixed(1)}%</b>`;}
+    else{const sh=pShares(s,false).sort((a,b)=>b.sh-a.sh);sh.slice(0,4).forEach(x=>h+=`<span>${x.id===g.cand?'You':esc(C[x.id].n)}</span><b>${x.sh.toFixed(1)}%</b>`);
+      const when=CAL.findIndex(cc=>cc.c&&cc.c.includes(s));h+=`<span>Votes</span><b>${CAL[when].d}</b>`;}
+    h+=`<span>Your ground game</span><b class="mono">${dots(groundLvl(g.pEff[s]||0,st.ev))}</b><span>Field offices</span><b>${g.org[s]||0}</b>`;
+  } else {
+    const m=pollMargin(s);h+=`<span>Poll</span><b class="${m>=0?'pos':'neg'}">${m>=0?'You +':'Opp +'}${Math.abs(m).toFixed(1)}</b><span>Your ground game</span><b class="mono">${dots(groundLvl(g.gEff[s]||0,st.ev))}</b><span>Theirs</span><b class="mono">${dots(groundLvl(g.oppEff[s]||0,st.ev))}</b><span>Field offices</span><b>${g.org[s]||0}</b>`;
+  }
+  h+='</div>';
+  const top=IK.slice().sort((a,b)=>sal(s,b)-sal(s,a)).slice(0,3);
+  h+=`<div class="mut" style="font-size:11px;margin-top:10px;letter-spacing:.08em;text-transform:uppercase">Top issues here</div><div class="issuelist">`+top.map(i=>{const want=isPri()?medP(s,i):medG(s,i);const d=Math.abs(g.stances[i]-want);return `<div class="row"><span>${II[i].n}</span><span class="bar"><i style="width:${clamp(sal(s,i)/1.4*100,5,100)}%"></i></span><span class="${d<0.8?'pos':d<1.5?'':'neg'}" style="font-size:11px">${d<0.8?'aligned':d<1.5?'okay':'off'}</span></div>`;}).join('')+'</div>';
+  {const o=g.org[s]||0;
+   if(!(isPri()&&g.held[s]))h+=`<div class="explain">Ground game fades a little every turn${isPri()?' until this state votes':''}, and big states take more to fill up. ${o?`Your field offices (level ${o}) keep topping it up every turn${isPri()?' and carry into the general':''}.`:'Field offices would keep topping it up every turn.'}</div>`;}
+  $('statePnl').innerHTML=h;
+}
+function renderActs(){
+  const tabs=[['camp','Campaign trail'],['media','Media & money'],['hq','Headquarters']];
+  $('actTabs').innerHTML=tabs.map(t=>`<button class="${g.tab===t[0]?'on':''}" data-t="${t[0]}">${t[1]}</button>`).join('');
+  document.querySelectorAll('#actTabs button').forEach(b=>b.onclick=()=>{g.tab=b.dataset.t;renderActs();});
+  const acts=ACTS[g.tab];
+  $('acts').innerHTML=acts.map((a,i)=>{const c=typeof a.c==='function'?a.c():a.c;let pj='';try{pj=a.p?a.p():'';}catch(e){}return `<button class="act" data-i="${i}" ${a.ok()&&!g.over?'':'disabled'}><b>${a.n}</b><small>${esc(a.d)}</small>${pj?`<span class="proj">${esc(pj)}</span>`:''}<div class="cost">${c}</div></button>`;}).join('');
+  const info=a=>{let n='',l='';try{n=a.now();l=a.later();}catch(e){}$('actInfo').innerHTML=`<div class="h">${esc(a.n)} · right now</div><div>${esc(n)}</div>${l?`<div class="h">Over time</div><div>${esc(l)}</div>`:''}`;};
+  document.querySelectorAll('#acts .act').forEach(b=>{const a=acts[+b.dataset.i];b.onclick=()=>a.f();b.onmouseenter=()=>info(a);b.onfocus=()=>info(a);});
+  $('actInfo').innerHTML=`<div class="h">Tip</div><div>Hover over an action to see what it does this turn and what it builds over time. Green numbers are projections for <b>${g.sel?S[g.sel].n:'the selected state'}</b>; click the map to change states.</div>`;
+  $('btnEnd').textContent=g.ap>0?`End turn (${g.ap} AP unused) →`:'End turn →';
+}
+function renderPlatform(){
+  $('platform').innerHTML=IK.map(i=>{const v=g.stances[i];const w=isPri()?(g.party==='D'?-1.2:1.2):II[i].tilt;const d=Math.abs(v-w);
+    return `<div class="row" title="${esc(II[i].o[v+2])}"><span>${II[i].n}</span><span class="mono" style="font-size:11px">${['Far L','Left','Center','Right','Far R'][v+2]}</span><span class="${d<0.9?'pos':d<1.6?'':'neg'}" style="font-size:11px">${d<0.9?'✓':d<1.6?'~':'✗'}</span></div>`;}).join('')+`<div class="mut" style="font-size:11px;margin-top:4px">✓ = close to what ${isPri()?'your party\'s primary voters':'swing voters'} want right now</div>`+(C[g.cand].wc?`<div class="wcch" style="margin-top:8px">🃏 <b>Challenge:</b> ${esc(C[g.cand].wc.ch)} <span class="${C[g.cand].wc.chk(g)?'pos':'neg'}">${C[g.cand].wc.chk(g)?'(on track)':'(not met yet)'}</span></div>`:'');
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+function modal(o){
+  pendingAfter=o.after||pendingAfter;
+  const b=$('mbox');b.className='mbox'+(o.wide?' wide':'');
+  b.innerHTML=`<div class="kicker">${esc(o.k||'')}</div><h2>${esc(o.t||'')}</h2><div>${o.body||''}</div><div class="choices" id="mch"></div>`;
+  const mc=$('mch');(o.choices||[]).forEach(c=>{const bt=document.createElement('button');bt.className='choice';bt.disabled=!!c.dis;bt.innerHTML=esc(c.l)+(c.s?`<small>${esc(c.s)}</small>`:'');bt.onclick=()=>{if(mc.dataset.used)return;mc.dataset.used='1';c.f();};mc.appendChild(bt);});
+  $('modal').classList.remove('hidden');
+}
+function closeModal(){$('modal').classList.add('hidden');}
+function toastMsg(t){const d=document.createElement('div');d.className='toast';d.innerHTML=esc(t);$('toasts').appendChild(d);setTimeout(()=>d.remove(),4000);}
+function toast(t){modal({k:'Heads up',t:t,choices:[{l:'OK',f:closeModal}]});}
+
+function openStanceModal(){
+  const tmp={...g.stances};
+  const draw=()=>{
+    let cost=0;IK.forEach(i=>cost+=Math.abs(tmp[i]-g.stances[i])*(g.lockStances?6:0));
+    let h=`<p class="mut">Each step you move costs ${g.lockStances?'6':'0'} credibility. Dashed = current position.</p><div class="axis"><span>◀ Progressive</span><span>Conservative ▶</span></div>`;
+    IK.forEach(i=>{h+=`<div class="stance" style="grid-template-columns:150px 1fr"><div class="nm">${II[i].n}</div><div class="five">${II[i].o.map((o,j)=>`<button data-i="${i}" data-v="${j-2}" class="${tmp[i]===j-2?'on':''} ${g.stances[i]===j-2?'orig':''}">${esc(o)}</button>`).join('')}</div></div>`;});
+    h+=`<p class="fx">Credibility cost: −${cost}</p>`;
+    modal({k:'Platform',t:'Adjust positions',wide:true,body:h,choices:[{l:'Confirm changes',dis:cost>g.cred,f:()=>{if(cost>0){g.cred-=cost;g.stx.flips+=cost/6;checkMid();logN(`You shift positions on ${IK.filter(i=>tmp[i]!==g.stances[i]).map(i=>II[i].n).join(', ')}. Critics call it a flip-flop. (Credibility −${cost})`);}g.stances={...tmp};closeModal();render();}},{l:'Cancel',f:closeModal}]});
+    document.querySelectorAll('#mbox .five button').forEach(b=>b.onclick=()=>{tmp[b.dataset.i]=+b.dataset.v;draw();});
+  };draw();
+}
+
+/* =========================================================
+   SETUP UI
+   ========================================================= */
+function seg(id,key,opts){const el=$(id);el.innerHTML=opts.map(o=>`<button data-v="${o[0]}" class="${SET[key]===o[0]?'on':''}">${o[1]}<small>${o[2]}</small></button>`).join('');el.querySelectorAll('button').forEach(b=>b.onclick=()=>{SET[key]=b.dataset.v;seg(id,key,opts);});}
+seg('optMode','mode',[['full','Full campaign','Primaries, convention and general · 23 turns'],['general','General election only','Start at the convention · 10 turns']]);
+seg('optDiff','diff',[['easy','Easy','Weaker, cheaper opponents'],['normal','Normal','A fair fight'],['hard','Hard','Well-funded opponents, a headwind for you']]);
+seg('optEnv','env',[['neutral','Neutral','An even national climate'],['midterm','Post-2026 midterm mood','Democrats won both chambers in Nov. 2026. Starts D+3'],['random','Random','Anything goes']]);
+if(loadSave())$('btnResume').classList.remove('hidden');
+$('btnResume').onclick=()=>{g=loadSave();if(!g)return;if(g.calVar)applyCal(g.calVar);$('title').classList.add('hidden');$('game').classList.remove('hidden');g.turnEventDone=true;render();if(cal().ph==='conv'&&!g.vp)runConvention();};
+$('btnAch').onclick=showAch;
+$('btnH2H').onclick=openH2H;
+$('btnProfile').onclick=showProfile;
+$('btnLb').onclick=showLeaderboard;
+bkInit();
+$('btnAch').textContent='Achievements ('+achCount()+'/'+ACH.length+')';
+$('btnHow').onclick=()=>modal({k:'Guide',t:'How to play',wide:true,body:`<p><b>Each turn</b> you get action points (AP): 4 plus your staff level. Spend them, then end the turn. Hover over any action to see what it does <i>right now</i> and what it builds <i>over time</i>. The green line on each action is a projection for the state you've selected.</p>
+<p><b>Effort is how you win states.</b> Rallies, town halls, ads, local TV and surrogates add effort to one state right away. Effort turns into votes with diminishing returns (about 7 points maximum per state) and <b>fades every turn</b>: 7% a turn in the primary, 12% in the general. Spend it close to when a state votes.</p>
+<p><b>Field offices are the long game.</b> They add nothing this turn. Each level adds +0.7 effort to that state at the start of <i>every</i> turn for the rest of the game, they stack, and they carry from the primary into the general. Build them early in states you'll need twice, like Michigan, Pennsylvania, Georgia and Nevada. In the final weeks they barely pay off.</p>
+<p><b>Momentum</b> lifts you in every state at once and fades 15% a turn. Media hits, speeches, debates and events move it. <b>Credibility</b> drops when you flip-flop. <b>Scandal heat</b> is a drag everywhere. <b>Stamina</b> under 30 doubles your gaffe risk.</p>
+<p><b>Primary vs. general:</b> primary voters reward your party's base, while the general rewards the middle. Moderating later costs credibility, and drifting too far from your base hurts turnout.</p>
+<p><b>Every game is different.</b> Each run rolls a new economy, an issue of the cycle, polling quality, primary calendar and small rating swings. Rivals surge and stumble, some weeks bring two events, and rare wildcards (independent candidates, crashes, court vacancies) can upend everything.</p>
+<p><b>Wildcard candidates 🃏</b> have special rules and a challenge to complete. <b>Achievements</b> are saved across games.</p>`,choices:[{l:'Got it',f:closeModal}]});
+$('btnNew').onclick=()=>{$('title').classList.add('hidden');$('pick').classList.remove('hidden');drawPick();window.scrollTo(0,0);};
+$('btnBack').onclick=()=>{$('pick').classList.add('hidden');$('title').classList.remove('hidden');};
+$('tabD').onclick=()=>{pickParty='D';pickId=null;drawPick();};
+$('tabR').onclick=()=>{pickParty='R';pickId=null;drawPick();};
+function drawPick(){
+  $('tabD').className=pickParty==='D'?'onD':'';$('tabR').className=pickParty==='R'?'onR':'';
+  const labels=['Name recognition','Fundraising','Debate','Discipline'];
+  const card=c=>`<div class="card ${c.wc?'wcard':''} ${pickId===c.id?'sel':''}" data-id="${c.id}"><span class="pin" style="background:${partyHex(c.p)}"></span>${c.wc?`<div class="wctag">🃏 ${esc(c.wc.tag)}</div>`:''}<h3>${esc(c.n)}</h3><div class="role">${esc(c.role)} · ${homeN(c)}</div><div class="trait">${esc(c.trait)}</div>${c.st.map((v,i)=>`<div class="statrow"><span>${labels[i]}</span><span class="bar"><i style="width:${v*10}%"></i></span><span class="mono">${v}</span></div>`).join('')}${c.wc?`<ul class="wcrules">${c.wc.rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul><div class="wcch"><b>Challenge:</b> ${esc(c.wc.ch)}</div>`:''}</div>`;
+  const all=Object.values(C).filter(c=>c.p===pickParty);
+  $('cards').innerHTML=all.filter(c=>!c.wc).map(card).join('')+`<div class="wchead"><div class="kicker">Wildcards</div><h3>Unconventional campaigns</h3><p class="mut">Outsiders and long shots, each with special rules and a challenge to complete. Harder, stranger and worth their own achievements.</p></div>`+all.filter(c=>c.wc).map(card).join('');
+  document.querySelectorAll('.card').forEach(el=>el.onclick=()=>{pickId=el.dataset.id;pickStances={...C[pickId].s};drawPick();});
+  $('btnLaunch').disabled=!pickId;
+  if(SET.mode==='general'){$('oppPick').classList.remove('hidden');const ot=pickParty==='D'?'R':'D';const o=[['random','Random','Weighted toward frontrunners']].concat(Object.values(C).filter(c=>c.p===ot).map(c=>[c.id,c.n+(c.wc?' 🃏':''),homeN(c)]));if(SET.oppChoice!=='random'&&(!C[SET.oppChoice]||C[SET.oppChoice].p!==ot))SET.oppChoice='random';seg('optOpp','oppChoice',o);}
+  drawStanceEd();
+}
+function drawStanceEd(){
+  if(!pickId){$('stanceEd').innerHTML='<p class="mut">Pick a candidate first.</p>';return;}
+  let h='<div class="axis"><span>◀ Progressive</span><span>Conservative ▶</span></div>';
+  IK.forEach(i=>{h+=`<div class="stance"><div class="nm">${II[i].n}<small>Weight: ${II[i].sal>=0.9?'very high':II[i].sal>=0.55?'high':'moderate'}</small></div><div class="five">${II[i].o.map((o,j)=>`<button data-i="${i}" data-v="${j-2}" class="${pickStances[i]===j-2?'on':''} ${C[pickId].s[i]===j-2?'orig':''}">${esc(o)}</button>`).join('')}</div></div>`;});
+  $('stanceEd').innerHTML=h;
+  document.querySelectorAll('#stanceEd .five button').forEach(b=>b.onclick=()=>{pickStances[b.dataset.i]=+b.dataset.v;drawStanceEd();});
+}
+$('btnLaunch').onclick=()=>{if(!pickId)return;$('pick').classList.add('hidden');$('game').classList.remove('hidden');window.scrollTo(0,0);newGame();};
+$('btnEnd').onclick=()=>{if(!g||g.over||g.turn>=CAL.length||!$('modal').classList.contains('hidden'))return;if(g.h2h)h2hSideDone();else endTurn();};
+$('btnStances').onclick=()=>openStanceModal();
+function openMenu(){
+  const c=g&&!g.over?cal():null;
+  modal({k:'Menu',t:'Campaign menu',body:c?`<p class="mut">${esc(C[g.cand].n)} · ${esc(c.d)} · Turn ${Math.min(g.turn+1,CAL.length)} of ${CAL.length}. Your progress saves automatically at the start of every turn.</p>`:'',choices:[
+    {l:'Resume',s:'Back to the campaign',f:closeModal},
+    {l:'How to play',s:'Rules, effort, field offices, momentum',f:()=>$('btnHow').onclick()},
+    {l:'Achievements',s:achCount()+' of '+ACH.length+' unlocked',f:showAch},
+    {l:'Main menu',s:g&&g.h2h?'Leave this head-to-head game (it can\'t be resumed).':'Save and return to the title screen. You can resume later.',f:()=>{if(g&&g.h2h){netClose();W=null;g=null;}else if(g&&!g.over)save();closeModal();goTitle();}},
+    ...(g&&g.h2h?[]:[{l:'Start over',s:'Abandon this campaign and pick a new candidate',f:confirmRestart}])]});
+}
+function confirmRestart(){
+  modal({k:'Start over',t:'Abandon this campaign?',body:'<p>Your current campaign will be deleted. Achievements you\'ve already earned are kept.</p>',choices:[
+    {l:'Yes, start over',f:()=>{clearSave();g=null;closeModal();$('game').classList.add('hidden');$('title').classList.add('hidden');pickId=null;$('pick').classList.remove('hidden');drawPick();window.scrollTo(0,0);}},
+    {l:'Cancel',f:openMenu}]});
+}
+function goTitle(){
+  $('game').classList.add('hidden');$('pick').classList.add('hidden');$('draft').classList.add('hidden');$('title').classList.remove('hidden');updateProfileBtn();
+  $('btnResume').classList.toggle('hidden',!loadSave());
+  $('btnAch').textContent='Achievements ('+achCount()+'/'+ACH.length+')';window.scrollTo(0,0);
+}
+$('btnMenu').onclick=openMenu;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&g&&!$('game').classList.contains('hidden')&&$('modal').classList.contains('hidden'))openMenu();});
+</script>
+</body>
+</html>
