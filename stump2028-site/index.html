@@ -225,6 +225,16 @@ table.rt th{font-family:var(--mono);font-size:10px;color:var(--mut);font-weight:
   .stance{grid-template-columns:1fr}
   .ennight{grid-template-columns:1fr}
 }
+
+.dx{display:flex;flex-direction:column;gap:7px;margin:4px 0 10px}
+.dl{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.035);border-left:3px solid #8a93a6;line-height:1.45}
+.dl b{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9aa3b5;margin-bottom:2px;font-weight:600}
+.dl span{font-family:var(--disp);font-size:16px}
+.dctx{display:flex;flex-direction:column;gap:3px;font-size:12.5px;margin:2px 0 8px}.dctx i{color:#9aa3b5;font-style:normal}
+.dreact{font-style:italic;color:#e3b24f;margin:2px 0 8px}
+.room{display:flex;align-items:center;gap:10px;font-size:12px;margin-top:6px}.room span{font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:#9aa3b5;font-size:10.5px}
+.rbar{flex:1;max-width:260px;height:8px;border-radius:5px;position:relative;background:linear-gradient(90deg,#c2362d55,#3a435a 45%,#3a435a 55%,#2b5cc055)}
+.rbar i{position:absolute;top:-3px;width:4px;height:14px;border-radius:2px;background:#f3efe4;transform:translateX(-2px)}
 </style>
 </head>
 <body>
@@ -1118,42 +1128,118 @@ function runDebate(kind,done){
     return;
   }
   const opp=kind==='general'?C[g.opp]:C[(topRival()||{id:g.opp}).id];
-  const top=IK.slice().sort((a,b)=>natSal(b)-natSal(a)+rnd(-.25,.25)).slice(0,3);
-  let q=0,total=0,lines=[];
-  const P=C[g.cand];
-  const ask=()=>{
-    if(q>=3){finish();return;}
-    const i=top[q];
-    const qs=[`"Families are struggling. What specifically would you do about ${II[i].n.toLowerCase()}?"`,`"Your opponents say your position on ${II[i].n.toLowerCase()} is out of touch. Respond."`,`"Voters at home want a straight answer on ${II[i].n.toLowerCase()}. Where exactly do you stand?"`];
-    modal({k:(kind==='general'?'Presidential debate':'Primary debate')+` · Question ${q+1} of 3`,t:II[i].n,body:`<p class="mut">The moderator turns to you:</p><p style="font-family:var(--disp);font-size:19px">${qs[q]}</p><p class="mut" style="font-size:12px">Your position: ${esc(II[i].o[g.stances[i]+2])}. Prep level: ${g.prep}. Opponent on stage: ${esc(opp.n)}.</p>`,choices:[
-      {l:'Lay out your plan in detail',s:'Rewards preparation and a popular position',f:()=>answer('plan',i)},
-      {l:'Pivot to your core message',s:'Safe, modest payoff',f:()=>answer('pivot',i)},
-      {l:'Go on the attack',s:'Big swings either way · better with oppo files',f:()=>answer('attack',i)},
-      {l:'Land a prepared zinger',s:'Needs prep · can become the moment of the night',f:()=>answer('zing',i)}]});
-  };
-  const answer=(type,i)=>{
-    const dist=Math.abs(g.stances[i]-want(i));let sc;
-    if(type==='plan')sc=stat(P,2)*.45+g.prep*1.1+(1.5-dist)*2+rnd(-2,2)-(P.out?1.5:0);
-    else if(type==='pivot')sc=3+stat(P,3)*.15+rnd(-1,1);
-    else if(type==='attack'){sc=stat(P,2)*.5+rnd(-5,5)+(g.oppo>0?2:0);if(sc<1.5)g.heat+=2;}
-    else sc=stat(P,0)*.25+g.prep*1.4+rnd(-4,5)+(P.out?1:0);
-    if(g.stamina<30)sc-=1.5;
-    const os=stat(opp,2)*.45+rnd(-2,3)+1.5;
-    const net=sc-os;total+=net;
-    const verdict=net>2?'You win the exchange decisively.':net>0?'You edge the exchange.':net>-2?`${opp.n} gets the better of that one.`:`That answer goes badly. Expect to see it in an attack ad.`;
-    lines.push(`Q${q+1} (${II[i].n}): ${verdict}`);
-    q++;
-    modal({k:'Debate',t:verdict,body:'',choices:[{l:q<3?'Next question':'See the post-debate spin',f:ask}]});
-  };
-  const finish=()=>{
+  const oppSt=i=>kind==='general'?g.oppStances[i]:rivalStances(opp.id)[i];
+  debateEngine({kind,opp,oppSt,done:(total,own,recap)=>{
     g.prep=0;
-    const d=clamp(total*0.35,-4.5,4.5);g.stx.debT++;if(d>0.5)g.stx.debW++;
+    const d=clamp(total*0.32,-4.5,4.5);g.stx.debT++;if(d>0.5)g.stx.debW++;
     g.mom+=d;if(kind==='general')g.oppMom-=d*.6;else{const r=topRival();if(r)r.mom-=d*.5;}
     const hl=d>2?'Snap polls say you won the debate decisively.':d>0.5?'You win the debate on points.':d>-0.5?'Pundits call the debate a draw.':d>-2?'Snap polls give the debate to '+opp.n+'.':'A rough night. You lost the debate badly.';
     logN(hl+' (Momentum '+sgn(d)+')');
-    modal({k:'Post-debate',t:hl,body:`<div class="fx">${lines.map(esc).join('<br>')}<br><br>Momentum ${sgn(d)}</div>`,choices:[{l:'Continue',f:()=>{closeModal();done();}}]});
+    modal({k:'Post-debate',t:hl,body:`<div class="fx">${recap.map(esc).join('<br>')}<br><br>Momentum ${sgn(d)}</div>`,choices:[{l:'Continue',f:()=>{closeModal();done();}}]});
+  }});
+}
+/* ---------- Debate engine: question → answer → opponent reply → your response → closing ---------- */
+const DQ={
+ economy:["Grocery bills and rent are still crushing families. What would you do in your first hundred days to bring costs down?","Tariffs: are they protecting American workers, or taxing American families?","A young couple in Ohio can't afford a starter home. What do you say to them tonight?"],
+ ai:["Economists say AI could wipe out millions of jobs this decade. What do you tell a 45-year-old paralegal or truck driver watching tonight?","Should Washington regulate artificial intelligence, or get out of the way?","Tech companies are building data centers faster than the grid can handle. Who should pay for that?"],
+ health:["Premiums went up again this year. Why should Americans trust you to fix health care?","Should every American be guaranteed health coverage, and who pays for it?","A diabetic in Georgia is rationing insulin. What would you do for her?"],
+ immig:["What would you do on day one at the southern border?","What happens to the millions of undocumented people already living here?","Farmers and builders say they can't find workers. Do we need more immigration, or less?"],
+ foreign:["If a U.S. ally were invaded tomorrow, would you send American troops?","Is America spending too much on defense, or too little?","How would you handle China, as a rival or as a partner?"],
+ integrity:["Many Americans no longer trust elections or Washington. How do you win that trust back?","Should members of Congress be allowed to trade stocks, and would you hold your own administration to that?","Would you accept the result of this election if you lose?"],
+ energy:["Gas prices or climate change: which comes first?","Would you expand drilling on federal land? Yes or no.","Hurricanes and wildfires are costing billions a year. What is your plan?"],
+ safety:["What would you do about gun violence in American cities?","Do police need more funding or more accountability?","A mother in Chicago lost her son to a stray bullet. What do you say to her?"]};
+const ZING=[o=>`"${o} has changed positions on this more often than a weathervane in a hurricane."`,o=>`"I've seen more specifics in a fortune cookie than in anything ${o} has proposed."`,o=>`"${o} wants a promotion for a job they never did."`,o=>`"With respect, ${o}, the American people are not a focus group."`,o=>`"If ${o} spent as much time on solutions as on soundbites, we wouldn't need this debate."`];
+const OZING=[m=>`"That was a great answer, for a different question."`,m=>`"${m} has a plan for everything except how to pay for it."`,m=>`"I'd ask ${m} to show us the receipts, but they'd probably lose those too."`,m=>`"${m} has been in politics so long they think 'real job' is a policy proposal."`,m=>`"Some people run for president to fix problems. ${m} runs to give speeches about them."`];
+const JOKEBACK=[o=>`"I see ${o} has been practicing in the mirror. It shows."`,o=>`"I'll take that as a compliment, coming from ${o}."`,o=>`"At least one of us read the briefing book."`,o=>`"That line tested well, I'm sure. The problem is it isn't true."`];
+const DT={economy:'the cost of living',ai:'AI and jobs',health:'health care',immig:'the border',foreign:'national security',integrity:'cleaning up Washington',energy:'energy prices',safety:'crime'};
+const lastN=n=>n.split(' ').pop();const lc1=s=>s.charAt(0).toLowerCase()+s.slice(1);
+const posTxt=(i,v)=>II[i].o[clamp(Math.round(v),-2,2)+2];
+function leanWord(i,v){const w=want(i),d=v-w,a=Math.abs(d);
+  if(isPri()){if(a<0.6)return 'in step with primary voters';return Math.abs(v)<Math.abs(w)?'more moderate than primary voters want':'further out than even primary voters';}
+  return a<0.6?'right where swing voters are':a<1.2?(d<0?'a bit left of':'a bit right of')+' swing voters':(d<0?'well left of':'well right of')+' swing voters';}
+function farWord(i,v){const w=want(i);if(isPri())return Math.abs(v)<Math.abs(w)?'a position our voters gave up on long ago':'a sure way to lose in November';return v<w?'too far left for this country':'too far right for this country';}
+const DBASE={D:['young','black','union'],R:['rural','work']},DSWING=['sub','senior','latino'];
+let DBG_TAC=null;
+function debateEngine(o){
+  const P=C[g.cand],O=o.opp,ml=lastN(P.n),ol=lastN(O.n),myCol=partyHex(g.party),opCol=O.p===g.party?'#c07be0':partyHex(O.p);
+  const top=IK.slice().sort((a,b)=>natSal(b)-natSal(a)+rnd(-.25,.25)).slice(0,3);
+  let q=0,total=0,own=0;const recap=[];const title=o.h2h||o.kind==='general'?'Presidential debate':'Primary debate';
+  const line=(who,txt,col)=>`<div class="dl" style="border-left-color:${col}"><b>${esc(who)}</b><span>${esc(txt)}</span></div>`;
+  const room=()=>{const v=clamp(total/7,-1,1);const lab=total>3?'Leaning your way':total>1?'Slightly your way':total>-1?'Even':total>-3?`Slightly ${ol}'s way`:`Leaning ${ol}'s way`;
+    return `<div class="room"><span>The room</span><div class="rbar" style="background:linear-gradient(90deg,${opCol}66,#3a435a 42%,#3a435a 58%,${myCol}66)"><i style="left:${50+v*46}%"></i></div><b>${esc(lab)}</b></div>`;};
+  const ask=()=>{
+    if(q>=3){closing();return;}
+    const i=top[q],myV=g.stances[i],opV=o.oppSt(i);const tx=[line('Moderator','"'+pickOne(DQ[i])+'"','#8a93a6')];
+    modal({k:`${title} · Question ${q+1} of 3`,t:II[i].n,wide:true,body:`<div class="dx">${tx.join('')}</div><div class="dctx"><span><b>You:</b> ${esc(posTxt(i,myV))} <i>· ${leanWord(i,myV)}</i></span><span><b>${esc(ol)}:</b> ${esc(posTxt(i,opV))} <i>· ${leanWord(i,opV)}</i></span><span class="mut">Prep ${g.prep}/3${g.oppo>0?' · oppo files in hand':''}${g.stamina<30?' · you look tired':''}</span></div>${room()}`,choices:[
+      {l:'Lay out your plan in detail',s:'Best when your position is mainstream and you have prepped',f:()=>open('plan',i,myV,opV,tx)},
+      {l:'Pivot to your core message',s:'Safe, but invites a "you dodged" reply',f:()=>open('pivot',i,myV,opV,tx)},
+      {l:`Go after ${ol}'s record`,s:'Big swings either way'+(g.oppo>0?' · your oppo files help':''),f:()=>open('attack',i,myV,opV,tx)},
+      {l:'Open with a prepared zinger',s:g.prep?'Prep makes it land':'Risky without prep',f:()=>open('zing',i,myV,opV,tx)}]});
   };
-  modal({k:kind==='general'?'Presidential debate':'Primary debate',t:kind==='general'?`You vs. ${opp.n}`:'The primary debate stage',body:`<p>${kind==='general'?'The two nominees take the stage. Three questions, three chances to move the race.':'The candidates line up under the lights. The frontrunner, '+esc(opp.n)+', is your main foil tonight.'}</p><p class="mut">Prep level: ${g.prep}/3 · Stamina: ${Math.round(g.stamina)}</p>`,choices:[{l:'Take the stage',f:ask}]});
+  const open=(type,i,myV,opV,tx)=>{
+    const myD=Math.abs(myV-want(i)),opD=Math.abs(opV-want(i)),iss=DT[i]||II[i].n.toLowerCase();let sc,say;
+    if(type==='plan'){sc=stat(P,2)*.45+g.prep*1.1+(1.5-myD)*2+rnd(-2,2)-(P.out?1.5:0)+((P.owns||[]).includes(i)?1.5:0);say=`"Here's exactly what I'll do: ${lc1(posTxt(i,myV))}. Not someday. In my first year."`;}
+    else if(type==='pivot'){sc=3+stat(P,3)*.15+rnd(-1,1);say=`"What I hear ${P.home&&S[P.home]?'in '+S[P.home].n+' and ':''}everywhere I go is simple: people want a government that finally works for them. That's what this campaign is about."`;}
+    else if(type==='attack'){sc=stat(P,2)*.5+rnd(-5,5)+(g.oppo>0?2:0)+(opD>=1?1:0);if(sc<1.5)g.heat+=2;say=`"${ol} wants ${lc1(posTxt(i,opV))}. `+(opD>=1?`That's ${farWord(i,opV)}, and voters know it."`:`They had their chance to deliver on ${iss} and they didn't."`);}
+    else {sc=stat(P,0)*.25+g.prep*1.4+rnd(-4,5)+(P.out?1:0);say=pickOne(ZING)(ol);}
+    if(g.stamina<30)sc-=1.5;
+    tx.push(line('You',say,myCol));
+    const os0=stat(O,2);const w={hit:1+(myD>=1?2.5:0)+(type==='plan'&&myD>=1?1:0),contrast:1+(os0>=8?1:0)+(opD<0.8?1.5:0)+(type==='pivot'?1.5:0),zing:.6+(os0>=8?.8:0)+(type==='zing'?1:0),dodge:.3+(opD>=1.2?2:0),above:.4+(type==='attack'?2:0)};
+    let r=Math.random()*Object.values(w).reduce((a,b)=>a+b,0),tac='hit';for(const k in w){r-=w[k];if(r<=0){tac=k;break;}}
+    let os=os0*.45+rnd(-2,3)+1.5,osay;
+    if(tac==='hit'){os+=myD>=1?1:-.5;osay=myD>=1?`"You just heard it. ${ml} wants ${lc1(posTxt(i,myV))}. That's ${farWord(i,myV)}, and it's the last thing families need."`:`"Nice words. But ${ml} has had years to do something about ${iss} and has nothing to show for it."`;}
+    else if(tac==='contrast'){os+=(1.2-opD)*.8;osay=type==='plan'?`"Here's the difference between us. My answer: ${lc1(posTxt(i,opV))}. Simple, and it works."`:`"Let me be specific, since ${ml} wasn't: ${lc1(posTxt(i,opV))}. That's a real plan."`;}
+    else if(tac==='zing'){os+=rnd(-1.5,2.5);osay=pickOne(OZING)(ml);}
+    else if(tac==='dodge'){os-=1;osay=`"Before I get to that, let me say what this election is really about: whether this country still works for regular people."`;}
+    else {os+=type==='attack'?1:0;osay=`"I'm not going to get down in the mud with ${ml}. The people watching tonight deserve better than insults."`;}
+    tx.push(line(O.n,osay,opCol));if(tac==='dodge')tx.push(line('Moderator',`"${ol}, that wasn't the question."`,'#8a93a6'));
+    DBG_TAC=tac;
+    const R=(rt)=>respond(rt,{i,myD,opD,sc,os,tac,tx,iss});
+    modal({k:`${title} · Your response · Question ${q+1}`,t:tac==='hit'?`${ol} comes right at you`:tac==='contrast'?`${ol} draws a contrast`:tac==='zing'?`${ol} goes for the one-liner`:tac==='dodge'?`${ol} dodges the question`:`${ol} takes the high road`,wide:true,body:`<div class="dx">${tx.join('')}</div>${room()}`,choices:[
+      {l:'Fact-check them on the spot',s:'Strong when their claim is unfair or their own plan is out of step',f:()=>R('fact')},
+      {l:'Hit back hard',s:'High risk, high reward'+(g.oppo>0?' · oppo files help':''),f:()=>R('punch')},
+      {l:'Stay calm and talk to voters',s:'Steady; rewards discipline',f:()=>R('calm')},
+      {l:'Laugh it off with a one-liner',s:'Disarms a zinger; can fall flat',f:()=>R('joke')},
+      {l:'Demand a straight answer',s:'Punishes a dodge or a holier-than-thou act',f:()=>R('press')}]});
+  };
+  const respond=(rt,x)=>{
+    const {i,myD,opD,tac,tx,iss}=x;let b,say;
+    const M={hit:{fact:myD<1?2.5:-1,punch:.5,calm:1.5,joke:0,press:-1},contrast:{fact:opD>=1?2.5:-.5,punch:1,calm:-.5,joke:-1,press:-1.5},zing:{fact:-1,punch:.5,calm:1,joke:2.5,press:-1},dodge:{fact:0,punch:1,calm:0,joke:.5,press:3},above:{fact:0,punch:-1.5,calm:.5,joke:1,press:1.5}};
+    b=M[tac][rt]+rnd(-1,1);
+    if(rt==='fact'){b+=g.prep*.5+(stat(P,2)-6)*.2;say=tac==='hit'&&myD<1?`"That's simply not true, and ${ol} knows it. Look at what I've actually proposed."`:tac==='contrast'?`"${ol}'s plan sounds tidy until you read it. `+(opD>=1?`It's ${farWord(i,o.oppSt(i))}."`:`The numbers don't add up."`):`"Let's get the facts straight. That is not what happened."`;}
+    else if(rt==='punch'){b+=rnd(-2.5,2.5)+(g.oppo>0?1.5:0);say=`"This from someone whose record on ${iss} is a disaster? Please.`+(g.oppo>0?` I have the receipts."`:`"`);}
+    else if(rt==='calm'){b+=(stat(P,3)-6)*.35;say=tac==='hit'||tac==='zing'?`"I'm not here to trade insults. I'm here for the folks at home who are worried about ${iss} tonight."`:`"To the folks at home worried about ${iss}: I see you, and I'll fight for you every single day."`;}
+    else if(rt==='joke'){b+=(stat(P,0)-6)*.3+rnd(-1.5,1.5);say=pickOne(JOKEBACK)(ol);}
+    else {b+=(stat(P,2)-6)*.2;say=`"${ol}, you didn't answer the question. Yes or no: where do you stand?"`;}
+    if(rt==='punch'&&b<0)g.heat+=1.5;
+    tx.push(line('You',say,myCol));
+    const net=x.sc-x.os+b*.75;total+=net;own+=x.sc+b*.75;
+    const react=net>2.5?'Dials spike. Clips of that exchange are everywhere within minutes.':net>0.5?'Focus-group dials tick up for you.':net>-0.5?'The dials barely move. A wash.':net>-2.5?`The dials drift toward ${ol}.`:'The dials crater. That moment will be in an attack ad by morning.';
+    const verdict=net>2?'You win the exchange decisively':net>0?'You edge the exchange':net>-2?`${ol} gets the better of that one`:'That exchange goes badly';
+    recap.push(`${II[i].n}: ${lc1(verdict)}.`);q++;
+    modal({k:`${title} · Question ${q} of 3`,t:verdict,wide:true,body:`<div class="dx">${tx.join('')}</div><p class="dreact">${esc(react)}</p>${room()}`,choices:[{l:q<3?'Next question':'Closing statements',f:ask}]});
+  };
+  const closing=()=>{
+    const pri=isPri()&&!o.h2h;
+    const C2=(k,l,s,quote)=>({l,s,f:()=>close(k,quote)});
+    modal({k:`${title} · Closing statements`,t:'Ninety seconds. Make them count.',wide:true,body:`<p class="mut">${esc(ol)} goes last. How do you close?</p>${room()}`,choices:[
+      C2('vision','Optimistic vision','Lifts you if your credibility is strong','"I believe our best days are still ahead of us. Give me the chance, and I\'ll prove it."'),
+      C2('contrast','Draw a sharp contrast','Hammers home a lead; backfires if you are behind',`"You've seen the choice tonight. ${ol} offers more of the same. I offer a way forward."`),
+      C2('base','Fire up your base',pri?'Primary voters love it':'Energizes your core blocs, cools the middle','"To everyone who has knocked doors and believed in this fight: we are going to win."'),
+      C2('reach','Reach across the aisle',pri?'Brave in a primary; few voters reward it yet':'Courts suburbanites, seniors and Latino voters','"Whoever you voted for last time, I want to be your president too."')]});
+  };
+  const close=(k,quote)=>{
+    const pri=isPri()&&!o.h2h;let c;
+    if(k==='vision')c=1+(g.cred-60)/25+rnd(-1,1);
+    else if(k==='contrast')c=(total>0?2:-1)+rnd(-1,1);
+    else if(k==='base'){c=pri?2+rnd(-1,1):.3;if(!pri){(DBASE[g.party]||[]).forEach(b=>addBloc(b,.6));DSWING.forEach(b=>addBloc(b,-.3));}}
+    else {c=pri?-.5+rnd(-1,1):1+rnd(-.5,.5);if(!pri){DSWING.forEach(b=>addBloc(b,.5));(DBASE[g.party]||[]).forEach(b=>addBloc(b,-.3));}}
+    total+=c*.6;own+=c*.6;
+    const tx=[line('You',quote,myCol),line(O.n,`"Ask yourself who will actually fight for you when the cameras are gone. I will."`,opCol)];
+    recap.push('Closing: '+(c>1.5?'a strong finish.':c>0?'a solid finish.':'it fell flat.'));
+    modal({k:`${title} · Closing statements`,t:c>1.5?'You finish strong':c>0?'A solid close':'The close falls flat',wide:true,body:`<div class="dx">${tx.join('')}</div>${room()}`,choices:[{l:o.h2h?'Continue':'See the post-debate spin',f:()=>o.done(total,own,recap)}]});
+  };
+  modal({k:title,t:o.h2h||o.kind==='general'?`You vs. ${O.n}`:'The primary debate stage',body:`<p>${o.h2h||o.kind==='general'?'The two nominees take the stage. Three questions, each with a reply and a response, then closing statements.':'The candidates line up under the lights. The frontrunner, '+esc(O.n)+', is your main foil tonight.'}</p><p class="mut">Each answer draws a reply from ${esc(ol)}. Read what they do, then choose how to respond.</p><p class="mut">Prep level: ${g.prep}/3 · Stamina: ${Math.round(g.stamina)}</p>`,choices:[{l:'Take the stage',f:ask}]});
 }
 
 /* =========================================================
@@ -1630,17 +1716,8 @@ function h2hSideDone(){
 }
 function waitScreen(){modal({k:'Head-to-head',t:'Turn submitted',body:`<p>Waiting for ${esc(W.names[1-NET.side])} to finish their turn…</p><p class="mut" style="font-size:12px">Room ${esc(NET.code)}</p>`,choices:[]});}
 function h2hDebate(done){
-  const P=C[g.cand];const top=IK.slice().sort((a,b)=>natSal(b)-natSal(a)+rnd(-.25,.25)).slice(0,3);let q=0,total=0;const lines=[];
-  const ask=()=>{if(q>=3){g.prep=0;W.sides[g.side].debScore=total;modal({k:'Debate',t:'Your answers are in',body:`<div class="fx">${lines.map(esc).join('<br>')}</div><p class="mut">Who won is revealed when both candidates have answered.</p>`,choices:[{l:'Continue',f:()=>{closeModal();done();}}]});return;}
-    const i=top[q];
-    modal({k:`Presidential debate · Question ${q+1} of 3`,t:II[i].n,body:`<p style="font-family:var(--disp);font-size:19px">"Where exactly do you stand on ${II[i].n.toLowerCase()}, and why should voters trust you over ${esc(C[g.opp].n)}?"</p><p class="mut" style="font-size:12px">Your position: ${esc(II[i].o[g.stances[i]+2])} · Prep ${g.prep}</p>`,choices:[
-      {l:'Lay out your plan in detail',s:'Rewards preparation and a popular position',f:()=>ans('plan',i)},{l:'Pivot to your core message',s:'Safe, modest',f:()=>ans('pivot',i)},
-      {l:'Go on the attack',s:'High variance · better with oppo files',f:()=>ans('attack',i)},{l:'Land a prepared zinger',s:'Needs prep',f:()=>ans('zing',i)}]});};
-  const ans=(type,i)=>{const dist=Math.abs(g.stances[i]-want(i));let sc;
-    if(type==='plan')sc=stat(P,2)*.45+g.prep*1.1+(1.5-dist)*2+rnd(-2,2)+((P.owns||[]).includes(i)?1.5:0);else if(type==='pivot')sc=3+stat(P,3)*.15+rnd(-1,1);
-    else if(type==='attack'){sc=stat(P,2)*.5+rnd(-5,5)+(g.oppo>0?2:0);if(sc<1.5)g.heat+=2;}else sc=stat(P,0)*.25+g.prep*1.4+rnd(-4,5);
-    if(g.stamina<30)sc-=1.5;total+=sc;lines.push(`Q${q+1} (${II[i].n}): ${sc>5?'a strong answer':sc>2.5?'a solid answer':'a shaky answer'}`);q++;ask();};
-  ask();
+  debateEngine({h2h:true,kind:'general',opp:C[g.opp],oppSt:i=>(g.oppStances||{})[i]||0,done:(total,own,recap)=>{g.prep=0;W.sides[g.side].debScore=own;
+    modal({k:'Debate',t:'Your answers are in',body:`<div class="fx">${recap.map(esc).join('<br>')}</div><p class="mut">Who won is revealed when both candidates have finished.</p>`,choices:[{l:'Continue',f:()=>{closeModal();done();}}]});}});
 }
 function h2hResolve(){
   const c=CAL[W.turn];W.lastDebate=null;
