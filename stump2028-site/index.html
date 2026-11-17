@@ -122,6 +122,8 @@ h1,h2,h3{font-family:var(--disp);margin:0;font-weight:700;letter-spacing:-.01em}
 .tile rect{transition:stroke .1s}
 .tile:hover rect{stroke:var(--ink)}
 .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:6px;align-items:center}
+.legend .lg{display:inline-flex;align-items:center;gap:2px;background:var(--panel2);padding:4px 8px;border-radius:6px;color:var(--ink)}
+.legend .lg b{margin-right:4px;font-weight:600}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
 .evbar{height:26px;display:flex;border-radius:6px;overflow:hidden;position:relative;background:var(--panel2);margin:6px 0 4px}
 .evbar div{height:100%}
@@ -175,6 +177,16 @@ h1,h2,h3{font-family:var(--disp);margin:0;font-weight:700;letter-spacing:-.01em}
 .out{opacity:.4;text-decoration:line-through}
 .pos{color:var(--good)} .neg{color:var(--bad)}
 .issuelist{font-size:12px}
+.coalpnl{margin-top:16px}
+.coalhd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.coalhd h2{margin:0}
+.coalhd .mut{font-size:11.5px}
+.coalgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cb{background:var(--panel2);border-radius:8px;padding:8px 10px;border-left:4px solid var(--mc,#9aa3b5)}
+.cb .nm{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb .md{display:flex;justify-content:space-between;align-items:center;margin-top:4px;font-family:var(--mono);font-size:11px;color:var(--mc)}
+.pips{display:flex;gap:2px}.pips i{width:9px;height:6px;border-radius:2px;background:#2b3550}.pips i.on{background:var(--mc)}
+@media (max-width:980px){.coalgrid{grid-template-columns:repeat(2,1fr)}}
 .coal .row{grid-template-columns:1fr 92px!important}
 .mood{font-size:11px;font-family:var(--mono);text-align:right}
 .tags{font-size:11px;color:var(--mut);margin-top:3px}
@@ -287,6 +299,7 @@ table.rt th{font-family:var(--mono);font-size:10px;color:var(--mut);font-weight:
         <div id="map"></div>
         <div class="legend" id="legend"></div>
       </div>
+      <div class="pnl coalpnl"><div class="coalhd"><h2>Your coalition</h2><span class="mut" id="coalNote"></span></div><div class="coalgrid" id="coalition"></div></div>
       <div class="below">
         <div class="pnl" id="pollPnl"></div>
         <div class="pnl"><h2>Campaign wire</h2><div class="feed" id="feed"></div></div>
@@ -302,11 +315,15 @@ table.rt th{font-family:var(--mono);font-size:10px;color:var(--mut);font-weight:
       </div>
       <div class="pnl"><h2>Your platform</h2><div class="issuelist" id="platform"></div>
         <button class="ghost" style="width:100%;margin-top:8px;padding:8px" id="btnStances">Adjust positions…</button></div>
-      <div class="pnl"><h2>Your coalition</h2><div class="issuelist" id="coalition"></div></div>
     </div>
   </div>
 </section>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="leanD" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#c8d5f3"/><rect width="4" height="8" fill="#6f95e0"/></pattern>
+  <pattern id="leanR" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#f4d2ce"/><rect width="4" height="8" fill="#e47a72"/></pattern>
+  <pattern id="toss" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#d9ceb2"/><circle cx="3.5" cy="3.5" r="1.3" fill="#9c8c6c"/></pattern>
+</defs></svg>
 <div id="toasts"></div>
 <div id="modal" class="hidden"><div class="mbox" id="mbox"></div></div>
 
@@ -1184,7 +1201,7 @@ function electionNight(finOverride){
     else if(won){head=me>=350?'A landslide!':me>=300?'A decisive victory':'You win the White House';txt=`Shortly after 1 AM, the networks call it: you will be the next President of the United States. ${esc(O.n)} concedes by phone.`;}
     else{head=them>=350?'Wiped out':'Defeat';txt=`${esc(O.n)} wins the presidency. You give a gracious concession speech to a tearful crowd.`;}
     const flips=SK.filter(s=>(fin[s]>0)!==((g.party==='D'?-S[s].l:S[s].l)>0));
-    modal({k:'Final result',t:head,wide:true,body:`<p>${txt}</p><div class="evnums" style="font-size:18px;margin:10px 0"><span style="color:${partyHex(g.party)}">You ${me} EV · ${myPV.toFixed(1)}%</span><span style="color:${partyHex(O.p)}">${esc(O.n)} ${them} EV · ${thPV.toFixed(1)}%</span></div><div class="evbar"><div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="flex:1"></div><div style="width:${them/538*100}%;background:${partyHex(O.p)}"></div><div class="mid"></div></div>${mapSVG(s=>colFor(fin[s]*(g.party==='D'?1:-1),true),()=>'#fff')}<p class="fx">States that flipped from 2024: ${flips.length?flips.map(s=>S[s].k).join(', '):'none'}<br>Ticket: ${esc(P.n)}${g.vp?' / '+esc(cand(g.vp).n):''} · Final war chest: ${fmtM(g.money)} · Credibility ${Math.round(g.cred)}${g.third?` · Independent candidate: ${oth.toFixed(1)}%`:''}<br>Achievements unlocked this game: ${(g.stx.newAch||[]).length}</p>`,choices:[{l:'View achievements',f:showAch},{l:'Run again',f:()=>{closeModal();g=null;pickId=null;$('game').classList.add('hidden');$('pick').classList.remove('hidden');drawPick();window.scrollTo(0,0);}},{l:'Main menu',f:()=>{closeModal();g=null;goTitle();}}]});
+    modal({k:'Final result',t:head,wide:true,body:`<p>${txt}</p><div class="evnums" style="font-size:18px;margin:10px 0"><span style="color:${partyHex(g.party)}">You ${me} EV · ${myPV.toFixed(1)}%</span><span style="color:${partyHex(O.p)}">${esc(O.n)} ${them} EV · ${thPV.toFixed(1)}%</span></div><div class="evbar"><div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="flex:1"></div><div style="width:${them/538*100}%;background:${partyHex(O.p)}"></div><div class="mid"></div></div>${mapSVG(s=>tierFill(fin[s]*(g.party==='D'?1:-1)),s=>{const t=tierOf(fin[s]);return t==='safe'||t==='likely'?'#fff':'#1a1a1a';})}<p class="mut" style="font-size:12px">Solid = won comfortably · striped = won narrowly · dotted = within 2 points</p><p class="fx">States that flipped from 2024: ${flips.length?flips.map(s=>S[s].k).join(', '):'none'}<br>Ticket: ${esc(P.n)}${g.vp?' / '+esc(cand(g.vp).n):''} · Final war chest: ${fmtM(g.money)} · Credibility ${Math.round(g.cred)}${g.third?` · Independent candidate: ${oth.toFixed(1)}%`:''}<br>Achievements unlocked this game: ${(g.stx.newAch||[]).length}</p>`,choices:[{l:'View achievements',f:showAch},{l:'Run again',f:()=>{closeModal();g=null;pickId=null;$('game').classList.add('hidden');$('pick').classList.remove('hidden');drawPick();window.scrollTo(0,0);}},{l:'Main menu',f:()=>{closeModal();g=null;goTitle();}}]});
   };
 }
 
@@ -1656,7 +1673,7 @@ function h2hFinale(me,them,pv,fin){
   const wname=tie?null:(won?C[g.cand].n:C[g.opp].n);
   if(W.net==='online'){recordGame({mode:'h2h_online',won,ev:me,opp_ev:them});if(won){unlock('h2hwin');if(W.sides[i].spent<50)unlock('steal');}}
   else{recordGame({mode:'h2h_local',won:i===0?won:!won,ev:i===0?me:them,opp_ev:i===0?them:me});}
-  modal({k:'Final result',t:tie?'269–269: a tie!':`${wname} wins the White House`,wide:true,body:`<div class="evnums" style="font-size:18px;margin:10px 0"><span style="color:${partyHex(g.party)}">${esc(C[g.cand].n)} ${me} EV</span><span style="color:${partyHex(C[g.opp].p)}">${esc(C[g.opp].n)} ${them} EV</span></div><div class="evbar"><div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="flex:1"></div><div style="width:${them/538*100}%;background:${partyHex(C[g.opp].p)}"></div><div class="mid"></div></div>${mapSVG(s=>colFor(fin[s]*(g.party==='D'?1:-1),true),()=>'#fff')}<p class="fx">Draft capital spent: ${esc(W.names[0])} ${W.sides[0].spent} · ${esc(W.names[1])} ${W.sides[1].spent}</p>`,choices:[{l:'Rematch (new draft)',f:()=>{closeModal();openH2H();}},{l:'Main menu',f:()=>{closeModal();W=null;g=null;goTitle();}}]});
+  modal({k:'Final result',t:tie?'269–269: a tie!':`${wname} wins the White House`,wide:true,body:`<div class="evnums" style="font-size:18px;margin:10px 0"><span style="color:${partyHex(g.party)}">${esc(C[g.cand].n)} ${me} EV</span><span style="color:${partyHex(C[g.opp].p)}">${esc(C[g.opp].n)} ${them} EV</span></div><div class="evbar"><div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="flex:1"></div><div style="width:${them/538*100}%;background:${partyHex(C[g.opp].p)}"></div><div class="mid"></div></div>${mapSVG(s=>tierFill(fin[s]*(g.party==='D'?1:-1)),s=>{const t=tierOf(fin[s]);return t==='safe'||t==='likely'?'#fff':'#1a1a1a';})}<p class="fx">Draft capital spent: ${esc(W.names[0])} ${W.sides[0].spent} · ${esc(W.names[1])} ${W.sides[1].spent}</p>`,choices:[{l:'Rematch (new draft)',f:()=>{closeModal();openH2H();}},{l:'Main menu',f:()=>{closeModal();W=null;g=null;goTitle();}}]});
 }
 function passScreen(side,next,note){
   $('modal').classList.add('opaque');
@@ -1747,10 +1764,16 @@ function colFor(dM,solid){ // dM = margin in D terms
   const t=clamp(Math.abs(dM)/18,0,1);const base=dM>0?[75,128,226]:[224,84,75];const mid=[226,218,200];
   const k=solid?0.35+0.65*t:t;const mix=mid.map((m,i)=>Math.round(m+(base[i]-m)*k));
   if(Math.abs(dM)<1&&!solid)return 'rgb(206,196,170)';return `rgb(${mix.join(',')})`;}
-function mapSVG(fill,txt,selected){
+const TIER={D:{safe:'#2c5fc2',likely:'#6f95e0',lean:'url(#leanD)'},R:{safe:'#c4372e',likely:'#e47a72',lean:'url(#leanR)'}};
+function tierOf(m){const a=Math.abs(m);return a>=10?'safe':a>=5?'likely':a>=2?'lean':'toss';}
+function tierFill(dM){const t=tierOf(dM);return t==='toss'?'url(#toss)':TIER[dM>0?'D':'R'][t];}
+const TIERN={safe:'Safe',likely:'Likely',lean:'Lean',toss:'Toss-up'};
+function swatch(f){return `<svg width="14" height="14" style="vertical-align:-2px;margin-right:4px"><rect width="14" height="14" rx="3" fill="${f}" stroke="rgba(0,0,0,.3)"/></svg>`;}
+function mapSVG(fill,txt,selected,tip){
   const W=56;let h=`<svg viewBox="0 0 ${12*W} ${8*W}" xmlns="http://www.w3.org/2000/svg">`;
   SK.forEach(s=>{const st=S[s];const x=st.x*W,y=st.y*W;const f=fill(s);
-    h+=`<g class="tile" data-s="${s}"><rect x="${x+2}" y="${y+2}" width="${W-4}" height="${W-4}" rx="7" fill="${f}" stroke="${selected===s?'#e3b24f':'rgba(0,0,0,.25)'}" stroke-width="${selected===s?3:1}"/><text x="${x+W/2}" y="${y+W/2+1}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="600" fill="${txt(s)}">${s}</text><text x="${x+W/2}" y="${y+W/2+15}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="${txt(s)}" opacity=".75">${st.ev}</text></g>`;});
+    const halo=String(f).startsWith('url(')?' stroke="rgba(255,255,255,.85)" stroke-width="3" paint-order="stroke"':'';
+    h+=`<g class="tile" data-s="${s}">${tip?`<title>${esc(tip(s))}</title>`:''}<rect x="${x+2}" y="${y+2}" width="${W-4}" height="${W-4}" rx="7" fill="${f}" stroke="${selected===s?'#e3b24f':'rgba(0,0,0,.25)'}" stroke-width="${selected===s?3:1}"/><text x="${x+W/2}" y="${y+W/2+1}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="700" fill="${txt(s)}"${halo}>${s}</text><text x="${x+W/2}" y="${y+W/2+15}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" font-weight="600" fill="${txt(s)}"${halo}>${st.ev}</text></g>`;});
   return h+'</svg>';
 }
 function textOn(rgb){const m=rgb.match(/\d+/g);if(!m)return '#fff';const [r,gg,b]=m.map(Number);return (r*.299+gg*.587+b*.114)>150?'#1a1a1a':'#fff';}
@@ -1771,7 +1794,7 @@ function render(){
   $('brief').innerHTML=g.brief||'';
   g.stx.maxHeat=Math.max(g.stx.maxHeat,g.heat);
   // map
-  let fill,txt;
+  let fill,txt,tip=null;
   if(isPri()){
     fill=s=>{if(g.held[s]){const w=g.pRes[s].w;return w===g.cand?PAL[0]:(g.rivals.find(r=>r.id===w)||{col:'#666'}).col;}
       const sh=pShares(s,false).sort((a,b)=>b.sh-a.sh);const up=upcomingStates(1).includes(s);return up?sh[0].col+'ee':sh[0].col+'80';};
@@ -1779,10 +1802,13 @@ function render(){
     const fl=field();
     $('legend').innerHTML=fl.map(f=>`<span><i style="background:${f.col}"></i>${f.me?'You':esc(C[f.id].n)}</span>`).join('')+'<span class="mut">· Solid = already voted · Bright = votes this turn · Faint = projected leader</span>';
   } else {
-    fill=s=>colFor(pollMargin(s)*(g.party==='D'?1:-1));txt=s=>textOn(fill(s));
-    $('legend').innerHTML=`<span><i style="background:${partyHex(g.party)}"></i>You lead</span><span><i style="background:rgb(206,196,170)"></i>Toss-up</span><span><i style="background:${partyHex(C[g.opp].p)}"></i>${esc(C[g.opp].n)} leads</span><span class="mut">· Polls have noise. An internal poll sharpens them.</span>`;
+    const dm=s=>pollMargin(s)*(g.party==='D'?1:-1);
+    fill=s=>tierFill(dm(s));txt=s=>{const t=tierOf(dm(s));return t==='safe'||t==='likely'?'#fff':'#1a1a1a';};
+    tip=s=>{const m=pollMargin(s),t=tierOf(m);return `${S[s].n} (${S[s].ev} EV): ${t==='toss'?'Toss-up':TIERN[t]+' '+(m>0?'you':C[g.opp].n)}`;};
+    const me=g.party,op=C[g.opp].p;
+    $('legend').innerHTML=`<span class="lg"><b>You</b> ${swatch(TIER[me].safe)}Safe ${swatch(TIER[me].likely)}Likely ${swatch(TIER[me].lean)}Lean</span><span class="lg">${swatch('url(#toss)')}Toss-up</span><span class="lg"><b>${esc(C[g.opp].n.split(' ').pop())}</b> ${swatch(TIER[op].lean)}Lean ${swatch(TIER[op].likely)}Likely ${swatch(TIER[op].safe)}Safe</span><span class="mut">Safe = up 10+ · Likely = 5–10 · Lean = 2–5 · polls have noise</span>`;
   }
-  $('map').innerHTML=mapSVG(fill,txt,g.sel);
+  $('map').innerHTML=mapSVG(fill,txt,g.sel,tip);
   document.querySelectorAll('#map .tile').forEach(t=>t.onclick=()=>{g.sel=t.dataset.s;render();});
   renderPolls();renderState();renderActs();renderPlatform();renderCoalition();
   $('feed').innerHTML=g.log.map(l=>`<div><span class="t">${esc(l.t)}</span>${esc(l.x)}</div>`).join('');
@@ -1835,8 +1861,12 @@ function renderActs(){
   $('actInfo').innerHTML=`<div class="h">Tip</div><div>Hover over an action to see what it does this turn and what it builds over time. Green lines are rough ratings for <b>${g.sel?S[g.sel].n:'the selected state'}</b>; click the map to change states.</div>`;
   $('btnEnd').textContent=g.ap>0?`End turn (${g.ap} AP unused) →`:'End turn →';
 }
+const MOODC=['#e0716b','#d9a07a','#9aa3b5','#8fcf9f','#4fc483'];
 function renderCoalition(){const el=$('coalition');if(!el||!g)return;
-  el.innerHTML='<div class="coal">'+BLOCS.map(b=>{const sc=blocMood(b.k);const m=MOODS[moodIdx(sc)];const prev=g.moodPrev&&g.moodPrev[b.k];const ar=prev==null?'':(sc-prev>0.35?' ↑':sc-prev<-0.35?' ↓':'');return `<div class="row"><span>${b.n}</span><span class="mood ${m[1]}">${m[0]}${ar}</span></div>`;}).join('')+'</div><div class="mut" style="font-size:11px;margin-top:4px">How each bloc feels about you'+(ph()==='gen'?' compared with your opponent':'')+'. Your positions, event choices and outreach move them.</div>';}
+  el.innerHTML=BLOCS.map(b=>{const sc=blocMood(b.k);const mi=moodIdx(sc);const m=MOODS[mi];const prev=g.moodPrev&&g.moodPrev[b.k];const ar=prev==null?'':(sc-prev>0.35?' ↑':sc-prev<-0.35?' ↓':'');
+    const top=IK.map((i,j)=>[i,b.w[j]]).sort((x,y)=>y[1]-x[1]).slice(0,2).map(x=>II[x[0]].n).join(' & ');
+    return `<div class="cb" style="--mc:${MOODC[mi]}" title="${esc(b.n)}: cares most about ${esc(top)}"><div class="nm">${esc(b.n)}</div><div class="md"><span>${m[0]}${ar}</span><span class="pips">${[0,1,2,3,4].map(i=>`<i class="${i<=mi?'on':''}"></i>`).join('')}</span></div></div>`;}).join('');
+  const n=$('coalNote');if(n)n.textContent=ph()==='gen'?'How each bloc feels about you vs. your opponent. Hover over a bloc for its top issues.':'How each bloc feels about you. Positions, event choices and outreach move them.';}
 function renderPlatform(){
   $('platform').innerHTML=IK.map(i=>{const v=g.stances[i];const w=isPri()?(g.party==='D'?-1.2:1.2):II[i].tilt;const d=Math.abs(v-w);
     return `<div class="row" title="${esc(II[i].o[v+2])}"><span>${II[i].n}</span><span class="mono" style="font-size:11px">${['Far L','Left','Center','Right','Far R'][v+2]}</span><span class="${d<0.9?'pos':d<1.6?'':'neg'}" style="font-size:11px">${d<0.9?'✓':d<1.6?'~':'✗'}</span></div>`;}).join('')+`<div class="mut" style="font-size:11px;margin-top:4px">✓ = close to what ${isPri()?'your party\'s primary voters':'swing voters'} want right now</div>`+(C[g.cand].wc?`<div class="wcch" style="margin-top:8px">🃏 <b>Challenge:</b> ${esc(C[g.cand].wc.ch)} <span class="${C[g.cand].wc.chk(g)?'pos':'neg'}">${C[g.cand].wc.chk(g)?'(on track)':'(not met yet)'}</span></div>`:'');
