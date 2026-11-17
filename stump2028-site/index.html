@@ -1164,6 +1164,7 @@ function runDebate(kind,done){
    ELECTION NIGHT
    ========================================================= */
 function computeFinal(){const pq=g.cycle?g.cycle.pollQ[1]:1;const natErr=gauss()*2.0*pq;const fin={};SK.forEach(s=>fin[s]=genMargin(s)+natErr+gauss()*2.2*pq);return fin;}
+function enLegend(){const me=g.party,op=C[g.opp].p;const two=t=>swatch(TIER[me][t])+swatch(TIER[op][t]);return `<div class="legend" style="margin-top:6px"><span class="lg">${two('safe')}Won by 10+</span><span class="lg">${two('likely')}5–10</span><span class="lg">${two('lean')}2–5</span><span class="lg">${swatch('url(#toss)')}Under 2</span><span class="lg">${swatch('#232c40')}Not called</span></div>`;}
 function electionNight(finOverride){
   const fin=finOverride||computeFinal();const ME=(g.h2h&&g.net==='local')?C[g.cand].n:'You';
   let me=0,them=0,called=[];
@@ -1172,7 +1173,7 @@ function electionNight(finOverride){
   modal({k:'Tuesday, November 7, 2028',t:'Election Night',wide:true,body:`<div class="ennight"><div><div id="enMap"></div></div><div><div class="kicker">Electoral votes · 270 to win</div><div style="display:flex;justify-content:space-between;align-items:flex-end;margin:8px 0"><div><div class="bigev" id="enMe" style="color:${partyHex(g.party)}">0</div><div class="mut">${esc(ME)}</div></div><div style="text-align:right"><div class="bigev" id="enThem" style="color:${partyHex(O.p)}">0</div><div class="mut">${esc(O.n)}</div></div></div><div class="evbar" id="enBar"><div class="mid"></div></div><div class="kicker" id="enClock" style="margin-top:10px">Polls closing…</div><div class="calls" id="enCalls"></div></div></div>`,choices:[{l:'Skip to results ⏩',f:()=>{fast=true;}}]});
   let fast=false;
   const done={};
-  const drawMap=()=>{$('enMap').innerHTML=mapSVG(s=>done[s]?colFor(fin[s]*(g.party==='D'?1:-1),true):'#232c40',s=>done[s]?'#fff':'#5d6780');};
+  const drawMap=()=>{$('enMap').innerHTML=mapSVG(s=>done[s]?tierFill(fin[s]*(g.party==='D'?1:-1)):'#232c40',s=>{if(!done[s])return '#5d6780';const t=tierOf(fin[s]);return t==='safe'||t==='likely'?'#fff':'#1a1a1a';})+enLegend();};
   drawMap();
   let gi=0;
   const step=()=>{
@@ -1201,7 +1202,7 @@ function electionNight(finOverride){
     else if(won){head=me>=350?'A landslide!':me>=300?'A decisive victory':'You win the White House';txt=`Shortly after 1 AM, the networks call it: you will be the next President of the United States. ${esc(O.n)} concedes by phone.`;}
     else{head=them>=350?'Wiped out':'Defeat';txt=`${esc(O.n)} wins the presidency. You give a gracious concession speech to a tearful crowd.`;}
     const flips=SK.filter(s=>(fin[s]>0)!==((g.party==='D'?-S[s].l:S[s].l)>0));
-    modal({k:'Final result',t:head,wide:true,body:`<p>${txt}</p><div class="evnums" style="font-size:18px;margin:10px 0"><span style="color:${partyHex(g.party)}">You ${me} EV · ${myPV.toFixed(1)}%</span><span style="color:${partyHex(O.p)}">${esc(O.n)} ${them} EV · ${thPV.toFixed(1)}%</span></div><div class="evbar"><div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="flex:1"></div><div style="width:${them/538*100}%;background:${partyHex(O.p)}"></div><div class="mid"></div></div>${mapSVG(s=>tierFill(fin[s]*(g.party==='D'?1:-1)),s=>{const t=tierOf(fin[s]);return t==='safe'||t==='likely'?'#fff':'#1a1a1a';})}<p class="mut" style="font-size:12px">Solid = won comfortably · striped = won narrowly · dotted = within 2 points</p><p class="fx">States that flipped from 2024: ${flips.length?flips.map(s=>S[s].k).join(', '):'none'}<br>Ticket: ${esc(P.n)}${g.vp?' / '+esc(cand(g.vp).n):''} · Final war chest: ${fmtM(g.money)} · Credibility ${Math.round(g.cred)}${g.third?` · Independent candidate: ${oth.toFixed(1)}%`:''}<br>Achievements unlocked this game: ${(g.stx.newAch||[]).length}</p>`,choices:[{l:'View achievements',f:showAch},{l:'Run again',f:()=>{closeModal();g=null;pickId=null;$('game').classList.add('hidden');$('pick').classList.remove('hidden');drawPick();window.scrollTo(0,0);}},{l:'Main menu',f:()=>{closeModal();g=null;goTitle();}}]});
+    modal({k:'Final result',t:head,wide:true,body:`<p>${txt}</p><div class="evnums" style="font-size:18px;margin:10px 0"><span style="color:${partyHex(g.party)}">You ${me} EV · ${myPV.toFixed(1)}%</span><span style="color:${partyHex(O.p)}">${esc(O.n)} ${them} EV · ${thPV.toFixed(1)}%</span></div><div class="evbar"><div style="width:${me/538*100}%;background:${partyHex(g.party)}"></div><div style="flex:1"></div><div style="width:${them/538*100}%;background:${partyHex(O.p)}"></div><div class="mid"></div></div>${mapSVG(s=>tierFill(fin[s]*(g.party==='D'?1:-1)),s=>{const t=tierOf(fin[s]);return t==='safe'||t==='likely'?'#fff':'#1a1a1a';})}${enLegend()}<p class="fx">States that flipped from 2024: ${flips.length?flips.map(s=>S[s].k).join(', '):'none'}<br>Ticket: ${esc(P.n)}${g.vp?' / '+esc(cand(g.vp).n):''} · Final war chest: ${fmtM(g.money)} · Credibility ${Math.round(g.cred)}${g.third?` · Independent candidate: ${oth.toFixed(1)}%`:''}<br>Achievements unlocked this game: ${(g.stx.newAch||[]).length}</p>`,choices:[{l:'View achievements',f:showAch},{l:'Run again',f:()=>{closeModal();g=null;pickId=null;$('game').classList.add('hidden');$('pick').classList.remove('hidden');drawPick();window.scrollTo(0,0);}},{l:'Main menu',f:()=>{closeModal();g=null;goTitle();}}]});
   };
 }
 
@@ -1769,11 +1770,11 @@ function tierOf(m){const a=Math.abs(m);return a>=10?'safe':a>=5?'likely':a>=2?'l
 function tierFill(dM){const t=tierOf(dM);return t==='toss'?'url(#toss)':TIER[dM>0?'D':'R'][t];}
 const TIERN={safe:'Safe',likely:'Likely',lean:'Lean',toss:'Toss-up'};
 function swatch(f){return `<svg width="14" height="14" style="vertical-align:-2px;margin-right:4px"><rect width="14" height="14" rx="3" fill="${f}" stroke="rgba(0,0,0,.3)"/></svg>`;}
-function mapSVG(fill,txt,selected,tip){
-  const W=56;let h=`<svg viewBox="0 0 ${12*W} ${8*W}" xmlns="http://www.w3.org/2000/svg">`;
+function mapSVG(fill,txt,selected,tip,defs,sub){
+  const W=56;let h=`<svg viewBox="0 0 ${12*W} ${8*W}" xmlns="http://www.w3.org/2000/svg">${defs?'<defs>'+defs+'</defs>':''}`;
   SK.forEach(s=>{const st=S[s];const x=st.x*W,y=st.y*W;const f=fill(s);
-    const halo=String(f).startsWith('url(')?' stroke="rgba(255,255,255,.85)" stroke-width="3" paint-order="stroke"':'';
-    h+=`<g class="tile" data-s="${s}">${tip?`<title>${esc(tip(s))}</title>`:''}<rect x="${x+2}" y="${y+2}" width="${W-4}" height="${W-4}" rx="7" fill="${f}" stroke="${selected===s?'#e3b24f':'rgba(0,0,0,.25)'}" stroke-width="${selected===s?3:1}"/><text x="${x+W/2}" y="${y+W/2+1}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="700" fill="${txt(s)}"${halo}>${s}</text><text x="${x+W/2}" y="${y+W/2+15}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" font-weight="600" fill="${txt(s)}"${halo}>${st.ev}</text></g>`;});
+    const halo=String(f).startsWith('url(#pdt')?' stroke="rgba(0,0,0,.9)" stroke-width="3" paint-order="stroke"':String(f).startsWith('url(')?' stroke="rgba(255,255,255,.85)" stroke-width="3" paint-order="stroke"':'';
+    h+=`<g class="tile" data-s="${s}">${tip?`<title>${esc(tip(s))}</title>`:''}<rect x="${x+2}" y="${y+2}" width="${W-4}" height="${W-4}" rx="7" fill="${f}" stroke="${selected===s?'#e3b24f':'rgba(0,0,0,.25)'}" stroke-width="${selected===s?3:1}"/><text x="${x+W/2}" y="${y+W/2+1}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="700" fill="${txt(s)}"${halo}>${s}</text><text x="${x+W/2}" y="${y+W/2+15}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" font-weight="600" fill="${txt(s)}"${halo}>${sub?sub(s):st.ev}</text></g>`;});
   return h+'</svg>';
 }
 function textOn(rgb){const m=rgb.match(/\d+/g);if(!m)return '#fff';const [r,gg,b]=m.map(Number);return (r*.299+gg*.587+b*.114)>150?'#1a1a1a':'#fff';}
@@ -1794,13 +1795,18 @@ function render(){
   $('brief').innerHTML=g.brief||'';
   g.stx.maxHeat=Math.max(g.stx.maxHeat,g.heat);
   // map
-  let fill,txt,tip=null;
+  let fill,txt,tip=null,pdefs='',psub=null;
   if(isPri()){
-    fill=s=>{if(g.held[s]){const w=g.pRes[s].w;return w===g.cand?PAL[0]:(g.rivals.find(r=>r.id===w)||{col:'#666'}).col;}
-      const sh=pShares(s,false).sort((a,b)=>b.sh-a.sh);const up=upcomingStates(1).includes(s);return up?sh[0].col+'ee':sh[0].col+'80';};
-    txt=s=>(g.held[s]||upcomingStates(1).includes(s))?'#111':'#fff';
-    const fl=field();
-    $('legend').innerHTML=fl.map(f=>`<span><i style="background:${f.col}"></i>${f.me?'You':esc(C[f.id].n)}</span>`).join('')+'<span class="mut">· Solid = already voted · Bright = votes this turn · Faint = projected leader</span>';
+    const cols=[PAL[0]].concat(g.rivals.map(r=>r.col));
+    pdefs=cols.map((c,i)=>`<pattern id="pst${i}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#f3efe4"/><rect width="5" height="9" fill="${c}"/></pattern><pattern id="pdt${i}" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#1b2436"/><circle cx="4" cy="4" r="1.9" fill="${c}"/></pattern>`).join('');
+    const ci=id=>id===g.cand?0:1+g.rivals.findIndex(r=>r.id===id);
+    const up=upcomingStates(1);const lead={};SK.forEach(s=>{if(!g.held[s])lead[s]=pShares(s,false).sort((a,b)=>b.sh-a.sh)[0];});
+    fill=s=>g.held[s]?cols[ci(g.pRes[s].w)]:up.includes(s)?`url(#pst${ci(lead[s].id)})`:`url(#pdt${ci(lead[s].id)})`;
+    txt=s=>g.held[s]?'#111':up.includes(s)?'#111':'#fff';
+    psub=s=>g.held[s]?'✓':S[s].ev;
+    tip=s=>{const nm=id=>id===g.cand?'you':C[id].n;return g.held[s]?`${S[s].n}: won by ${nm(g.pRes[s].w)}`:`${S[s].n}: ${up.includes(s)?'votes this turn':'votes later'}, ${nm(lead[s].id)} projected to lead`;};
+    const fl=field();const sw=(f)=>`<svg width="14" height="14" style="vertical-align:-2px;margin-right:4px"><defs>${pdefs}</defs><rect width="14" height="14" rx="3" fill="${f}" stroke="rgba(0,0,0,.3)"/></svg>`;
+    $('legend').innerHTML=fl.map(f=>`<span class="lg">${swatch(f.col)}${f.me?'You':esc(C[f.id].n.split(' ').pop())}</span>`).join('')+`<span class="lg">${sw(cols[0])}Won ✓ ${sw('url(#pst0)')}Votes this turn ${sw('url(#pdt0)')}Votes later</span><span class="mut">Striped and dotted states show the projected leader.</span>`;
   } else {
     const dm=s=>pollMargin(s)*(g.party==='D'?1:-1);
     fill=s=>tierFill(dm(s));txt=s=>{const t=tierOf(dm(s));return t==='safe'||t==='likely'?'#fff':'#1a1a1a';};
@@ -1808,7 +1814,7 @@ function render(){
     const me=g.party,op=C[g.opp].p;
     $('legend').innerHTML=`<span class="lg"><b>You</b> ${swatch(TIER[me].safe)}Safe ${swatch(TIER[me].likely)}Likely ${swatch(TIER[me].lean)}Lean</span><span class="lg">${swatch('url(#toss)')}Toss-up</span><span class="lg"><b>${esc(C[g.opp].n.split(' ').pop())}</b> ${swatch(TIER[op].lean)}Lean ${swatch(TIER[op].likely)}Likely ${swatch(TIER[op].safe)}Safe</span><span class="mut">Safe = up 10+ · Likely = 5–10 · Lean = 2–5 · polls have noise</span>`;
   }
-  $('map').innerHTML=mapSVG(fill,txt,g.sel,tip);
+  $('map').innerHTML=mapSVG(fill,txt,g.sel,tip,pdefs,psub);
   document.querySelectorAll('#map .tile').forEach(t=>t.onclick=()=>{g.sel=t.dataset.s;render();});
   renderPolls();renderState();renderActs();renderPlatform();renderCoalition();
   $('feed').innerHTML=g.log.map(l=>`<div><span class="t">${esc(l.t)}</span>${esc(l.x)}</div>`).join('');
