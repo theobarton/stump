@@ -319,11 +319,7 @@ table.rt th{font-family:var(--mono);font-size:10px;color:var(--mut);font-weight:
   </div>
 </section>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <pattern id="leanD" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#c8d5f3"/><rect width="4" height="8" fill="#6f95e0"/></pattern>
-  <pattern id="leanR" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#f4d2ce"/><rect width="4" height="8" fill="#e47a72"/></pattern>
-  <pattern id="toss" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#d9ceb2"/><circle cx="3.5" cy="3.5" r="1.3" fill="#9c8c6c"/></pattern>
-</defs></svg>
+
 <div id="toasts"></div>
 <div id="modal" class="hidden"><div class="mbox" id="mbox"></div></div>
 
@@ -1164,7 +1160,7 @@ function runDebate(kind,done){
    ELECTION NIGHT
    ========================================================= */
 function computeFinal(){const pq=g.cycle?g.cycle.pollQ[1]:1;const natErr=gauss()*2.0*pq;const fin={};SK.forEach(s=>fin[s]=genMargin(s)+natErr+gauss()*2.2*pq);return fin;}
-function enLegend(){const me=g.party,op=C[g.opp].p;const two=t=>swatch(TIER[me][t])+swatch(TIER[op][t]);return `<div class="legend" style="margin-top:6px"><span class="lg">${two('safe')}Won by 10+</span><span class="lg">${two('likely')}5–10</span><span class="lg">${two('lean')}2–5</span><span class="lg">${swatch('url(#toss)')}Under 2</span><span class="lg">${swatch('#232c40')}Not called</span></div>`;}
+function enLegend(){const me=g.party,op=C[g.opp].p;const two=t=>swatch(TIER[me][t])+swatch(TIER[op][t]);return `<div class="legend" style="margin-top:6px"><span class="lg">${two('safe')}Won by 10+</span><span class="lg">${two('likely')}5–10</span><span class="lg">${two('lean')}2–5</span><span class="lg">${swatch(TOSS)}Under 2</span><span class="lg">${swatch('#232c40')}Not called</span></div>`;}
 function electionNight(finOverride){
   const fin=finOverride||computeFinal();const ME=(g.h2h&&g.net==='local')?C[g.cand].n:'You';
   let me=0,them=0,called=[];
@@ -1765,16 +1761,17 @@ function colFor(dM,solid){ // dM = margin in D terms
   const t=clamp(Math.abs(dM)/18,0,1);const base=dM>0?[75,128,226]:[224,84,75];const mid=[226,218,200];
   const k=solid?0.35+0.65*t:t;const mix=mid.map((m,i)=>Math.round(m+(base[i]-m)*k));
   if(Math.abs(dM)<1&&!solid)return 'rgb(206,196,170)';return `rgb(${mix.join(',')})`;}
-const TIER={D:{safe:'#2c5fc2',likely:'#6f95e0',lean:'url(#leanD)'},R:{safe:'#c4372e',likely:'#e47a72',lean:'url(#leanR)'}};
+const TIER={D:{safe:'#2b5cc0',likely:'#5f88db',lean:'#a9c0ec'},R:{safe:'#c2362d',likely:'#dd6b62',lean:'#f1b3ad'}};const TOSS='#b9a878';
+function mixHex(a,b,t){const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));if(!/^#[0-9a-f]{6}$/i.test(a))return a;const x=p(a),y=p(b);return '#'+x.map((v,i)=>Math.round(v*t+y[i]*(1-t)).toString(16).padStart(2,'0')).join('');}
 function tierOf(m){const a=Math.abs(m);return a>=10?'safe':a>=5?'likely':a>=2?'lean':'toss';}
-function tierFill(dM){const t=tierOf(dM);return t==='toss'?'url(#toss)':TIER[dM>0?'D':'R'][t];}
+function tierFill(dM){const t=tierOf(dM);return t==='toss'?TOSS:TIER[dM>0?'D':'R'][t];}
 const TIERN={safe:'Safe',likely:'Likely',lean:'Lean',toss:'Toss-up'};
 function swatch(f){return `<svg width="14" height="14" style="vertical-align:-2px;margin-right:4px"><rect width="14" height="14" rx="3" fill="${f}" stroke="rgba(0,0,0,.3)"/></svg>`;}
-function mapSVG(fill,txt,selected,tip,defs,sub){
-  const W=56;let h=`<svg viewBox="0 0 ${12*W} ${8*W}" xmlns="http://www.w3.org/2000/svg">${defs?'<defs>'+defs+'</defs>':''}`;
+function mapSVG(fill,txt,selected,tip,ring,sub){
+  const W=56;let h=`<svg viewBox="0 0 ${12*W} ${8*W}" xmlns="http://www.w3.org/2000/svg">`;
   SK.forEach(s=>{const st=S[s];const x=st.x*W,y=st.y*W;const f=fill(s);
-    const halo=String(f).startsWith('url(#pdt')?' stroke="rgba(0,0,0,.9)" stroke-width="3" paint-order="stroke"':String(f).startsWith('url(')?' stroke="rgba(255,255,255,.85)" stroke-width="3" paint-order="stroke"':'';
-    h+=`<g class="tile" data-s="${s}">${tip?`<title>${esc(tip(s))}</title>`:''}<rect x="${x+2}" y="${y+2}" width="${W-4}" height="${W-4}" rx="7" fill="${f}" stroke="${selected===s?'#e3b24f':'rgba(0,0,0,.25)'}" stroke-width="${selected===s?3:1}"/><text x="${x+W/2}" y="${y+W/2+1}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="700" fill="${txt(s)}"${halo}>${s}</text><text x="${x+W/2}" y="${y+W/2+15}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" font-weight="600" fill="${txt(s)}"${halo}>${sub?sub(s):st.ev}</text></g>`;});
+    const halo='';const rg=ring?ring(s):null;
+    h+=`<g class="tile" data-s="${s}">${tip?`<title>${esc(tip(s))}</title>`:''}<rect x="${x+2}" y="${y+2}" width="${W-4}" height="${W-4}" rx="7" fill="${f}" stroke="${selected===s?'#e3b24f':rg||'rgba(0,0,0,.25)'}" stroke-width="${selected===s?3:rg?2.5:1}"/><text x="${x+W/2}" y="${y+W/2+1}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" font-weight="700" fill="${txt(s)}"${halo}>${s}</text><text x="${x+W/2}" y="${y+W/2+15}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" font-weight="600" fill="${txt(s)}"${halo}>${sub?sub(s):st.ev}</text></g>`;});
   return h+'</svg>';
 }
 function textOn(rgb){const m=rgb.match(/\d+/g);if(!m)return '#fff';const [r,gg,b]=m.map(Number);return (r*.299+gg*.587+b*.114)>150?'#1a1a1a':'#fff';}
@@ -1795,26 +1792,26 @@ function render(){
   $('brief').innerHTML=g.brief||'';
   g.stx.maxHeat=Math.max(g.stx.maxHeat,g.heat);
   // map
-  let fill,txt,tip=null,pdefs='',psub=null;
+  let fill,txt,tip=null,pring=null,psub=null;
   if(isPri()){
     const cols=[PAL[0]].concat(g.rivals.map(r=>r.col));
-    pdefs=cols.map((c,i)=>`<pattern id="pst${i}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#f3efe4"/><rect width="5" height="9" fill="${c}"/></pattern><pattern id="pdt${i}" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#1b2436"/><circle cx="4" cy="4" r="1.9" fill="${c}"/></pattern>`).join('');
+    const BG='#1b2436',upC=c=>mixHex(c,BG,.62),laterC=c=>mixHex(c,BG,.4);
     const ci=id=>id===g.cand?0:1+g.rivals.findIndex(r=>r.id===id);
     const up=upcomingStates(1);const lead={};SK.forEach(s=>{if(!g.held[s])lead[s]=pShares(s,false).sort((a,b)=>b.sh-a.sh)[0];});
-    fill=s=>g.held[s]?cols[ci(g.pRes[s].w)]:up.includes(s)?`url(#pst${ci(lead[s].id)})`:`url(#pdt${ci(lead[s].id)})`;
-    txt=s=>g.held[s]?'#111':up.includes(s)?'#111':'#fff';
+    fill=s=>g.held[s]?cols[ci(g.pRes[s].w)]:up.includes(s)?upC(cols[ci(lead[s].id)]):laterC(cols[ci(lead[s].id)]);
+    txt=s=>g.held[s]?'#111':up.includes(s)?'#fff':'#e6e9f0';pring=s=>!g.held[s]&&up.includes(s)?'#f3efe4':null;
     psub=s=>g.held[s]?'✓':S[s].ev;
     tip=s=>{const nm=id=>id===g.cand?'you':C[id].n;return g.held[s]?`${S[s].n}: won by ${nm(g.pRes[s].w)}`:`${S[s].n}: ${up.includes(s)?'votes this turn':'votes later'}, ${nm(lead[s].id)} projected to lead`;};
-    const fl=field();const sw=(f)=>`<svg width="14" height="14" style="vertical-align:-2px;margin-right:4px"><defs>${pdefs}</defs><rect width="14" height="14" rx="3" fill="${f}" stroke="rgba(0,0,0,.3)"/></svg>`;
-    $('legend').innerHTML=fl.map(f=>`<span class="lg">${swatch(f.col)}${f.me?'You':esc(C[f.id].n.split(' ').pop())}</span>`).join('')+`<span class="lg">${sw(cols[0])}Won ✓ ${sw('url(#pst0)')}Votes this turn ${sw('url(#pdt0)')}Votes later</span><span class="mut">Striped and dotted states show the projected leader.</span>`;
+    const fl=field();const sw=(f,r)=>`<svg width="14" height="14" style="vertical-align:-2px;margin-right:4px"><rect x="1" y="1" width="12" height="12" rx="3" fill="${f}" stroke="${r||'rgba(0,0,0,.3)'}" stroke-width="${r?2:1}"/></svg>`;
+    $('legend').innerHTML=fl.map(f=>`<span class="lg">${swatch(f.col)}${f.me?'You':esc(C[f.id].n.split(' ').pop())}</span>`).join('')+`<span class="lg">${sw(cols[0])}Won ✓ ${sw(upC(cols[0]),'#f3efe4')}Votes this turn ${sw(laterC(cols[0]))}Votes later</span><span class="mut">Outlined and faded states are tinted by the projected leader.</span>`;
   } else {
     const dm=s=>pollMargin(s)*(g.party==='D'?1:-1);
     fill=s=>tierFill(dm(s));txt=s=>{const t=tierOf(dm(s));return t==='safe'||t==='likely'?'#fff':'#1a1a1a';};
     tip=s=>{const m=pollMargin(s),t=tierOf(m);return `${S[s].n} (${S[s].ev} EV): ${t==='toss'?'Toss-up':TIERN[t]+' '+(m>0?'you':C[g.opp].n)}`;};
     const me=g.party,op=C[g.opp].p;
-    $('legend').innerHTML=`<span class="lg"><b>You</b> ${swatch(TIER[me].safe)}Safe ${swatch(TIER[me].likely)}Likely ${swatch(TIER[me].lean)}Lean</span><span class="lg">${swatch('url(#toss)')}Toss-up</span><span class="lg"><b>${esc(C[g.opp].n.split(' ').pop())}</b> ${swatch(TIER[op].lean)}Lean ${swatch(TIER[op].likely)}Likely ${swatch(TIER[op].safe)}Safe</span><span class="mut">Safe = up 10+ · Likely = 5–10 · Lean = 2–5 · polls have noise</span>`;
+    $('legend').innerHTML=`<span class="lg"><b>You</b> ${swatch(TIER[me].safe)}Safe ${swatch(TIER[me].likely)}Likely ${swatch(TIER[me].lean)}Lean</span><span class="lg">${swatch(TOSS)}Toss-up</span><span class="lg"><b>${esc(C[g.opp].n.split(' ').pop())}</b> ${swatch(TIER[op].lean)}Lean ${swatch(TIER[op].likely)}Likely ${swatch(TIER[op].safe)}Safe</span><span class="mut">Safe = up 10+ · Likely = 5–10 · Lean = 2–5 · polls have noise</span>`;
   }
-  $('map').innerHTML=mapSVG(fill,txt,g.sel,tip,pdefs,psub);
+  $('map').innerHTML=mapSVG(fill,txt,g.sel,tip,pring,psub);
   document.querySelectorAll('#map .tile').forEach(t=>t.onclick=()=>{g.sel=t.dataset.s;render();});
   renderPolls();renderState();renderActs();renderPlatform();renderCoalition();
   $('feed').innerHTML=g.log.map(l=>`<div><span class="t">${esc(l.t)}</span>${esc(l.x)}</div>`).join('');
