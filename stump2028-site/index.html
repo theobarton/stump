@@ -395,6 +395,9 @@ const C={
  massie:{n:'Thomas Massie',p:'R',home:'KY',role:'U.S. representative from Kentucky; lost his 2026 primary after breaking with the president',trait:'Libertarian rebel with a devoted grassroots following',st:[4,4,6,9,8],sd:2,pb:-2,wc:{tag:'Rebel without a party',rules:['The party establishment is hostile: −2 with primary voters','Devoted small-dollar donors (+$1M a turn and stronger online fundraising)','Voters trust him: starts with 85 credibility'],ch:'Win the White House without ever changing a position.',chk:g=>g.stx.flips===0},cred0:85,s:{economy:1,ai:2,health:2,immig:1,foreign:-2,integrity:1,energy:1,safety:2}},
 };
 for(const k in C){C[k].id=k;}
+// Candidates drafted in head-to-head (flag h2hc) live in C only for that match. They are never part of the playable pool.
+function candPool(){return Object.values(C).filter(c=>!c.h2hc);}
+function clearDrafted(){for(const k in C)if(C[k].h2hc)delete C[k];if(typeof pickId!=='undefined'&&pickId&&!C[pickId])pickId=null;if(typeof SET!=='undefined'&&SET.oppChoice&&SET.oppChoice!=='random'&&!C[SET.oppChoice])SET.oppChoice='random';}
 const VPX={
  gallego:{n:'Ruben Gallego',p:'D',home:'AZ',perk:'swing'},warnock:{n:'Raphael Warnock',p:'D',home:'GA',perk:'debate'},
  tscott:{n:'Tim Scott',p:'R',home:'SC',perk:'debate'},hsanders:{n:'Sarah Huckabee Sanders',p:'R',home:'AR',perk:'base'}};
@@ -469,14 +472,14 @@ function newGame(){
   const ot=P.p==='D'?'R':'D';
   // other-party nominee
   if(SET.mode==='general'&&SET.oppChoice!=='random') g.opp=SET.oppChoice;
-  else g.opp=weightedPick(Object.values(C).filter(c=>c.p===ot),c=>Math.pow(Math.max(5,stat(c,0)+stat(c,1)+stat(c,2)+(c.pb||0)*1.5),2.4)*(c.wc?0.3:1)).id;
+  else g.opp=weightedPick(candPool().filter(c=>c.p===ot),c=>Math.pow(Math.max(5,stat(c,0)+stat(c,1)+stat(c,2)+(c.pb||0)*1.5),2.4)*(c.wc?0.3:1)).id;
   g.oppStances={};IK.forEach(k=>g.oppStances[k]=Math.round(rivalStances(g.opp)[k]*0.75*2)/2);
   // money
   g.money=stat(P,1)*1.6+(P.sf?(P.wc?30:14):0)+(P.sd||0)*2;
   g.mom=P.pb||0;g.heat=P.heat0||0;if(P.cred0)g.cred=P.cred0;
   if(g.mode==='full'){
-    let pool=Object.values(C).filter(c=>c.p===P.p&&c.id!==pickId&&!c.wc).sort((a,b)=>strength(b)-strength(a)+rnd(-4,4)).slice(0,4);
-    const wcs=Object.values(C).filter(c=>c.p===P.p&&c.id!==pickId&&c.wc);if(wcs.length&&Math.random()<0.5)pool.push(pickOne(wcs));
+    let pool=candPool().filter(c=>c.p===P.p&&c.id!==pickId&&!c.wc).sort((a,b)=>strength(b)-strength(a)+rnd(-4,4)).slice(0,4);
+    const wcs=candPool().filter(c=>c.p===P.p&&c.id!==pickId&&c.wc);if(wcs.length&&Math.random()<0.5)pool.push(pickOne(wcs));
     g.rivals=pool.map((c,i)=>({id:c.id,active:true,mom:c.pb||0,eff:{},col:PAL[i+1]}));
     g.del[g.cand]=0; g.rivals.forEach(r=>g.del[r.id]=0);
     logN('You file paperwork for an exploratory committee. The '+partyName(g.party)+' field takes shape: '+g.rivals.map(r=>C[r.id].n).join(', ')+'.');
@@ -751,7 +754,7 @@ function gameOverPrimary(w){
 function runConvention(){
   const P=C[g.cand];g.mom*=0.5;
   if(g.h2hAI){g.vp=g.draftVp[0]||null;g.oppVp=g.draftVp[1]||null;logN('Your drafted ticket heads to the convention'+(g.vp?' with '+cand(g.vp).n+' as running mate.':' without a running mate.'));convSpeech();return;}
-  const pool=[...Object.values(C).filter(c=>c.p===g.party&&c.id!==g.cand),...Object.values(VPX).filter(c=>c.p===g.party)].map(c=>c.id||Object.keys(VPX).find(k=>VPX[k]===c));
+  const pool=[...candPool().filter(c=>c.p===g.party&&c.id!==g.cand),...Object.values(VPX).filter(c=>c.p===g.party)].map(c=>c.id||Object.keys(VPX).find(k=>VPX[k]===c));
   Object.keys(VPX).forEach(k=>VPX[k].id=k);
   const opts=pool.filter((v,i,a)=>a.indexOf(v)===i);
   let h=`<p>You walk into the convention as the ${partyName(g.party)} nominee. First decision: who's on the ticket with you? A running mate gives you a boost in their home state and brings one special perk.</p><div class="vpgrid">`;
@@ -760,7 +763,7 @@ function runConvention(){
   h+='</div>';
   modal({k:'July 2028 · Convention',t:'Choose your running mate',body:h,wide:true,choices:[]});
   document.querySelectorAll('[data-vp]').forEach(b=>b.onclick=()=>{g.vp=b.dataset.vp;
-    const op=[...Object.values(C).filter(c=>c.p!==g.party&&c.id!==g.opp),...Object.values(VPX).filter(c=>c.p!==g.party)];
+    const op=[...candPool().filter(c=>c.p!==g.party&&c.id!==g.opp),...Object.values(VPX).filter(c=>c.p!==g.party)];
     g.oppVp=weightedPick(op,c=>c.sw?3:1+(stat(c,0)>=8?1:0)).id;
     logN('You name '+cand(g.vp).n+' as your running mate. '+C[g.opp].n+' picks '+cand(g.oppVp).n+'.');
     convSpeech();});
@@ -1650,12 +1653,12 @@ function finishDraft(st){
 }
 function startH2HvsAI(myStances){
   const R0=D.rosters[0],R1=D.rosters[1];
-  const aiSt={};const base=Object.values(C).filter(c=>c.p===D.parties[1]&&!c.wc);const tpl=pickOne(base).s;IK.forEach(i=>aiSt[i]=clamp(Math.round(tpl[i]*0.7+(Math.random()<.2?(Math.random()<.5?-1:1):0)),-2,2));
+  const aiSt={};const base=candPool().filter(c=>c.p===D.parties[1]&&!c.wc);const tpl=pickOne(base).s;IK.forEach(i=>aiSt[i]=clamp(Math.round(tpl[i]*0.7+(Math.random()<.2?(Math.random()<.5?-1:1):0)),-2,2));
   C.h2h0=buildCand('h2h0',D.names[0],D.parties[0],R0,myStances);C.h2h1=buildCand('h2h1',D.names[1],D.parties[1],R1,aiSt);
   pickId='h2h0';pickStances={...myStances};const keep={mode:SET.mode,opp:SET.oppChoice};SET.mode='general';SET.oppChoice='h2h1';
   $('draft').classList.add('hidden');$('game').classList.remove('hidden');window.scrollTo(0,0);
   newGame();SET.mode=keep.mode;SET.oppChoice=keep.opp;
-  g.h2hAI=true;g.jit.h2h0=[0,0,0,0,0];g.jit.h2h1=[0,0,0,0,0];g.draftVp=[R0.vp,R1.vp];g.spent=R0.spent;
+  g.h2hAI=true;g.h2hCands={h2h0:C.h2h0,h2h1:C.h2h1};g.jit.h2h0=[0,0,0,0,0];g.jit.h2h1=[0,0,0,0,0];g.draftVp=[R0.vp,R1.vp];g.spent=R0.spent;
   const x0=rosterExtras(R0),x1=rosterExtras(R1);g.money+=x0.money-10;g.staff=x0.staff;g.oppo=x0.oppo;Object.assign(g.org,x0.org);
   for(const s in x1.org)g.oppEff[s]=(g.oppEff[s]||0)+5;if(x1.money)g.oppMom+=x1.money/15;if(x1.staff>1)g.oppMom+=1;
   g.log=[];logN(`Draft complete. You spent ${R0.spent} capital; ${D.names[1]} spent ${R1.spent}. The general election begins.`);
@@ -2002,7 +2005,7 @@ seg('optMode','mode',[['full','Full campaign','Primaries, convention and general
 seg('optDiff','diff',[['easy','Easy','Weaker, cheaper opponents'],['normal','Normal','A fair fight'],['hard','Hard','Well-funded opponents, a headwind for you']]);
 seg('optEnv','env',[['neutral','Neutral','An even national climate'],['midterm','Post-2026 midterm mood','Democrats won both chambers in Nov. 2026. Starts D+3'],['random','Random','Anything goes']]);
 if(loadSave())$('btnResume').classList.remove('hidden');
-$('btnResume').onclick=()=>{g=loadSave();if(!g)return;if(g.calVar)applyCal(g.calVar);$('title').classList.add('hidden');$('game').classList.remove('hidden');g.turnEventDone=true;render();if(cal().ph==='conv'&&!g.vp)runConvention();};
+$('btnResume').onclick=()=>{g=loadSave();if(!g)return;clearDrafted();if(g.h2hCands)Object.assign(C,g.h2hCands);if(g.calVar)applyCal(g.calVar);$('title').classList.add('hidden');$('game').classList.remove('hidden');g.turnEventDone=true;render();if(cal().ph==='conv'&&!g.vp)runConvention();};
 $('btnAch').onclick=showAch;
 $('btnH2H').onclick=openH2H;
 $('btnProfile').onclick=showProfile;
@@ -2024,11 +2027,11 @@ function drawPick(){
   $('tabD').className=pickParty==='D'?'onD':'';$('tabR').className=pickParty==='R'?'onR':'';
   const labels=['Name recognition','Fundraising','Debate','Discipline','Organizing'];
   const card=c=>`<div class="card ${c.wc?'wcard':''} ${pickId===c.id?'sel':''}" data-id="${c.id}"><span class="pin" style="background:${partyHex(c.p)}"></span>${c.wc?`<div class="wctag">🃏 ${esc(c.wc.tag)}</div>`:''}<h3>${esc(c.n)}</h3><div class="role">${esc(c.role)} · ${homeN(c)}</div><div class="trait">${esc(c.trait)}</div>${c.st.map((v,i)=>`<div class="statrow"><span>${labels[i]}</span><span class="bar"><i style="width:${v*10}%"></i></span><span class="mono">${v}</span></div>`).join('')}${c.wc?`<ul class="wcrules">${c.wc.rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul><div class="wcch"><b>Challenge:</b> ${esc(c.wc.ch)}</div>`:''}</div>`;
-  const all=Object.values(C).filter(c=>c.p===pickParty);
+  const all=candPool().filter(c=>c.p===pickParty);
   $('cards').innerHTML=all.filter(c=>!c.wc).map(card).join('')+`<div class="wchead"><div class="kicker">Wildcards</div><h3>Unconventional campaigns</h3><p class="mut">Outsiders and long shots, each with special rules and a challenge to complete. Harder, stranger and worth their own achievements.</p></div>`+all.filter(c=>c.wc).map(card).join('');
   document.querySelectorAll('.card').forEach(el=>el.onclick=()=>{pickId=el.dataset.id;pickStances={...C[pickId].s};drawPick();});
   $('btnLaunch').disabled=!pickId;
-  if(SET.mode==='general'){$('oppPick').classList.remove('hidden');const ot=pickParty==='D'?'R':'D';const o=[['random','Random','Weighted toward frontrunners']].concat(Object.values(C).filter(c=>c.p===ot).map(c=>[c.id,c.n+(c.wc?' 🃏':''),homeN(c)]));if(SET.oppChoice!=='random'&&(!C[SET.oppChoice]||C[SET.oppChoice].p!==ot))SET.oppChoice='random';seg('optOpp','oppChoice',o);}
+  if(SET.mode==='general'){$('oppPick').classList.remove('hidden');const ot=pickParty==='D'?'R':'D';const o=[['random','Random','Weighted toward frontrunners']].concat(candPool().filter(c=>c.p===ot).map(c=>[c.id,c.n+(c.wc?' 🃏':''),homeN(c)]));if(SET.oppChoice!=='random'&&(!C[SET.oppChoice]||C[SET.oppChoice].p!==ot))SET.oppChoice='random';seg('optOpp','oppChoice',o);}
   drawStanceEd();
 }
 function drawStanceEd(){
@@ -2056,6 +2059,7 @@ function confirmRestart(){
     {l:'Cancel',f:openMenu}]});
 }
 function goTitle(){
+  clearDrafted();
   $('game').classList.add('hidden');$('pick').classList.add('hidden');$('draft').classList.add('hidden');$('title').classList.remove('hidden');updateProfileBtn();
   $('btnResume').classList.toggle('hidden',!loadSave());
   $('btnAch').textContent='Achievements ('+achCount()+'/'+ACH.length+')';window.scrollTo(0,0);
