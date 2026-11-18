@@ -231,10 +231,24 @@ table.rt th{font-family:var(--mono);font-size:10px;color:var(--mut);font-weight:
 .dl b{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9aa3b5;margin-bottom:2px;font-weight:600}
 .dl span{font-family:var(--disp);font-size:16px}
 .dctx{display:flex;flex-direction:column;gap:3px;font-size:12.5px;margin:2px 0 8px}.dctx i{color:#9aa3b5;font-style:normal}
+.dbt{font-size:12px;color:#8fcf9f;margin:-3px 0 2px 14px}.dbt.neg{color:#e0716b}
 .dreact{font-style:italic;color:#e3b24f;margin:2px 0 8px}
 .room{display:flex;align-items:center;gap:10px;font-size:12px;margin-top:6px}.room span{font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:#9aa3b5;font-size:10.5px}
 .rbar{flex:1;max-width:260px;height:8px;border-radius:5px;position:relative;background:linear-gradient(90deg,#c2362d55,#3a435a 45%,#3a435a 55%,#2b5cc055)}
 .rbar i{position:absolute;top:-3px;width:4px;height:14px;border-radius:2px;background:#f3efe4;transform:translateX(-2px)}
+
+.rep{margin-top:8px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);font-size:12.5px}
+.rephd{display:flex;justify-content:space-between;margin-bottom:4px}.rephd b{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9aa3b5}
+.reprow{display:flex;justify-content:space-between;gap:10px;padding:2px 0;border-top:1px dashed rgba(255,255,255,.05)}.reprow span:last-child{white-space:nowrap}
+.repsp{margin-top:4px;color:#9aa3b5;font-size:12px}
+
+.weekpnl h2{margin-bottom:6px}
+.wk{border:1px solid rgba(255,255,255,.08);border-left:3px solid #e3b24f;border-radius:9px;padding:9px 11px;margin-bottom:8px;background:rgba(255,255,255,.025)}
+.wk.thr{border-left-color:#e0716b}.wk.sig{border-left-color:#57c4b8;background:rgba(87,196,184,.06)}.wk.done{opacity:.6}
+.wkk{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#9aa3b5;margin-bottom:2px}
+.wk b{font-size:14px}.wk p{margin:3px 0;font-size:12.5px;line-height:1.4}.wkh{color:#e3b24f}.wko{color:#8fcf9f;font-style:italic}
+.wkb{display:block;width:100%;text-align:left;margin-top:5px;padding:6px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:inherit;cursor:pointer;font:inherit;font-size:13px}
+.wkb:hover:not([disabled]){border-color:#e3b24f}.wkb[disabled]{opacity:.45;cursor:default}.wkb small{display:block;color:#9aa3b5;font-size:11.5px;margin-top:1px}
 </style>
 </head>
 <body>
@@ -316,6 +330,7 @@ table.rt th{font-family:var(--mono);font-size:10px;color:var(--mut);font-weight:
       </div>
     </div>
     <div class="side">
+      <div class="pnl weekpnl" id="weekPnl"></div>
       <div class="pnl stbox" id="statePnl"></div>
       <div class="pnl">
         <div class="tabs" id="actTabs"></div>
@@ -371,7 +386,7 @@ const C={
  cruz:{n:'Ted Cruz',p:'R',home:'TX',role:'U.S. senator from Texas',trait:'Veteran debater who knows the conservative base well',st:[8,8,9,5,6],s:{economy:1,ai:2,health:2,immig:2,foreign:1,integrity:1,energy:2,safety:2}},
  paul:{n:'Rand Paul',p:'R',home:'KY',role:'U.S. senator from Kentucky',trait:'Libertarian lane: devoted small-dollar donors and an independent streak',st:[6,5,7,7,8],sd:1.5,s:{economy:1,ai:2,health:2,immig:1,foreign:-1,integrity:1,energy:1,safety:1}},
  newsom:{n:'Gavin Newsom',p:'D',home:'CA',role:'Governor of California (term ends Jan. 2027)',trait:'Fundraising juggernaut with a 54-electoral-vote home base',st:[9,10,8,5,7],s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:-1,integrity:-1,energy:-1,safety:-1}},
- shapiro:{n:'Josh Shapiro',p:'D',home:'PA',role:'Governor of Pennsylvania',trait:'Swing-state governor who plays well in the middle',st:[6,8,7,9,8],sw:1,s:{economy:-1,ai:0,health:-1,immig:0,foreign:0,integrity:-1,energy:0,safety:0}},
+ shapiro:{n:'Josh Shapiro',p:'D',home:'PA',role:'Governor of Pennsylvania',trait:'Swing-state governor who plays well in the middle',st:[6,8,7,9,8],sw:1,pb:0.9,s:{economy:-1,ai:0,health:-1,immig:0,foreign:0,integrity:-1,energy:0,safety:0}},
  buttigieg:{n:'Pete Buttigieg',p:'D',home:'MI',role:'Former U.S. Secretary of Transportation',trait:'Media natural: bonus on interviews, podcasts and debates',st:[8,8,10,8,5],med:1,s:{economy:-1,ai:-1,health:-1,immig:-1,foreign:-1,integrity:-1,energy:-1,safety:-1}},
  aoc:{n:'Alexandria Ocasio-Cortez',p:'D',home:'NY',role:'U.S. representative from New York',trait:'Grassroots machine: huge small-dollar fundraising and base enthusiasm',st:[9,8,7,5,9],sd:2.5,pb:1.5,s:{economy:-2,ai:-2,health:-2,immig:-2,foreign:-2,integrity:-2,energy:-2,safety:-1}},
  kelly:{n:'Mark Kelly',p:'D',home:'AZ',role:'U.S. senator from Arizona; former astronaut and Navy pilot',trait:'Veteran and astronaut: trusted on security, strong in the Sun Belt',st:[6,7,5,9,7],sw:1,fp:.6,s:{economy:-1,ai:-1,health:-1,immig:0,foreign:0,integrity:-1,energy:0,safety:-1}},
@@ -395,9 +410,6 @@ const C={
  massie:{n:'Thomas Massie',p:'R',home:'KY',role:'U.S. representative from Kentucky; lost his 2026 primary after breaking with the president',trait:'Libertarian rebel with a devoted grassroots following',st:[4,4,6,9,8],sd:2,pb:-2,wc:{tag:'Rebel without a party',rules:['The party establishment is hostile: −2 with primary voters','Devoted small-dollar donors (+$1M a turn and stronger online fundraising)','Voters trust him: starts with 85 credibility'],ch:'Win the White House without ever changing a position.',chk:g=>g.stx.flips===0},cred0:85,s:{economy:1,ai:2,health:2,immig:1,foreign:-2,integrity:1,energy:1,safety:2}},
 };
 for(const k in C){C[k].id=k;}
-// Candidates drafted in head-to-head (flag h2hc) live in C only for that match. They are never part of the playable pool.
-function candPool(){return Object.values(C).filter(c=>!c.h2hc);}
-function clearDrafted(){for(const k in C)if(C[k].h2hc)delete C[k];if(typeof pickId!=='undefined'&&pickId&&!C[pickId])pickId=null;if(typeof SET!=='undefined'&&SET.oppChoice&&SET.oppChoice!=='random'&&!C[SET.oppChoice])SET.oppChoice='random';}
 const VPX={
  gallego:{n:'Ruben Gallego',p:'D',home:'AZ',perk:'swing'},warnock:{n:'Raphael Warnock',p:'D',home:'GA',perk:'debate'},
  tscott:{n:'Tim Scott',p:'R',home:'SC',perk:'debate'},hsanders:{n:'Sarah Huckabee Sanders',p:'R',home:'AR',perk:'base'}};
@@ -447,7 +459,7 @@ const sgn=x=>(x>=0?'+':'')+x.toFixed(1);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const cand=id=>C[id]||VPX[id];
 const homeN=c=>c&&c.home?S[c.home].n:'No home state';
-const stat=(c,i)=>c.st?clamp((c.st[i]??6)+((typeof g!=='undefined'&&g&&g.jit&&g.jit[c.id])?g.jit[c.id][i]:0),3,10):6; // 0 nameID 1 fund 2 debate 3 disc 4 org
+const stat=(c,i)=>c.st?clamp((c.st[i]??6)+((typeof g!=='undefined'&&g&&g.jit&&g.jit[c.id])?g.jit[c.id][i]:0)+(i===0&&typeof g!=='undefined'&&g&&g.nid&&c.id===g.cand?g.nid:0),3,10):6; // 0 nameID 1 fund 2 debate 3 disc 4 org
 const PAL=['#e3b24f','#57c4b8','#c07be0','#e08a4b','#9bd35a','#e06fa6'];
 const partyCol=p=>p==='D'?'var(--D)':'var(--R)';
 const partyHex=p=>p==='D'?'#4b80e2':'#e0544b';
@@ -472,14 +484,14 @@ function newGame(){
   const ot=P.p==='D'?'R':'D';
   // other-party nominee
   if(SET.mode==='general'&&SET.oppChoice!=='random') g.opp=SET.oppChoice;
-  else g.opp=weightedPick(candPool().filter(c=>c.p===ot),c=>Math.pow(Math.max(5,stat(c,0)+stat(c,1)+stat(c,2)+(c.pb||0)*1.5),2.4)*(c.wc?0.3:1)).id;
+  else g.opp=weightedPick(Object.values(C).filter(c=>c.p===ot),c=>Math.pow(Math.max(5,stat(c,0)+stat(c,1)+stat(c,2)+(c.pb||0)*1.5),2.4)*(c.wc?0.3:1)).id;
   g.oppStances={};IK.forEach(k=>g.oppStances[k]=Math.round(rivalStances(g.opp)[k]*0.75*2)/2);
   // money
   g.money=stat(P,1)*1.6+(P.sf?(P.wc?30:14):0)+(P.sd||0)*2;
   g.mom=P.pb||0;g.heat=P.heat0||0;if(P.cred0)g.cred=P.cred0;
   if(g.mode==='full'){
-    let pool=candPool().filter(c=>c.p===P.p&&c.id!==pickId&&!c.wc).sort((a,b)=>strength(b)-strength(a)+rnd(-4,4)).slice(0,4);
-    const wcs=candPool().filter(c=>c.p===P.p&&c.id!==pickId&&c.wc);if(wcs.length&&Math.random()<0.5)pool.push(pickOne(wcs));
+    let pool=Object.values(C).filter(c=>c.p===P.p&&c.id!==pickId&&!c.wc).sort((a,b)=>strength(b)-strength(a)+rnd(-4,4)).slice(0,4);
+    const wcs=Object.values(C).filter(c=>c.p===P.p&&c.id!==pickId&&c.wc);if(wcs.length&&Math.random()<0.5)pool.push(pickOne(wcs));
     g.rivals=pool.map((c,i)=>({id:c.id,active:true,mom:c.pb||0,eff:{},col:PAL[i+1]}));
     g.del[g.cand]=0; g.rivals.forEach(r=>g.del[r.id]=0);
     logN('You file paperwork for an exploratory committee. The '+partyName(g.party)+' field takes shape: '+g.rivals.map(r=>C[r.id].n).join(', ')+'.');
@@ -496,6 +508,27 @@ const cal=()=>CAL[Math.min(g.turn,CAL.length-1)];
 const ph=()=>cal().ph;
 const isPri=()=>ph()==='pre'||ph()==='pri';
 function logN(t){t=soften(t);g.log.unshift({t:CAL[g.turn]?CAL[g.turn].d:'',x:t});if(g.log.length>300)g.log.pop();}
+/* ---------- momentum ledger: every swing gets a reason ---------- */
+function momSnap(){const o={};(g.rivals||[]).forEach(r=>o[r.id]=r.mom);if(g.opp&&!isPri())o._opp=g.oppMom||0;return {me:g.mom,o};}
+function mk(label){if(!g)return;const b=g._mb||momSnap(),n=momSnap();const dm=n.me-b.me;const ot=[];
+  for(const k in n.o){const d=n.o[k]-(b.o[k]||0);if(Math.abs(d)>0.08)ot.push([k,d]);}
+  if(label&&(Math.abs(dm)>0.08||ot.length)){g.led=g.led||[];g.led.push({l:label,me:dm,ot});}g._mb=n;}
+function oppNm(k){return k==='_opp'?C[g.opp].n.split(' ').pop():(C[k]?C[k].n.split(' ').pop():k);}
+function relevantOpp(){if(!isPri())return '_opp';const r=topRival();return r?r.id:null;}
+function raceReport(){
+  const L=g.led||[];g.led=[];if(!L.length){g.rep='';return;}
+  const m={};L.forEach(e=>{const r=m[e.l]=m[e.l]||{l:e.l,me:0,ot:{}};r.me+=e.me;e.ot.forEach(([k,d])=>r.ot[k]=(r.ot[k]||0)+d);});
+  const ro=relevantOpp();
+  const rows=Object.values(m).map(r=>{const od=ro?(r.ot[ro]||0):0;r.net=r.me-od;r.mag=Math.abs(r.me)+Object.values(r.ot).reduce((a,b)=>a+Math.abs(b),0);return r;}).filter(r=>r.mag>0.15).sort((a,b)=>b.mag-a.mag).slice(0,6);
+  const tot=rows.reduce((a,r)=>a+r.net,0);
+  const tag=(nm,d)=>Math.abs(d)<0.15?'':`<span class="${(nm==='You')===(d>0)?'pos':'neg'}">${esc(nm)} ${arrows(d,Math.abs(d))}</span>`;
+  g.rep=`<div class="rep"><div class="rephd"><b>What moved the race</b><span class="${tot>0.4?'pos':tot<-0.4?'neg':'mut'}">${tot>1.5?'A good week for you':tot>0.4?'Slightly your way':tot>-0.4?'Roughly a wash':tot>-1.5?'Slightly against you':'A rough week'}</span></div>`+
+    rows.map(r=>`<div class="reprow"><span>${esc(r.l)}</span><span>${tag('You',r.me)} ${Object.entries(r.ot).map(([k,d])=>tag(oppNm(k),d)).join(' ')}</span></div>`).join('')+(g.repSpend?`<div class="repsp">${esc(g.repSpend)}</div>`:'')+`</div>`;
+}
+function spendSnap(){const o={};if(isPri())(g.rivals||[]).filter(r=>r.active).forEach(r=>{for(const s in r.eff)o[r.id+'|'+s]=r.eff[s];});else for(const s in g.oppEff)o['_opp|'+s]=g.oppEff[s];return o;}
+function spendNote(){const b=g._sb||{},n=spendSnap();const by={};for(const k in n){const d=n[k]-(b[k]||0);if(d<=0.3)continue;const [who,s]=k.split('|');(by[who]=by[who]||[]).push([s,d]);}
+  const parts=Object.entries(by).map(([who,a])=>{a.sort((x,y)=>y[1]-x[1]);const tot=a.reduce((t,x)=>t+x[1],0);return [tot,`${who==='_opp'?C[g.opp].n.split(' ').pop():C[who].n.split(' ').pop()} spent heaviest in ${a.slice(0,3).map(x=>x[0]).join(', ')}`];}).sort((x,y)=>y[0]-x[0]).slice(0,2).map(x=>x[1]);
+  g.repSpend=parts.length?parts.join(' · ')+'.':'';g._sb=n;}
 function save(){if(g&&g.h2h)return;try{localStorage.setItem('stump2028',JSON.stringify(g));}catch(e){}}
 function loadSave(){try{const s=localStorage.getItem('stump2028');return s?JSON.parse(s):null;}catch(e){return null;}}
 function clearSave(){try{localStorage.removeItem('stump2028');}catch(e){}}
@@ -589,7 +622,7 @@ function natMargin(fn){let t=0,w=0;SK.forEach(s=>{t+=fn(s)*S[s].ev;w+=S[s].ev;})
 
 // ---- Primary ----
 function field(){const f=[{id:g.cand,st:g.stances,eff:g.pEff,mom:g.mom,col:PAL[0],me:true}];g.rivals.filter(r=>r.active).forEach(r=>f.push({id:r.id,st:rivalStances(r.id),eff:r.eff,mom:r.mom,col:r.col}));return f;}
-function pScore(f,s){const c=C[f.id];let sc=stat(c,0)*.22+stat(c,1)*.15+(c.pb||0)*.45;IK.forEach(i=>sc-=sal(s,i)*Math.abs(f.st[i]-medP(s,i))*1.05);sc+=effC(f.eff[s],S[s].ev)*(f.me?1.05:0.8)+(s==='IA'||s==='NV'?(stat(c,4)-6)*0.35:0);sc+=sat(f.mom)*0.5;if(c.home===s)sc+=4.5;if(f.me){sc-=g.heat*0.05;sc-=Math.max(0,50-g.cred)*0.06;let bs=0,bw=0;BKS.forEach(k=>{const w=SH[s][k]*PAFF[g.party][k];bs+=w*bget(g.bloc,k);bw+=w;});sc+=bs/bw*1.0;}return sc;}
+function pScore(f,s){const c=C[f.id];const nw=.22*(1-0.45*Math.min(1,Object.keys(g.held||{}).length/20));let sc=stat(c,0)*nw+stat(c,1)*.15+(c.pb||0)*.45;IK.forEach(i=>sc-=sal(s,i)*Math.abs(f.st[i]-medP(s,i))*1.05);sc+=effC(f.eff[s],S[s].ev)*(f.me?1.05:0.8)+(s==='IA'||s==='NV'?(stat(c,4)-6)*0.35:0);sc+=sat(f.mom)*0.5;if(c.home===s)sc+=4.5;if(f.me){sc-=g.heat*0.05;sc-=Math.max(0,50-g.cred)*0.06;let bs=0,bw=0;BKS.forEach(k=>{const w=SH[s][k]*PAFF[g.party][k];bs+=w*bget(g.bloc,k);bw+=w;});sc+=bs/bw*1.0;}return sc;}
 function pShares(s,noise){const fl=field();const sc=fl.map(f=>pScore(f,s)+(noise?gauss()*1.6:0));const mx=Math.max(...sc);const ex=sc.map(x=>Math.exp((x-mx)/3.5));const t=ex.reduce((a,b)=>a+b,0);return fl.map((f,i)=>({id:f.id,col:f.col,sh:ex[i]/t*100}));}
 const delOf=s=>S[s].ev*10;
 const TOTDEL=SK.reduce((a,s)=>a+delOf(s),0);
@@ -604,6 +637,7 @@ function targetable(s){if(isPri())return !g.held[s];return true;}
 function startTurn(){
   const c=cal();
   if(c.ph==='conv'){render();runConvention();return;}
+  mk(g.turn===GEN_START||g.turn===CONV+1?'The convention':'Other campaign news');
   g.apMax=4+g.staff;g.medTurn=0;
   g.ap=g.apMax; g.stamina=clamp(g.stamina+18+(C[g.cand].iron?12:0),0,100);
   // income
@@ -617,7 +651,7 @@ function startTurn(){
   g.rivals.forEach(r=>{for(const s in r.eff)r.eff[s]*=dec;});
   // org adds effort
   {const om=orgM();for(const s in g.org){if(c.ph==='gen')g.gEff[s]=(g.gEff[s]||0)+g.org[s]*0.7*om;else if(!g.held[s])g.pEff[s]=(g.pEff[s]||0)+g.org[s]*0.7*om;}}
-  g.mom*=0.85; g.oppMom*=0.85; g.rivals.forEach(r=>r.mom*=0.85);
+  g.mom*=0.85; g.oppMom*=0.85; g.rivals.forEach(r=>r.mom*=0.85);mk('Buzz fades over time (yours and theirs)');
   g.heat=Math.max(0,g.heat-1.5);
   g.bloc=g.bloc||{};g.oppBloc=g.oppBloc||{};BKS.forEach(k=>{g.bloc[k]=bget(g.bloc,k)*0.95;g.oppBloc[k]=bget(g.oppBloc,k)*0.95;});
   g.env+=gauss()*0.3;
@@ -626,7 +660,7 @@ function startTurn(){
   if(g.pac>0){const spend=Math.min(g.pac,6);g.pac-=spend;const tg=isPri()?upcomingStates(2).slice(0,4):competitive(5);tg.forEach(s=>addEff(s,spend/tg.length*1.2));}
   // poll noise
   const pq=g.cycle?g.cycle.pollQ[1]:1;g.noise={_n:gauss()*1.0*pq};SK.forEach(s=>g.noise[s]=gauss()*1.6*pq);
-  newsShocks();
+  newsShocks();spendNote();raceReport();wkGen();
   if(c.ph==='gen'&&g.stx.genStart==null)g.stx.genStart=natMargin(genMargin);
   briefing(g.lastSnap,inc,momBefore);if(g.turn>0)logN(g.brief.replace(/<[^>]+>/g,''));
   g.moodPrev={};BKS.forEach(k=>g.moodPrev[k]=blocMood(k));
@@ -641,7 +675,7 @@ function competitive(n){return SK.map(s=>({s,m:genMargin(s)})).filter(x=>Math.ab
 function addEff(s,x){if(isPri())g.pEff[s]=(g.pEff[s]||0)+x;else g.gEff[s]=(g.gEff[s]||0)+x;}
 
 function endTurn(){
-  const c=cal();
+  const c=cal();wkExpire();
   if(c.ph==='pre'||c.ph==='pri')aiPrimary();
   if(c.ph==='gen')aiGeneral();
   const after=()=>{
@@ -660,7 +694,7 @@ function afterContests(){
 /* ---------- AI ---------- */
 function aiPrimary(){
   const up=upcomingStates(2);if(!up.length)return;
-  const diffM={easy:.75,normal:1,hard:1.3}[g.diff];
+  const diffM={easy:.8,normal:1.08,hard:1.38}[g.diff];
   g.rivals.filter(r=>r.active).forEach(r=>{
     const c=C[r.id];let b=(3+stat(c,1)*0.35+Math.max(0,r.mom)*0.25)*diffM*(0.75+stat(c,4)*0.05);
     const w=up.map(s=>Math.pow(delOf(s),0.6)*(c.home===s?3:1)*rnd(.6,1.4));const t=w.reduce((a,b)=>a+b,0);
@@ -668,23 +702,24 @@ function aiPrimary(){
   });
 }
 function aiGeneral(){
-  const diffM={easy:.7,normal:1,hard:1.35}[g.diff];
-  const O=C[g.opp];const budget=(9.5+stat(O,1)*0.35+Math.max(0,g.oppMom)*0.3)*diffM*(0.75+stat(O,4)*0.05);
+  const diffM={easy:.78,normal:1.12,hard:1.45}[g.diff];
+  mk('Earlier this turn');const O=C[g.opp];const budget=(9.5+stat(O,1)*0.35+Math.max(0,g.oppMom)*0.3)*diffM*(0.75+stat(O,4)*0.05);
   const cand=SK.map(s=>({s,m:genMargin(s)})).filter(x=>x.m>-9&&x.m<11);
   const w=cand.map(x=>S[x.s].ev*Math.exp(-Math.abs(x.m-1)/4));const t=w.reduce((a,b)=>a+b,0)||1;
   cand.forEach((x,i)=>g.oppEff[x.s]=(g.oppEff[x.s]||0)+budget*w[i]/t);
-  g.oppMom+=rnd(0.2,1.1)*diffM*(0.8+stat(O,0)*0.03+stat(O,2)*0.03);if(natMargin(genMargin)>2)g.oppMom+=0.5*diffM;
+  g.oppMom+=rnd(0.2,1.1)*diffM*(0.8+stat(O,0)*0.03+stat(O,2)*0.03);const behind=natMargin(genMargin)>2;if(behind)g.oppMom+=0.5*diffM;mk(behind?`${O.n} rallies supporters while trailing`:`${O.n}'s rallies and earned media`);
   {g.oppBloc=g.oppBloc||{};const tg=competitive(5);const wt={};BKS.forEach(k=>{wt[k]=0;tg.forEach(s=>wt[k]+=SH[s][k]*S[s].ev);});const top=BKS.slice().sort((a,b)=>wt[b]-wt[a]).slice(0,2);top.forEach(k=>g.oppBloc[k]=clamp(bget(g.oppBloc,k)+0.45*diffM,-6,6));}
-  if(Math.random()<0.45*diffM){const iss=pickOne(IK);g.mom-=1;logN(C[g.opp].n+' runs a national ad blitz attacking your position on '+II[iss].n.toLowerCase()+'. (Momentum −1)');}
+  if(Math.random()<0.45*diffM){const iss=pickOne(IK);g.mom-=1;logN(C[g.opp].n+' runs a national ad blitz attacking your position on '+II[iss].n.toLowerCase()+'. (Momentum −1)');mk(`${O.n}'s attack ads on ${DT[iss]||II[iss].n.toLowerCase()}`);}
   if(g.diff==='hard')g.env+=(g.party==='D'?-0.15:0.15);
 }
 
 /* ---------- Primary contests ---------- */
 function resolveContests(list,done){
   const rows=[];let tonight={};
+  const surp={};let wsum=0;
   list.forEach(s=>{
     if(g.held[s])return;
-    const sh=pShares(s,true).sort((a,b)=>b.sh-a.sh);
+    const ex=pShares(s,false);const sh=pShares(s,true).sort((a,b)=>b.sh-a.sh);const dw=delOf(s);wsum+=dw;sh.forEach(x=>{const e=ex.find(y=>y.id===x.id);surp[x.id]=(surp[x.id]||0)+(x.sh-(e?e.sh:x.sh))*dw;});
     const el=sh.filter(x=>x.sh>=15);const tot=el.reduce((a,b)=>a+b.sh,0);
     const D=delOf(s);const alloc={};
     el.forEach(x=>alloc[x.id]=Math.round(D*x.sh/tot));
@@ -702,6 +737,10 @@ function resolveContests(list,done){
   order.forEach((id,i)=>{const d=i===0?(early?3.5:2.5):i===1?(early?0.5:0.5):-1;if(id===g.cand)g.mom+=d;else{const r=g.rivals.find(r=>r.id===id);if(r)r.mom+=d;}});
   g.rivals.filter(r=>r.active&&!tonight[r.id]).forEach(r=>r.mom-=1.5);
   if(!tonight[g.cand])g.mom-=1.5;
+  // expectations game: beating the polls matters as much as winning
+  let expLine='';
+  if(wsum){for(const id in surp){const su=surp[id]/wsum;const base=C[id].st?C[id].st[0]:6;const d=clamp(su/5,-2,2.5)*(su>0&&base<=6?1.4:1);if(id===g.cand){g.mom+=d;if(su>3.5)g.nid=Math.min(3,(g.nid||0)+0.6);expLine=su>3.5?'You blew past expectations. The press is calling it a breakout.':su>1.2?'You beat expectations.':su<-3.5?'You fell well short of expectations, and the press notices.':su<-1.2?'You came in a bit under expectations.':'You landed about where the polls had you.';}else{const r=g.rivals.find(r=>r.id===id);if(r)r.mom+=d*0.7;}}}
+  mk('Results in '+(list.length>3?list.length+' states':list.map(s=>S[s].n).join(' and ')));
   // money for winners
   if(order[0]===g.cand)g.money+=2+list.length*0.4;
   // headline
@@ -723,6 +762,7 @@ function resolveContests(list,done){
   let h='<table class="rt"><tr><th>State</th><th>Winner</th><th>Your share</th><th>Your delegates</th></tr>';
   rows.forEach(r=>{const me=r.sh.find(x=>x.id===g.cand);h+=`<tr><td>${S[r.s].n}</td><td><span class="dot" style="display:inline-block;background:${r.sh[0].col}"></span> ${r.sh[0].id===g.cand?'<b>You</b>':esc(C[r.sh[0].id].n)} <span class="mut">${r.sh[0].sh.toFixed(0)}%</span></td><td class="mono">${me.sh.toFixed(1)}%</td><td class="mono">${r.alloc[g.cand]||0}</td></tr>`;});
   h+='</table>';
+  if(expLine)h+=`<p class="fx">Expectations: ${esc(expLine)}</p>`;
   h+=delegateTable();
   if(dropped.length)h+=`<p class="fx">Dropping out: ${dropped.map(id=>esc(C[id].n)).join(', ')}</p>`;
   // nomination check
@@ -754,7 +794,7 @@ function gameOverPrimary(w){
 function runConvention(){
   const P=C[g.cand];g.mom*=0.5;
   if(g.h2hAI){g.vp=g.draftVp[0]||null;g.oppVp=g.draftVp[1]||null;logN('Your drafted ticket heads to the convention'+(g.vp?' with '+cand(g.vp).n+' as running mate.':' without a running mate.'));convSpeech();return;}
-  const pool=[...candPool().filter(c=>c.p===g.party&&c.id!==g.cand),...Object.values(VPX).filter(c=>c.p===g.party)].map(c=>c.id||Object.keys(VPX).find(k=>VPX[k]===c));
+  const pool=[...Object.values(C).filter(c=>c.p===g.party&&c.id!==g.cand),...Object.values(VPX).filter(c=>c.p===g.party)].map(c=>c.id||Object.keys(VPX).find(k=>VPX[k]===c));
   Object.keys(VPX).forEach(k=>VPX[k].id=k);
   const opts=pool.filter((v,i,a)=>a.indexOf(v)===i);
   let h=`<p>You walk into the convention as the ${partyName(g.party)} nominee. First decision: who's on the ticket with you? A running mate gives you a boost in their home state and brings one special perk.</p><div class="vpgrid">`;
@@ -763,7 +803,7 @@ function runConvention(){
   h+='</div>';
   modal({k:'July 2028 · Convention',t:'Choose your running mate',body:h,wide:true,choices:[]});
   document.querySelectorAll('[data-vp]').forEach(b=>b.onclick=()=>{g.vp=b.dataset.vp;
-    const op=[...candPool().filter(c=>c.p!==g.party&&c.id!==g.opp),...Object.values(VPX).filter(c=>c.p!==g.party)];
+    const op=[...Object.values(C).filter(c=>c.p!==g.party&&c.id!==g.opp),...Object.values(VPX).filter(c=>c.p!==g.party)];
     g.oppVp=weightedPick(op,c=>c.sw?3:1+(stat(c,0)>=8?1:0)).id;
     logN('You name '+cand(g.vp).n+' as your running mate. '+C[g.opp].n+' picks '+cand(g.oppVp).n+'.');
     convSpeech();});
@@ -804,7 +844,7 @@ function spend(ap,money,stam){g.ap-=ap;g.money-=money||0;g.stamina=clamp(g.stami
 function needState(){if(!g.sel||!targetable(g.sel)){toast('Pick a state on the map first'+(isPri()?' (one that has not voted yet).':'.'));return false;}return true;}
 function selOk(){return g.sel&&targetable(g.sel);}
 function townEff(s){let dist=0;IK.forEach(i=>dist+=Math.abs(g.stances[i]-(isPri()?medP(s,i):medG(s,i))));dist/=IK.length;return (1+clamp(1.6-dist,0,1.4))*orgM();}
-function adEff(a,s){return a*21/(5+S[s].ev)*(g.flags.data?1.25:1)*(isPri()?1.3:1);}
+function adEff(a,s){return a*19.5/(5+S[s].ev)*(g.flags.data?1.25:1)*(isPri()?1.3:1);}
 function nextDebate(){for(let t=g.turn;t<CAL.length;t++)if(CAL[t].debate&&CAL[t].debate!=='vp')return t;return -1;}
 function stateAct(s,x,label){const pts=effPts(s,x);addEff(s,x);return `${label} (${IMPW[impLvl(pts)].toLowerCase()} boost in ${s})`;}
 const MOM_NOTE='Momentum shifts every state at once, so it\'s the best lever when many states are close. It has diminishing returns, and repeat media hits in one turn wear thin. It fades over time.';
@@ -856,9 +896,9 @@ const ACTS={
    later:()=>`Money doesn't win votes by itself. It pays for ads, field offices and staff. You also get passive income each turn (more after you're the nominee). Heat fades 1.5 a turn.`,
    f(){const P=C[g.cand];const f=stat(P,1);if(P.wc&&P.id==='cuban'&&g.stx.fundUses===0)toastMsg('Heads up: fundraising breaks your wildcard challenge.');
     modal({k:'Fundraising',t:'How do you raise it?',body:'<p>Money buys ads and offices. Where it comes from shapes how voters see you.</p>',choices:[
-     {l:'Online small-dollar push',pre:1,s:`≈ ${fmtM(f*0.35+Math.max(0,g.mom)*0.3+(P.sd||0))} · 4 stamina · grows with momentum`,f:()=>{g.stx.fundUses++;spend(1,0,4);const x=f*0.35+Math.max(0,g.mom)*0.3+(P.sd||0)+rnd(-.5,1);g.money+=x;logN(`Online fundraising brings in ${fmtM(x)}.`);closeModal();afterAct();}},
-     {l:'Call time with donors',s:`≈ ${fmtM(f*0.62)} · no stamina`,f:()=>{g.stx.fundUses++;spend(1,0,0);const x=f*0.62+rnd(-.5,.5);g.money+=x;logN(`Four hours of call time: ${fmtM(x)}.`);closeModal();afterAct();}},
-     {l:'High-dollar dinner',s:`≈ ${fmtM(f*1.2)} · 10 stamina · more scrutiny`,f:()=>{g.stx.fundUses++;spend(1,0,10);const x=f*1.2+rnd(0,1.5);g.money+=x;g.heat+=2;g.stx.dinners++;logN(`A $10,000-a-plate dinner raises ${fmtM(x)}. Critics complain about access. (Heat +3)`);closeModal();afterAct();}},
+     {l:'Online small-dollar push',pre:1,s:`≈ ${fmtM(f*0.35+Math.max(0,g.mom)*0.3+(P.sd||0))} · 4 stamina · grows with momentum`,f:()=>{g.stx.fundUses++;spend(1,0,4);const x=wkMul('fund')*(f*0.35+Math.max(0,g.mom)*0.3+(P.sd||0)+rnd(-.5,1));g.money+=x;logN(`Online fundraising brings in ${fmtM(x)}.`);closeModal();afterAct();}},
+     {l:'Call time with donors',s:`≈ ${fmtM(f*0.62)} · no stamina`,f:()=>{g.stx.fundUses++;spend(1,0,0);const x=wkMul('fund')*(f*0.62+rnd(-.5,.5));g.money+=x;logN(`Four hours of call time: ${fmtM(x)}.`);closeModal();afterAct();}},
+     {l:'High-dollar dinner',s:`≈ ${fmtM(f*1.2)} · 10 stamina · more scrutiny`,f:()=>{g.stx.fundUses++;spend(1,0,10);const x=wkMul('fund')*(f*1.2+rnd(0,1.5));g.money+=x;g.heat+=2;g.stx.dinners++;logN(`A $10,000-a-plate dinner raises ${fmtM(x)}. Critics complain about access. (Heat +3)`);closeModal();afterAct();}},
      {l:'Cancel',f:closeModal}]});}},
   {id:'media',n:'National media',d:'Sunday shows, podcasts, late night',c:'1 AP · 6 stamina',ok:()=>g.ap>=1&&g.stamina>=6,
    p:()=>'Momentum gamble · every state at once',
@@ -901,8 +941,10 @@ const ACTS={
   {id:'prep',n:'Debate prep',d:'Mock debates sharpen your next performance (max 3)',c:'1 AP · 5 stamina',ok:()=>g.ap>=1&&g.prep<3&&g.stamina>=5,
    p:()=>{const t=nextDebate();return t<0?'No debates left':'Next debate: '+CAL[t].d;},
    now:()=>'Prep level +1. Nothing changes until the debate.',
-   later:()=>'At the next debate, each prep level boosts "lay out your plan" and "zinger" answers. A big debate win can swing the race. Prep resets after every debate.',
-   f(){spend(1,0,5);g.prep++;logN('Mock debate session. Prep level '+g.prep+'.');afterAct();}},
+   later:()=>`Pick a focus: a likely topic (${likelyTopics().slice(0,2).map(k=>II[k].n).join(', ')} right now), your opponent's record, or one-liners. Prep resets after every debate.`,
+   f(){const lt=likelyTopics();modal({k:'Debate prep',t:'What do you drill?',body:'<p>Questions usually come from the issues voters care most about right now. Drilling a topic makes your plan answers and follow-ups much stronger on it.</p>',choices:lt.map((i,n)=>({l:II[i].n,s:(n<2?'Very likely topic':'Possible topic')+((g.drill||[]).includes(i)?' · already drilled':''),f:()=>{spend(1,0,5);g.prep=Math.min(3,g.prep+1);g.drill=(g.drill||[]).concat([i]);logN('Mock debate session on '+II[i].n.toLowerCase()+'.');closeModal();afterAct();}})).concat([
+     {l:'Your opponent\'s record',s:'Sharper attacks and comebacks',f:()=>{spend(1,0,5);g.prep=Math.min(3,g.prep+1);g.drillO=(g.drillO||0)+1;logN('Your team builds an attack book on your opponent.');closeModal();afterAct();}},
+     {l:'One-liners',s:'Better zingers and comebacks',f:()=>{spend(1,0,5);g.prep=Math.min(3,g.prep+1);g.drillZ=(g.drillZ||0)+1;logN('Your writers workshop a dozen one-liners.');closeModal();afterAct();}},{l:'Cancel',f:closeModal}])});}},
   {id:'rest',n:'Rest & recharge',d:'Recover 30 stamina. Tired candidates make gaffes.',c:'1 AP',ok:()=>g.ap>=1&&g.stamina<100,
    p:()=>'Recharge your stamina',
    now:()=>'A big stamina recharge.',
@@ -919,7 +961,8 @@ const ACTS={
    later:()=>'Positions decide how each voter bloc sees you, in every state, for the rest of the game. If credibility gets too low, you lose support everywhere.',
    f(){openStanceModal();}},
  ]};
-function afterAct(){g.stx.maxHeat=Math.max(g.stx.maxHeat,g.heat);checkMid();render();}
+Object.values(ACTS).forEach(arr=>arr.forEach(a=>{const f=a.f;a.f=function(){mk('Earlier this turn');g._act=a.n;return f.apply(this,arguments);};}));
+function afterAct(){mk(g._act||'Your campaign');g.stx.maxHeat=Math.max(g.stx.maxHeat,g.heat);checkMid();render();}
 
 function topRival(){return g.rivals.filter(r=>r.active).sort((a,b)=>(g.del[b.id]||0)+b.mom*20-((g.del[a.id]||0)+a.mom*20))[0];}
 
@@ -1095,7 +1138,7 @@ function runTurnEvent(){
   if(Math.random()<0.25)pendingAfter=()=>{const p2=EVENTS.filter(e=>!g.usedEv.includes(e.id)&&(!e.when||e.when()));if(p2.length){showEvent(pickOne(p2),false,true);}};
 }
 function showEvent(e,wild,second){
-  g.usedEv.push(e.id);
+  g.usedEv.push(e.id);g._evt=(wild?'Wildcard: ':'')+e.t;
   const st=e.st?e.st():null;
   const body=e.b(st);
   if(e.pre)e.pre();
@@ -1104,7 +1147,7 @@ function showEvent(e,wild,second){
   checkMid();
 }
 function launchEvent(){
-  const P=C[g.cand];
+  const P=C[g.cand];g._evt='Your campaign launch';
   modal({k:'Q2 2027 · Announcement',t:'Where do you launch?',body:`<p>It's official: you're running for President of the United States. Where you announce sends the first message.</p>`,choices:[
    {l:P.home?'Hometown rally in '+S[P.home].n:'A rally in the heartland',s:'Momentum and a home-state base',f:()=>res(()=>{g.mom+=1.5;addEff(P.home||'OH',2);return 'Twenty thousand people and a marching band. A strong first image. (Momentum +1.5)';})},
    {l:'A diner in Iowa, then New Hampshire',s:'Early-state effort',f:()=>res(()=>{addEff('IA',2);addEff('NH',2);return 'Retail politics from day one. (+2 effort in IA and NH)';})},
@@ -1112,19 +1155,19 @@ function launchEvent(){
    {l:'Livestream announcement video',s:'Cheap and raises money',f:()=>res(()=>{g.money+=3.5;g.mom+=.5;return 'The video gets 9 million views and raises $3.5M in 24 hours.';})},
   ]});
 }
-function res(fn){const out=fn();g.cred=clamp(g.cred,0,100);g.stamina=clamp(g.stamina,0,100);g.heat=Math.max(0,g.heat);g.mom=clamp(g.mom,-12,12);
+function res(fn){mk('Earlier this turn');const out=fn();g.cred=clamp(g.cred,0,100);g.stamina=clamp(g.stamina,0,100);g.heat=Math.max(0,g.heat);g.mom=clamp(g.mom,-12,12);mk(g._evt||'Campaign news');
   modal({k:'Outcome',t:'What happened',body:`<p>${esc(out)}</p>`,choices:[{l:'Continue',f:()=>{closeModal();render();if(pendingAfter){const a=pendingAfter;pendingAfter=null;a();}}}]});}
 let pendingAfter=null;
 
 /* =========================================================
    DEBATES
    ========================================================= */
-function runDebate(kind,done){
+function runDebate(kind,done){mk('Earlier this turn');
   if(kind==='vp'){
     if(!g.vp||!g.oppVp){logN('No vice-presidential debate this cycle: '+(g.vp?'your opponent has':'you have')+' no running mate.');done();return;}
     const mine=cand(g.vp),theirs=cand(g.oppVp);
     let a=stat(mine,2)+(vpPerk(g.vp)==='debate'?3:0)+rnd(-3,3), b=stat(theirs,2)+(vpPerk(g.oppVp)==='debate'?3:0)+rnd(-3,3);
-    const d=clamp((a-b)*0.35,-2.5,2.5);g.mom+=d;g.oppMom-=d*.5;
+    const d=clamp((a-b)*0.35,-2.5,2.5);g.mom+=d;g.oppMom-=d*.5;mk('VP debate');
     const t=d>0.4?`${mine.n} wins the VP debate in snap polls.`:d<-0.4?`${theirs.n} gets the better of ${mine.n} in the VP debate.`:'The VP debate is a draw that changes few minds.';
     logN(t+' (Momentum '+sgn(d)+')');
     modal({k:'VP debate',t:'The undercard',body:`<p>${esc(t)}</p><p class="fx">Momentum ${sgn(d)}</p>`,choices:[{l:'Continue',f:()=>{closeModal();done();}}]});
@@ -1134,8 +1177,8 @@ function runDebate(kind,done){
   const oppSt=i=>kind==='general'?g.oppStances[i]:rivalStances(opp.id)[i];
   debateEngine({kind,opp,oppSt,done:(total,own,recap)=>{
     g.prep=0;
-    const d=clamp(total*0.32,-4.5,4.5);g.stx.debT++;if(d>0.5)g.stx.debW++;
-    g.mom+=d;if(kind==='general')g.oppMom-=d*.6;else{const r=topRival();if(r)r.mom-=d*.5;}
+    const d=clamp(total*0.32,-4.5,4.5);g.stx.debT++;if(d>0.5)g.stx.debW++;if(d>1&&isPri())g.nid=Math.min(3,(g.nid||0)+0.4);
+    g.mom+=d;if(kind==='general')g.oppMom-=d*.6;else{const r=topRival();if(r)r.mom-=d*.5;}mk(kind==='general'?'The presidential debate':'The primary debate');
     const hl=d>2?'Snap polls say you won the debate decisively.':d>0.5?'You win the debate on points.':d>-0.5?'Pundits call the debate a draw.':d>-2?'Snap polls give the debate to '+opp.n+'.':'A rough night. You lost the debate badly.';
     logN(hl+' (Momentum '+sgn(d)+')');
     modal({k:'Post-debate',t:hl,body:`<div class="fx">${recap.map(esc).join('<br>')}<br><br>Momentum ${sgn(d)}</div>`,choices:[{l:'Continue',f:()=>{closeModal();done();}}]});
@@ -1163,57 +1206,151 @@ function leanWord(i,v){const w=want(i),d=v-w,a=Math.abs(d);
 function farWord(i,v){const w=want(i);if(isPri())return Math.abs(v)<Math.abs(w)?'a position our voters gave up on long ago':'a sure way to lose in November';return v<w?'too far left for this country':'too far right for this country';}
 const DBASE={D:['young','black','union'],R:['rural','work']},DSWING=['sub','senior','latino'];
 let DBG_TAC=null;
+/* ---------- Debate content, issue by issue ---------- */
+const DX={
+ economy:{hook:{L:'a wealth tax and price controls that would send prices even higher',C:'half-measures while families fall further behind',R:'tax cuts for the rich and tariffs that work like a sales tax on every family'},
+  def:{L:'My plan cuts costs for working families and asks billionaires to pay their fair share. That isn\'t radical. It\'s fair.',C:'My plan is paid for line by line, and it lowers rent and grocery bills.',R:'Lower taxes and cheaper energy bring prices down. It worked before and it will work again.'},
+  ang:[{l:'Talk about rent and housing',s:'Young voters and suburbanites feel it most',tag:'numbers',say:'"Rent is the biggest bill most families pay. I will get four million homes built and cut the red tape that blocks them."',bl:{young:.5,sub:.3},st:2,base:1,fw:.5},
+   {l:'Blame corporate price-gouging',s:'The base loves it · business-minded voters don\'t',tag:'populist',say:'"Corporations posted record profits while you paid record prices. That ends when I\'m president."',bl:{union:.4,work:.3,sub:-.2},st:0,base:1.5,fw:.3,req:'LC'},
+   {l:'Make it about tariffs and factories',s:'Plays in the Rust Belt · economists push back',tag:'populist',say:'"We stopped making things in this country. I\'ll bring the factories home, and the jobs with them."',bl:{work:.5,union:.3,sub:-.2},st:0,base:1.3,fw:.3,req:'CR'},
+   {l:'Tell the story of a family you met',s:'Emotional · strong if you are disciplined',tag:'story',say:'"I met a mom in {city} who works two jobs and still skips meals so her kids can eat. She is who I\'m running for."',bl:{work:.3},st:3,base:1.2,fw:.2}],
+  fu:{q:'How exactly do you bring prices down, and how fast?',o:[{l:'Give specifics and a timeline',s:'Strong if you drilled this topic · shaky if not',prep:1,say:'"Three things in year one: build housing, cap junk fees, and cut the costs that land on your bill every month."',st:2,base:.5,bl:{sub:.3}},
+   {l:'Promise relief checks',s:'Popular now · suburbanites and deficit hawks wince',say:'"Families will get direct relief in my first hundred days."',st:0,base:1.5,bl:{young:.3,work:.3,sub:-.3}},
+   {l:'Admit there is no quick fix',s:'Honest · credibility up, less buzz',say:'"Anyone who promises overnight relief is not leveling with you. Here is what will actually work."',st:3,base:.6,cred:2}]}},
+ ai:{hook:{L:'heavy-handed rules that hand the future to China',C:'a toothless wait-and-see approach while jobs disappear',R:'letting Big Tech automate away millions of jobs with no plan for the workers'},
+  def:{L:'My plan keeps America ahead and makes sure workers aren\'t thrown away. We can do both.',C:'Smart guardrails and real retraining. That is how you lead on AI without wrecking jobs.',R:'Let American companies win the race and the jobs will follow. Washington regulators won\'t build anything.'},
+  ang:[{l:'Promise a worker guarantee',s:'Union and working-class voters respond',tag:'populist',say:'"If AI takes your job, my administration will guarantee you the training and the income to land your next one."',bl:{union:.5,work:.4},st:0,base:1.2,fw:.4,req:'LC'},
+   {l:'Frame it as a race with China',s:'Security framing that plays broadly',tag:'tough',say:'"Whoever leads on AI leads the century. It will be America, not China."',bl:{sub:.2,senior:.2},st:2,base:1.2,fw:.3},
+   {l:'Go after Big Tech',s:'Populist on left and right · tech donors hate it',tag:'populist',say:'"A handful of tech billionaires are making decisions that affect every family. That has to change."',bl:{work:.4,rural:.2},st:0,base:1.1,fw:.2},
+   {l:'Talk about deepfakes and kids',s:'Parents and seniors are worried',tag:'story',say:'"My kids see fake videos in their feeds every day. Parents deserve tools to protect them."',bl:{sub:.3,senior:.3},st:3,base:1.2,fw:.2}],
+  fu:{q:'Would you slow AI down if it meant losing ground to China?',o:[{l:'"No. We lead, with guardrails."',s:'Middle of the road · safe',say:'"We don\'t slow down. We lead, and we set the rules for the world."',st:2,base:1,bl:{sub:.2}},
+   {l:'"Yes, if it protects workers."',s:'Unions cheer · security hawks don\'t',say:'"I\'m not trading a million American jobs for a faster chatbot."',st:0,base:1,bl:{union:.5,work:.3,sub:-.2}},
+   {l:'Give the technical answer',s:'Impressive if you drilled it · dry if not',prep:1,say:'"Compute thresholds, safety testing, and export controls on chips. That keeps us safe and ahead."',st:2,base:.3,cred:1}]}},
+ health:{hook:{L:'a government takeover that ends private insurance for 150 million people',C:'tinkering around the edges while premiums keep climbing',R:'letting insurers deny people with preexisting conditions again'},
+  def:{L:'Under my plan nobody pays a premium or a deductible again, and you keep your doctor.',C:'My plan protects what works and fixes what doesn\'t. Nobody loses coverage.',R:'My plan protects preexisting conditions and gives you more choices, not fewer.'},
+  ang:[{l:'Make it about drug prices',s:'Seniors care most · almost no one objects',tag:'numbers',say:'"Americans pay three times what the rest of the world pays for the same pills. I will end that."',bl:{senior:.6},st:2,base:1.4,fw:.2},
+   {l:'Tell a patient\'s story',s:'Emotional · strong with discipline',tag:'story',say:'"A woman in {city} told me she was rationing insulin. In America. No one should have to make that choice."',bl:{senior:.2,black:.2},st:3,base:1.2,fw:.3},
+   {l:'Defend coverage for preexisting conditions',s:'Suburbanites and seniors respond',tag:'numbers',say:'"If you have asthma, diabetes or cancer, you will never be denied coverage. Period."',bl:{sub:.4,senior:.3},st:2,base:1.2,fw:.4,req:'LC'},
+   {l:'Push choice and lower premiums',s:'Free-market framing · rural and working-class voters',tag:'numbers',say:'"Washington\'s one-size-fits-all approach drove your premiums up. More choice brings them down."',bl:{rural:.4,work:.3},st:2,base:1.2,fw:.4,req:'CR'}],
+  fu:{q:'Will anyone lose the insurance they have now under your plan?',o:[{l:'"No one. Guaranteed."',s:'Clean answer · fact-checkers will look hard',say:'"Not one person."',st:3,base:1.2,risk:1},
+   {l:'Explain the transition honestly',s:'Strong if you drilled it · credibility up',prep:1,say:'"Some plans will change, and here is exactly how you\'ll be protected while they do."',st:2,base:.4,cred:2},
+   {l:'Turn it on your opponent',s:'Works if their plan is the unpopular one',say:'"The only plan that takes away coverage is the one on the other side of this stage."',st:2,base:.6,atk:1}]}},
+ immig:{hook:{L:'open borders and amnesty that reward breaking the law',C:'amnesty by another name with a few cameras at the border',R:'mass deportations that would tear families apart and wreck our farms'},
+  def:{L:'My plan secures the border and fixes a broken system. Those go together.',C:'More agents, more technology, and a fair deal for Dreamers. Most Americans agree.',R:'A secure border is a basic duty of government. Enforcing the law isn\'t cruel.'},
+  ang:[{l:'Lead with border security',s:'Seniors and working-class voters · young voters cool',tag:'tough',say:'"First things first: we secure the border. More agents, more technology, fewer drugs."',bl:{senior:.3,work:.3,young:-.2},st:2,base:1.2,fw:.4},
+   {l:'Talk about Dreamers and families',s:'Latino and young voters respond · some see it as soft',tag:'story',say:'"Kids who were brought here as babies, who serve in our military, deserve a path forward."',bl:{latino:.6,young:.3,rural:-.3},st:3,base:1.1,fw:.3,req:'LC'},
+   {l:'Make it about fentanyl and crime',s:'Hard-hitting · older and rural voters',tag:'tough',say:'"Fentanyl coming across that border kills tens of thousands of Americans every year. That is a national emergency."',bl:{senior:.3,rural:.3,latino:-.2},st:2,base:1.3,fw:.3,req:'CR'},
+   {l:'Talk about workers and the economy',s:'Farm and business voters like it',tag:'numbers',say:'"Farmers can\'t find workers. Builders can\'t find workers. A legal system that works fixes that."',bl:{rural:.2,sub:.2},st:2,base:1.1,fw:.3}],
+  fu:{q:'Yes or no: should the people already here illegally be able to stay?',o:[{l:'"Most, if they earn it."',s:'Middle answer · rural voters grumble',say:'"Pay a fine, pass a background check, get in line. Most Americans support that."',st:2,base:1,bl:{latino:.4,sub:.2,rural:-.3}},
+   {l:'"No. The law is the law."',s:'Base on the right loves it · Latino voters cool',say:'"If you broke the law to get here, you don\'t get rewarded for it."',st:2,base:1,bl:{rural:.4,senior:.2,latino:-.5}},
+   {l:'"Border first, then we talk."',s:'Safer · strong if you drilled it',prep:1,say:'"Nothing else happens until the border is secure. That is the order of operations."',st:3,base:.8,bl:{senior:.2}}]}},
+ foreign:{hook:{L:'weakness that invites the next war',C:'more endless entanglements nobody voted for',R:'reckless saber-rattling that could drag us into war'},
+  def:{L:'Strength means alliances that work and wars we never have to fight.',C:'Steady, strong, and with our allies. That is what keeps the peace.',R:'Peace through strength isn\'t a slogan. It\'s how the Cold War was won.'},
+  ang:[{l:'Speak like a commander-in-chief',s:'Gravitas · rewards discipline',tag:'tough',say:'"To any adversary watching tonight: do not test the United States."',bl:{senior:.3,sub:.2},st:3,base:1.3,fw:.3},
+   {l:'Talk about bringing troops home',s:'Restraint · young voters and some on the right',tag:'populist',say:'"I want our sons and daughters home, not in another war without end."',bl:{young:.4,rural:.2},st:0,base:1.1,fw:.3},
+   {l:'Make it about China and jobs',s:'Economic nationalism · Rust Belt likes it',tag:'populist',say:'"China is stealing our technology and our jobs. I will stand up to them."',bl:{work:.4,union:.2},st:0,base:1.1,fw:.2}],
+  fu:{q:'Would you send American troops to defend Taiwan?',o:[{l:'"I won\'t telegraph that."',s:'Experts nod · strong if you drilled it',prep:1,say:'"No president should tell Beijing our plans on a debate stage."',st:2,base:.8,cred:1},
+   {l:'"Yes. We stand with allies."',s:'Hawkish · older voters yes, young voters no',say:'"Yes. America keeps its word."',st:2,base:1,bl:{senior:.3,young:-.3}},
+   {l:'"I\'ll do everything to avoid war."',s:'Young voters like it · hawks pounce',say:'"I will do everything in my power to keep American troops out of a war with China."',st:3,base:1,bl:{young:.3,senior:-.2}}]}},
+ integrity:{hook:{L:'tearing up the Constitution to pack the courts',C:'cosmetic ethics rules that change nothing',R:'a power grab that puts one man above the law'},
+  def:{L:'Fixing a broken system isn\'t radical. Most Americans want the same reforms I do.',C:'Ban stock trading, set term limits, secure our elections. Who is against that?',R:'Draining the swamp means making the bureaucracy answer to voters.'},
+  ang:[{l:'Push the stock-trading ban',s:'Popular across both parties',tag:'numbers',say:'"Members of Congress shouldn\'t get rich trading on secrets. I will sign the ban on day one."',bl:{sub:.3,work:.3,young:.2},st:2,base:1.4,fw:.2},
+   {l:'Promise to accept the results',s:'Reassures suburbanites · your base may ask why',tag:'tough',say:'"Win or lose, I will accept the results, and I\'m asking my opponent to say the same."',bl:{sub:.5,senior:.2},st:3,base:1.1,fw:.2},
+   {l:'Take on the establishment',s:'Outsider energy · works when voters are angry',tag:'populist',say:'"Both parties built this swamp. I\'m the one who will drain it."',bl:{work:.4,young:.3,sub:-.2},st:0,base:1.2,fw:.3}],
+  fu:{q:'Will you pledge right now to accept the result of this election?',o:[{l:'"Yes, unequivocally."',s:'Suburbanites like it · some of your base grumbles',say:'"Yes. No conditions."',st:3,base:1.1,bl:{sub:.4,rural:-.2}},
+   {l:'"If it\'s fair and secure."',s:'A hedge · swing voters notice',say:'"I will accept a fair election, with every legal vote counted."',st:2,base:.6,bl:{rural:.2,sub:-.3}},
+   {l:'Turn it on your opponent',s:'Aggressive',say:'"I\'d like to hear my opponent answer that one."',st:2,base:.6,atk:1}]}},
+ energy:{hook:{L:'a war on American energy that sends gas prices through the roof',C:'an all-of-the-above slogan with no plan behind it',R:'handing the future to Big Oil while the bills keep rising'},
+  def:{L:'Clean energy is the biggest jobs opportunity in a generation, and now it\'s cheaper too.',C:'Nuclear, gas, solar, all of it, plus faster permits. That is how you lower bills.',R:'American energy means American jobs and lower prices at the pump.'},
+  ang:[{l:'Talk about gas prices and bills',s:'Everyone feels it · strongest with working-class and rural voters',tag:'numbers',say:'"Your power bill went up again this year. My plan cuts it, starting with more supply."',bl:{work:.4,rural:.3,senior:.2},st:2,base:1.3,fw:.3},
+   {l:'Talk about clean-energy jobs',s:'Young voters and unions respond · rural voters don\'t',tag:'populist',say:'"Every solar farm and battery plant is a union job that can\'t be shipped overseas."',bl:{young:.5,union:.3,rural:-.2},st:0,base:1.1,fw:.4,req:'LC'},
+   {l:'Make it about energy independence',s:'Security framing · center and right',tag:'tough',say:'"We should never depend on dictators for the energy that runs our country."',bl:{rural:.3,senior:.3,young:-.2},st:2,base:1.2,fw:.4,req:'CR'}],
+  fu:{q:'Yes or no: would you ban fracking?',o:[{l:'"No."',s:'Pennsylvania approves · climate activists don\'t',say:'"No. I won\'t ban fracking."',st:2,base:1,bl:{work:.3,young:-.3}},
+   {l:'"We\'ll phase it out over time."',s:'Climate voters cheer · swing voters worry',say:'"We will transition, carefully, with every worker protected."',st:2,base:.8,bl:{young:.5,work:-.4}},
+   {l:'Explain the nuance',s:'Credible if you drilled it',prep:1,say:'"Tighter methane rules, faster permits for everything else, and no bans. Here\'s how it works."',st:2,base:.3,cred:1}]}},
+ safety:{hook:{L:'defunding the police and letting criminals walk free',C:'tough talk with nothing behind it',R:'more guns on the streets and no plan for the violence'},
+  def:{L:'I want more police, better trained, and fewer weapons of war on our streets.',C:'Fund the police and fix the background-check system. Most gun owners agree with me.',R:'Backing the police and punishing criminals is how you make cities safe.'},
+  ang:[{l:'Back the police, loudly',s:'Seniors and suburbanites · some young voters cool',tag:'tough',say:'"I will fund the police. Every city, every department. Safety comes first."',bl:{senior:.4,sub:.3,young:-.2},st:2,base:1.2,fw:.4},
+   {l:'Speak for families who lost someone',s:'Emotional · strong with discipline',tag:'story',say:'"I have sat with mothers who buried their children. I won\'t accept that as normal."',bl:{black:.4,sub:.2},st:3,base:1.2,fw:.3},
+   {l:'Push universal background checks',s:'Popular · some rural voters bristle',tag:'numbers',say:'"Nine in ten Americans support universal background checks. Let\'s just do it."',bl:{sub:.4,rural:-.3},st:2,base:1.1,fw:.3,req:'LC'},
+   {l:'Defend the Second Amendment',s:'Rural voters cheer · suburban parents may not',tag:'tough',say:'"I will never let Washington take away your right to protect your family."',bl:{rural:.6,sub:-.3},st:2,base:1.1,fw:.3,req:'CR'}],
+  fu:{q:'What would you say to the parents from the last school shooting?',o:[{l:'Speak from the heart',s:'Big moment either way · discipline matters',say:'"That I\'m sorry. And that sorry isn\'t enough, so here is what I will do."',st:3,base:.8,big:1},
+   {l:'Lay out a specific plan',s:'Strong if you drilled it',prep:1,say:'"School security funding, red-flag laws, and a counselor in every school."',st:2,base:.4,bl:{sub:.3}},
+   {l:'Pivot to mental health',s:'Safe · few voters object',say:'"We have to treat the mental-health crisis behind so much of this violence."',st:3,base:.8,bl:{rural:.2}}]}},
+};
+function dCity(){return CITY[pickOne(BG)]||'Ohio';}
+function likelyTopics(){return IK.slice().sort((a,b)=>natSal(b)-natSal(a)).slice(0,4);}
 function debateEngine(o){
   const P=C[g.cand],O=o.opp,ml=lastN(P.n),ol=lastN(O.n),myCol=partyHex(g.party),opCol=O.p===g.party?'#c07be0':partyHex(O.p);
   const top=IK.slice().sort((a,b)=>natSal(b)-natSal(a)+rnd(-.25,.25)).slice(0,3);
-  let q=0,total=0,own=0;const recap=[];const title=o.h2h||o.kind==='general'?'Presidential debate':'Primary debate';
+  const drill=g.drill||[],dO=g.drillO||0,dZ=g.drillZ||0;
+  let q=0,total=0,own=0;const recap=[];const title=o.h2h||o.kind==='general'?'Presidential debate':'Primary debate';const pri=isPri()&&!o.h2h;
   const line=(who,txt,col)=>`<div class="dl" style="border-left-color:${col}"><b>${esc(who)}</b><span>${esc(txt)}</span></div>`;
   const room=()=>{const v=clamp(total/7,-1,1);const lab=total>3?'Leaning your way':total>1?'Slightly your way':total>-1?'Even':total>-3?`Slightly ${ol}'s way`:`Leaning ${ol}'s way`;
     return `<div class="room"><span>The room</span><div class="rbar" style="background:linear-gradient(90deg,${opCol}66,#3a435a 42%,#3a435a 58%,${myCol}66)"><i style="left:${50+v*46}%"></i></div><b>${esc(lab)}</b></div>`;};
+  const blocs=(bl,m)=>{const ch={};for(const k in (bl||{})){addBloc(k,bl[k]*m);ch[k]=bl[k]*m;}return reactText(ch);};
+  const hookOn=(i,v)=>DX[i].hook[sideOf(v)];
   const ask=()=>{
     if(q>=3){closing();return;}
-    const i=top[q],myV=g.stances[i],opV=o.oppSt(i);const tx=[line('Moderator','"'+pickOne(DQ[i])+'"','#8a93a6')];
-    modal({k:`${title} · Question ${q+1} of 3`,t:II[i].n,wide:true,body:`<div class="dx">${tx.join('')}</div><div class="dctx"><span><b>You:</b> ${esc(posTxt(i,myV))} <i>· ${leanWord(i,myV)}</i></span><span><b>${esc(ol)}:</b> ${esc(posTxt(i,opV))} <i>· ${leanWord(i,opV)}</i></span><span class="mut">Prep ${g.prep}/3${g.oppo>0?' · oppo files in hand':''}${g.stamina<30?' · you look tired':''}</span></div>${room()}`,choices:[
-      {l:'Lay out your plan in detail',s:'Best when your position is mainstream and you have prepped',f:()=>open('plan',i,myV,opV,tx)},
-      {l:'Pivot to your core message',s:'Safe, but invites a "you dodged" reply',f:()=>open('pivot',i,myV,opV,tx)},
-      {l:`Go after ${ol}'s record`,s:'Big swings either way'+(g.oppo>0?' · your oppo files help':''),f:()=>open('attack',i,myV,opV,tx)},
-      {l:'Open with a prepared zinger',s:g.prep?'Prep makes it land':'Risky without prep',f:()=>open('zing',i,myV,opV,tx)}]});
+    const i=top[q],myV=g.stances[i],opV=o.oppSt(i),side=sideOf(myV);const X=DX[i];
+    const angs=shuffle(X.ang.filter(a=>!a.req||a.req.includes(side))).slice(0,2);
+    const tx=[line('Moderator','"'+pickOne(DQ[i])+'"','#8a93a6')];const dr=drill.includes(i);
+    const ctx=`<div class="dctx"><span><b>You:</b> ${esc(posTxt(i,myV))} <i>· ${leanWord(i,myV)}</i></span><span><b>${esc(ol)}:</b> ${esc(posTxt(i,opV))} <i>· ${leanWord(i,opV)}</i></span><span class="${dr?'pos':'mut'}">${dr?'You drilled this topic in prep.':'You did not drill this topic.'}${dO?' · Oppo prep on '+esc(ol)+'.':''}${dZ?' · One-liners ready.':''}${g.oppo>0?' · Oppo files in hand.':''}${g.stamina<30?' · You look tired.':''}</span></div>`;
+    modal({k:`${title} · Question ${q+1} of 3`,t:II[i].n,wide:true,body:`<div class="dx">${tx.join('')}</div>${ctx}${room()}`,choices:[
+      {l:'Lay out your plan',s:'Best when your position is mainstream'+(dr?' · you drilled this':''),f:()=>open({t:'plan'},i,myV,opV,tx)}]
+      .concat(angs.map(a=>({l:a.l,s:a.s,f:()=>open({t:'ang',a},i,myV,opV,tx)})))
+      .concat([{l:`Go after ${ol}'s position`,s:'Big swings either way'+(dO||g.oppo>0?' · your oppo work helps':''),f:()=>open({t:'attack'},i,myV,opV,tx)},
+      {l:'Open with a zinger',s:dZ||g.prep?'You have lines ready':'Risky without prep',f:()=>open({t:'zing'},i,myV,opV,tx)}])});
   };
-  const open=(type,i,myV,opV,tx)=>{
-    const myD=Math.abs(myV-want(i)),opD=Math.abs(opV-want(i)),iss=DT[i]||II[i].n.toLowerCase();let sc,say;
-    if(type==='plan'){sc=stat(P,2)*.45+g.prep*1.1+(1.5-myD)*2+rnd(-2,2)-(P.out?1.5:0)+((P.owns||[]).includes(i)?1.5:0);say=`"Here's exactly what I'll do: ${lc1(posTxt(i,myV))}. Not someday. In my first year."`;}
-    else if(type==='pivot'){sc=3+stat(P,3)*.15+rnd(-1,1);say=`"What I hear ${P.home&&S[P.home]?'in '+S[P.home].n+' and ':''}everywhere I go is simple: people want a government that finally works for them. That's what this campaign is about."`;}
-    else if(type==='attack'){sc=stat(P,2)*.5+rnd(-5,5)+(g.oppo>0?2:0)+(opD>=1?1:0);if(sc<1.5)g.heat+=2;say=`"${ol} wants ${lc1(posTxt(i,opV))}. `+(opD>=1?`That's ${farWord(i,opV)}, and voters know it."`:`They had their chance to deliver on ${iss} and they didn't."`);}
-    else {sc=stat(P,0)*.25+g.prep*1.4+rnd(-4,5)+(P.out?1:0);say=pickOne(ZING)(ol);}
+  const open=(A,i,myV,opV,tx)=>{
+    const myD=Math.abs(myV-want(i)),opD=Math.abs(opV-want(i)),iss=DT[i]||II[i].n.toLowerCase(),dr=drill.includes(i)?1.5:0;let sc,say,bt='';
+    if(A.t==='plan'){sc=stat(P,2)*.45+g.prep*.7+dr+(1.5-myD)*2+rnd(-2,2)-(P.out?1.5:0)+((P.owns||[]).includes(i)?1.5:0);say=`"Here's exactly what I'll do: ${lc1(posTxt(i,myV))}. Not someday. In my first year."`;}
+    else if(A.t==='ang'){const a=A.a;sc=a.base+stat(P,a.st)*.45+(1.5-myD)*2*a.fw+dr+g.prep*.3+rnd(-2,2)+((P.owns||[]).includes(i)?1:0);say=a.say.replace('{city}',dCity());bt=blocs(a.bl,.6);}
+    else if(A.t==='attack'){sc=stat(P,2)*.5+rnd(-5,5)+(g.oppo>0?2:0)+dO+(opD>=1?1:0);if(sc<1.5)g.heat+=2;
+      say=pri?(Math.abs(opV)<Math.abs(want(i))?`"${ol}'s position on ${iss} sounds like something the other party would say. Our voters deserve a fighter."`:`"${ol} is offering ${hookOn(i,opV)}. That's how we lose in November."`):`"Let's be clear about what ${ol} is offering: ${hookOn(i,opV)}.`+(opD>=1?` That's ${farWord(i,opV)}."`:` Voters deserve better."`);}
+    else {sc=stat(P,0)*.25+g.prep*1.1+dZ*1.2+rnd(-4,5)+(P.out?1:0);say=pickOne(ZING)(ol);}
     if(g.stamina<30)sc-=1.5;
-    tx.push(line('You',say,myCol));
-    const os0=stat(O,2);const w={hit:1+(myD>=1?2.5:0)+(type==='plan'&&myD>=1?1:0),contrast:1+(os0>=8?1:0)+(opD<0.8?1.5:0)+(type==='pivot'?1.5:0),zing:.6+(os0>=8?.8:0)+(type==='zing'?1:0),dodge:.3+(opD>=1.2?2:0),above:.4+(type==='attack'?2:0)};
+    tx.push(line('You',say,myCol));if(bt)tx.push(`<div class="dbt">${esc(bt.trim())}</div>`);
+    const tag=A.t==='ang'?A.a.tag:A.t;
+    const go=()=>reply(A,i,myV,opV,tx,sc,myD,opD,iss,tag);
+    if((A.t==='plan'||A.t==='ang')&&Math.random()<(A.t==='plan'?0.85:0.55))followUp(A,i,myV,opV,tx,sc,myD,opD,iss,tag);else go();
+  };
+  const followUp=(A,i,myV,opV,tx,sc,myD,opD,iss,tag)=>{
+    const F=DX[i].fu;tx.push(line('Moderator',`"Follow-up: ${F.q}"`,'#8a93a6'));const dr=drill.includes(i);
+    modal({k:`${title} · Follow-up · Question ${q+1}`,t:'The moderator presses you',wide:true,body:`<div class="dx">${tx.join('')}</div>${room()}`,choices:F.o.map(f=>({l:f.l,s:f.s+(f.prep?(dr?' · you drilled it':' · you did not drill it'):''),f:()=>{
+      let x=f.base+stat(P,f.st)*.35+rnd(-1.5,1.5);if(f.prep)x+=dr?2.5:-1;if(f.big)x+=rnd(-3,3)+(stat(P,3)-6)*.5;if(f.atk)x+=opD>=1?1:-.7;
+      if(f.risk&&Math.random()<0.35){x-=2.5;g.heat+=1;}if(f.cred)g.cred+=f.cred;
+      tx.push(line('You',f.say,myCol));const bt=blocs(f.bl,.7);if(bt)tx.push(`<div class="dbt">${esc(bt.trim())}</div>`);
+      if(f.risk&&x<0)tx.push(`<div class="dbt neg">Fact-checkers flag the answer within minutes.</div>`);
+      reply(A,i,myV,opV,tx,sc+x*.6,myD,opD,iss,tag);}}))});
+  };
+  const reply=(A,i,myV,opV,tx,sc,myD,opD,iss,tag)=>{
+    const os0=stat(O,2);const w={hit:1+(myD>=1?2.5:0)+(A.t==='plan'&&myD>=1?1:0)+(tag==='populist'?1:0),contrast:1+(os0>=8?1:0)+(opD<0.8?1.5:0)+(tag==='story'?1.2:0),zing:.6+(os0>=8?.8:0)+(A.t==='zing'?1:0)+(tag==='numbers'?.6:0),dodge:.3+(opD>=1.2?2:0),above:.4+(A.t==='attack'?2:0)+(tag==='tough'?.8:0)};
     let r=Math.random()*Object.values(w).reduce((a,b)=>a+b,0),tac='hit';for(const k in w){r-=w[k];if(r<=0){tac=k;break;}}
     let os=os0*.45+rnd(-2,3)+1.5,osay;
-    if(tac==='hit'){os+=myD>=1?1:-.5;osay=myD>=1?`"You just heard it. ${ml} wants ${lc1(posTxt(i,myV))}. That's ${farWord(i,myV)}, and it's the last thing families need."`:`"Nice words. But ${ml} has had years to do something about ${iss} and has nothing to show for it."`;}
-    else if(tac==='contrast'){os+=(1.2-opD)*.8;osay=type==='plan'?`"Here's the difference between us. My answer: ${lc1(posTxt(i,opV))}. Simple, and it works."`:`"Let me be specific, since ${ml} wasn't: ${lc1(posTxt(i,opV))}. That's a real plan."`;}
+    if(tac==='hit'){os+=myD>=1?1:-.5;osay=myD>=0.8?(pri?`"${ml} is offering ${hookOn(i,myV)}. That's ${farWord(i,myV)}."`:`"What ${ml} is really offering is ${hookOn(i,myV)}. That's ${farWord(i,myV)}."`):`"Nice words. But ${ml} has had years to do something about ${iss} and has nothing to show for it."`;}
+    else if(tac==='contrast'){os+=(1.2-opD)*.8;osay=tag==='story'?`"Stories are moving, but they aren't a plan. Mine is: ${lc1(posTxt(i,opV))}."`:A.t==='plan'?`"Here's the difference between us. My answer: ${lc1(posTxt(i,opV))}. Simple, and it works."`:`"Let me be specific, since ${ml} wasn't: ${lc1(posTxt(i,opV))}. That's a real plan."`;}
     else if(tac==='zing'){os+=rnd(-1.5,2.5);osay=pickOne(OZING)(ml);}
-    else if(tac==='dodge'){os-=1;osay=`"Before I get to that, let me say what this election is really about: whether this country still works for regular people."`;}
-    else {os+=type==='attack'?1:0;osay=`"I'm not going to get down in the mud with ${ml}. The people watching tonight deserve better than insults."`;}
+    else if(tac==='dodge'){os-=1;osay=`"Before I get to ${iss}, let me say what this election is really about: whether this country still works for regular people."`;}
+    else {os+=A.t==='attack'?1:0;osay=`"I'm not going to get down in the mud with ${ml}. The people watching tonight deserve better than insults."`;}
     tx.push(line(O.n,osay,opCol));if(tac==='dodge')tx.push(line('Moderator',`"${ol}, that wasn't the question."`,'#8a93a6'));
-    DBG_TAC=tac;
-    const R=(rt)=>respond(rt,{i,myD,opD,sc,os,tac,tx,iss});
+    DBG_TAC=tac;const R=rt=>respond(rt,{i,myV,opV,myD,opD,sc,os,tac,tx,iss});
     modal({k:`${title} · Your response · Question ${q+1}`,t:tac==='hit'?`${ol} comes right at you`:tac==='contrast'?`${ol} draws a contrast`:tac==='zing'?`${ol} goes for the one-liner`:tac==='dodge'?`${ol} dodges the question`:`${ol} takes the high road`,wide:true,body:`<div class="dx">${tx.join('')}</div>${room()}`,choices:[
       {l:'Fact-check them on the spot',s:'Strong when their claim is unfair or their own plan is out of step',f:()=>R('fact')},
-      {l:'Hit back hard',s:'High risk, high reward'+(g.oppo>0?' · oppo files help':''),f:()=>R('punch')},
-      {l:'Stay calm and talk to voters',s:'Steady; rewards discipline',f:()=>R('calm')},
-      {l:'Laugh it off with a one-liner',s:'Disarms a zinger; can fall flat',f:()=>R('joke')},
+      {l:'Hit back hard',s:'High risk, high reward'+(dO||g.oppo>0?' · your oppo work helps':''),f:()=>R('punch')},
+      {l:'Stay calm and talk to voters',s:'Steady · rewards discipline',f:()=>R('calm')},
+      {l:'Laugh it off with a one-liner',s:'Disarms a zinger · can fall flat'+(dZ?' · you have lines ready':''),f:()=>R('joke')},
       {l:'Demand a straight answer',s:'Punishes a dodge or a holier-than-thou act',f:()=>R('press')}]});
   };
   const respond=(rt,x)=>{
-    const {i,myD,opD,tac,tx,iss}=x;let b,say;
+    const {i,myV,opV,myD,opD,tac,tx,iss}=x;let b,say;
     const M={hit:{fact:myD<1?2.5:-1,punch:.5,calm:1.5,joke:0,press:-1},contrast:{fact:opD>=1?2.5:-.5,punch:1,calm:-.5,joke:-1,press:-1.5},zing:{fact:-1,punch:.5,calm:1,joke:2.5,press:-1},dodge:{fact:0,punch:1,calm:0,joke:.5,press:3},above:{fact:0,punch:-1.5,calm:.5,joke:1,press:1.5}};
     b=M[tac][rt]+rnd(-1,1);
-    if(rt==='fact'){b+=g.prep*.5+(stat(P,2)-6)*.2;say=tac==='hit'&&myD<1?`"That's simply not true, and ${ol} knows it. Look at what I've actually proposed."`:tac==='contrast'?`"${ol}'s plan sounds tidy until you read it. `+(opD>=1?`It's ${farWord(i,o.oppSt(i))}."`:`The numbers don't add up."`):`"Let's get the facts straight. That is not what happened."`;}
-    else if(rt==='punch'){b+=rnd(-2.5,2.5)+(g.oppo>0?1.5:0);say=`"This from someone whose record on ${iss} is a disaster? Please.`+(g.oppo>0?` I have the receipts."`:`"`);}
+    if(rt==='fact'){b+=g.prep*.4+(drill.includes(i)?.8:0)+(stat(P,2)-6)*.2;say=tac==='hit'?`"That's simply not true. ${DX[i].def[sideOf(myV)]}"`:tac==='contrast'?(pri?`"${ol}'s plan sounds tidy until you read it. The numbers don't add up."`:`"${ol}'s plan sounds tidy until you read it. It means ${hookOn(i,opV)}."`):tac==='zing'?`"Cute line. Here are the facts: ${DX[i].def[sideOf(myV)]}"`:`"Notice ${ol} still hasn't answered. I will: ${DX[i].def[sideOf(myV)]}"`;}
+    else if(rt==='punch'){b+=rnd(-2.5,2.5)+(g.oppo>0?1.5:0)+dO*.8;say=`"This from someone whose record on ${iss} is a disaster? Please.`+(g.oppo>0||dO?` I have the receipts."`:`"`);}
     else if(rt==='calm'){b+=(stat(P,3)-6)*.35;say=tac==='hit'||tac==='zing'?`"I'm not here to trade insults. I'm here for the folks at home who are worried about ${iss} tonight."`:`"To the folks at home worried about ${iss}: I see you, and I'll fight for you every single day."`;}
-    else if(rt==='joke'){b+=(stat(P,0)-6)*.3+rnd(-1.5,1.5);say=pickOne(JOKEBACK)(ol);}
-    else {b+=(stat(P,2)-6)*.2;say=`"${ol}, you didn't answer the question. Yes or no: where do you stand?"`;}
+    else if(rt==='joke'){b+=(stat(P,0)-6)*.3+dZ*.9+rnd(-1.5,1.5);say=pickOne(JOKEBACK)(ol);}
+    else {b+=(stat(P,2)-6)*.2;say=`"${ol}, you didn't answer the question. Yes or no: where do you stand on ${iss}?"`;}
     if(rt==='punch'&&b<0)g.heat+=1.5;
     tx.push(line('You',say,myCol));
     const net=x.sc-x.os+b*.75;total+=net;own+=x.sc+b*.75;
@@ -1223,16 +1360,15 @@ function debateEngine(o){
     modal({k:`${title} · Question ${q} of 3`,t:verdict,wide:true,body:`<div class="dx">${tx.join('')}</div><p class="dreact">${esc(react)}</p>${room()}`,choices:[{l:q<3?'Next question':'Closing statements',f:ask}]});
   };
   const closing=()=>{
-    const pri=isPri()&&!o.h2h;
     const C2=(k,l,s,quote)=>({l,s,f:()=>close(k,quote)});
     modal({k:`${title} · Closing statements`,t:'Ninety seconds. Make them count.',wide:true,body:`<p class="mut">${esc(ol)} goes last. How do you close?</p>${room()}`,choices:[
       C2('vision','Optimistic vision','Lifts you if your credibility is strong','"I believe our best days are still ahead of us. Give me the chance, and I\'ll prove it."'),
-      C2('contrast','Draw a sharp contrast','Hammers home a lead; backfires if you are behind',`"You've seen the choice tonight. ${ol} offers more of the same. I offer a way forward."`),
+      C2('contrast','Draw a sharp contrast','Hammers home a lead · backfires if you are behind',`"You've seen the choice tonight. ${ol} offers more of the same. I offer a way forward."`),
       C2('base','Fire up your base',pri?'Primary voters love it':'Energizes your core blocs, cools the middle','"To everyone who has knocked doors and believed in this fight: we are going to win."'),
-      C2('reach','Reach across the aisle',pri?'Brave in a primary; few voters reward it yet':'Courts suburbanites, seniors and Latino voters','"Whoever you voted for last time, I want to be your president too."')]});
+      C2('reach','Reach across the aisle',pri?'Brave in a primary · few voters reward it yet':'Courts suburbanites, seniors and Latino voters','"Whoever you voted for last time, I want to be your president too."')]});
   };
   const close=(k,quote)=>{
-    const pri=isPri()&&!o.h2h;let c;
+    let c;
     if(k==='vision')c=1+(g.cred-60)/25+rnd(-1,1);
     else if(k==='contrast')c=(total>0?2:-1)+rnd(-1,1);
     else if(k==='base'){c=pri?2+rnd(-1,1):.3;if(!pri){(DBASE[g.party]||[]).forEach(b=>addBloc(b,.6));DSWING.forEach(b=>addBloc(b,-.3));}}
@@ -1240,9 +1376,10 @@ function debateEngine(o){
     total+=c*.6;own+=c*.6;
     const tx=[line('You',quote,myCol),line(O.n,`"Ask yourself who will actually fight for you when the cameras are gone. I will."`,opCol)];
     recap.push('Closing: '+(c>1.5?'a strong finish.':c>0?'a solid finish.':'it fell flat.'));
+    g.drill=[];g.drillO=0;g.drillZ=0;
     modal({k:`${title} · Closing statements`,t:c>1.5?'You finish strong':c>0?'A solid close':'The close falls flat',wide:true,body:`<div class="dx">${tx.join('')}</div>${room()}`,choices:[{l:o.h2h?'Continue':'See the post-debate spin',f:()=>o.done(total,own,recap)}]});
   };
-  modal({k:title,t:o.h2h||o.kind==='general'?`You vs. ${O.n}`:'The primary debate stage',body:`<p>${o.h2h||o.kind==='general'?'The two nominees take the stage. Three questions, each with a reply and a response, then closing statements.':'The candidates line up under the lights. The frontrunner, '+esc(O.n)+', is your main foil tonight.'}</p><p class="mut">Each answer draws a reply from ${esc(ol)}. Read what they do, then choose how to respond.</p><p class="mut">Prep level: ${g.prep}/3 · Stamina: ${Math.round(g.stamina)}</p>`,choices:[{l:'Take the stage',f:ask}]});
+  modal({k:title,t:o.h2h||o.kind==='general'?`You vs. ${O.n}`:'The primary debate stage',body:`<p>${o.h2h||o.kind==='general'?'The two nominees take the stage. Three questions, each with follow-ups, a reply and your response, then closing statements.':'The candidates line up under the lights. The frontrunner, '+esc(O.n)+', is your main foil tonight.'}</p><p class="mut">Each answer draws a reply from ${esc(ol)}. Read what they do, then choose how to respond. Some answers shift voter blocs for the rest of the campaign.</p><p class="mut">Prep ${g.prep}/3${drill.length?' · drilled: '+drill.map(k=>II[k].n).join(', '):''} · Stamina ${Math.round(g.stamina)}</p>`,choices:[{l:'Take the stage',f:ask}]});
 }
 
 /* =========================================================
@@ -1334,8 +1471,8 @@ const SHOCK_UP=['catches fire after a viral town-hall moment','surges after a wi
 const SHOCK_DN=['stumbles after a bad interview','is hit by a staff shake-up','faces questions over a campaign finance filing','draws criticism for a botched answer on the trail'];
 function newsShocks(){
   if(Math.random()<0.4){
-    if(isPri()){const act=g.rivals.filter(r=>r.active);if(!act.length)return;const r=pickOne(act);const up=Math.random()<0.5;const d=rnd(1.5,3.2)*(up?1:-1);r.mom+=d;logN(`${C[r.id].n} ${pickOne(up?SHOCK_UP:SHOCK_DN)}. (Their momentum ${sgn(d)})`);}
-    else if(ph()==='gen'){const up=Math.random()<0.5;const d=rnd(1,2.5)*(up?1:-1);g.oppMom+=d;logN(`${C[g.opp].n} ${pickOne(up?SHOCK_UP:SHOCK_DN)}. (Their momentum ${sgn(d)})`);}
+    if(isPri()){const act=g.rivals.filter(r=>r.active);if(!act.length)return;const r=pickOne(act);const up=Math.random()<0.5;const d=rnd(1.5,3.2)*(up?1:-1);const hd=pickOne(up?SHOCK_UP:SHOCK_DN);r.mom+=d;logN(`${C[r.id].n} ${hd}. (Their momentum ${sgn(d)})`);mk(`News: ${C[r.id].n.split(' ').pop()} ${hd}`);}
+    else if(ph()==='gen'){const up=Math.random()<0.5;const d=rnd(1,2.5)*(up?1:-1);const hd=pickOne(up?SHOCK_UP:SHOCK_DN);g.oppMom+=d;logN(`${C[g.opp].n} ${hd}. (Their momentum ${sgn(d)})`);mk(`News: ${C[g.opp].n.split(' ').pop()} ${hd}`);}
   }
   if(Math.random()<0.25){const i=pickOne(IK);g.salMod[i]+=0.15;logN(`News cycle: ${II[i].n.toLowerCase()} is suddenly everywhere. (Issue weight up)`);}
 }
@@ -1354,6 +1491,154 @@ function briefing(prev,inc,momBefore){
   g.brief='<b>Since last turn:</b> '+parts.join(' · ')+'.'+(n?` Field offices kept working in ${n} state${n>1?'s':''}.`:'');
   g.lastSnap=now;
 }
+
+/* ---------- This week: time-limited situations that make each turn different ---------- */
+const CITY={PA:'Allentown',MI:'Saginaw',WI:'Green Bay',OH:'Youngstown',GA:'Macon',NC:'Hickory',AZ:'Mesa',NV:'Henderson',IA:'Cedar Rapids',NH:'Manchester',SC:'Spartanburg',MN:'Duluth',VA:'Roanoke',FL:'Lakeland',TX:'Waco',IN:'Kokomo',KY:'Bowling Green',TN:'Chattanooga',AL:'Decatur',MO:'Joplin',IL:'Peoria',NY:'Buffalo',CA:'Fresno',CO:'Pueblo',ME:'Lewiston',NE:'Omaha',NM:'Las Cruces',OK:'Tulsa',WV:'Charleston',KS:'Wichita',LA:'Shreveport',MS:'Tupelo',AR:'Fort Smith',UT:'Ogden',WA:'Spokane',OR:'Medford',MA:'Worcester',NJ:'Camden',MD:'Hagerstown',CT:'Waterbury',SD:'Sioux Falls',ND:'Fargo',ID:'Boise',MT:'Billings',WY:'Casper'};
+const BELL=[['Maricopa County','AZ'],['Erie County','PA'],['Northampton County','PA'],['Bucks County','PA'],['Saginaw County','MI'],['Kent County','MI'],['Door County','WI'],['Sauk County','WI'],['Washoe County','NV'],['Clark County','NV'],['Gwinnett County','GA'],['Cobb County','GA'],['Wake County','NC'],['New Hanover County','NC'],['Hillsborough County','FL'],['Hamilton County','OH'],['Bexar County','TX'],['Washington County','MN'],['Loudoun County','VA'],['Hillsborough County','NH']];
+const ENDN={work:{D:'The building-trades unions',R:'A coalition of small-business owners'},sub:{D:'A bloc of suburban mayors',R:'A bloc of suburban mayors'},young:{D:'The Sunrise Movement',R:'Turning Point Action'},senior:{D:'A national retirees\' alliance',R:'A national retirees\' alliance'},latino:{D:'Latino Victory Fund',R:'The LIBRE Initiative'},black:{D:'A coalition of Black church leaders',R:'A group of Black pastors and business owners'},rural:{D:'The National Farmers Union',R:'Evangelical leaders across the heartland'},union:{D:'The United Auto Workers',R:'The Teamsters'}};
+const HOTD={economy:['Grocery prices just posted their biggest jump in a year.','A jobs report came in far below expectations.'],ai:['A major bank announced it will replace 12,000 back-office jobs with AI.','Deepfake robocalls hit voters in three states.'],health:['A big insurer announced double-digit premium hikes.','A viral video shows a family\'s $80,000 hospital bill.'],immig:['Border crossings spiked again last month.','A raid on a meatpacking plant split a small town in half.'],foreign:['Tensions in the Taiwan Strait are at their highest in decades.','American troops came under fire overseas.'],integrity:['A congressional stock-trading scandal is front-page news.','A state election board is fighting over how to count ballots.'],energy:['Gas prices spiked 40 cents in two weeks.','A record heat wave strained the power grid.'],safety:['A mass shooting dominates the news.','A string of carjackings has a big city on edge.']};
+function tStates(){return isPri()?upcomingStates(2):competitive(9);}
+function issFit(s,i){const ideal=isPri()?medP(s,i):IDEAL[s][i];return clamp(1-Math.abs(g.stances[i]-ideal)/1.1,-1,1);}
+function fitWord(f){return f>0.45?'a strong fit':f>0.05?'a decent fit':f>-0.4?'a shaky fit':'a poor fit';}
+function btop(k){const b=BB[k];return IK.map((i,j)=>[i,b.w[j]]).sort((x,y)=>y[1]-x[1])[0][0];}
+function worstIssue(){return IK.slice().sort((a,b)=>Math.abs(g.stances[b]-want(b))*natSal(b)-Math.abs(g.stances[a]-want(a))*natSal(a))[0];}
+function sideOf(v){return v<-0.5?'L':v>0.5?'R':'C';}
+const capF=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const WKT={
+ plant:{k:'Opportunity',mk:()=>{const pool=tStates().filter(s=>['RUST','PL','S'].includes(S[s].r));if(!pool.length)return null;return {s:pickOne(pool),i:pickOne(['economy','ai']),biz:pickOne(['An auto-parts plant','A distribution center','A steel mill','An appliance factory','A call center']),n:pickOne([300,450,600,800,1200])};},
+  t:w=>`Layoffs in ${S[w.s].n}`,d:w=>`${w.biz} near ${CITY[w.s]||'a mid-sized town'} is cutting ${w.n} jobs, ${w.i==='ai'?'replacing workers with automation':'blaming costs and trade'}. Cameras will follow whoever shows up.`,
+  h:w=>`Your position on ${II[w.i].n.toLowerCase()} (${lc1(posTxt(w.i,g.stances[w.i]))}) is ${fitWord(issFit(w.s,w.i))} for workers there.`,
+  o:w=>[{l:'Visit the workers',ap:1,st:8,s:'Payoff depends on how your position fits',f:()=>{const f=issFit(w.s,w.i);addEff(w.s,1.2+f*2.2);addBloc('work',f>0?0.7:-0.4);addBloc('union',f>0?0.5:-0.3);return f>0.2?'Workers line up to shake your hand, and local news leads with it.':f>-0.2?'A tense but respectful conversation on the factory floor.':`A laid-off worker confronts you on camera about your ${II[w.i].n.toLowerCase()} position.`;}},
+       {l:'Send a statement',ap:0,s:'Free, but voters notice who showed up',f:()=>{addEff(w.s,0.3);return 'A statement goes out. Few people read it.';}}]},
+ endorse:{k:'Opportunity',mk:()=>{const k=pickOne(BKS);return {b:k,nm:ENDN[k][g.party]};},
+  t:w=>`${w.nm} weigh an endorsement`,d:w=>`They could move ${BB[w.b].n.toLowerCase()}, and they want to hear where you stand on ${II[btop(w.b)].n.toLowerCase()}.`,
+  h:w=>{const i=btop(w.b),j=IK.indexOf(i),d=Math.abs(g.stances[i]-BB[w.b].ideal[j]);return `${BB[w.b].sn} are ${MOODS[moodIdx(blocMood(w.b))][0].toLowerCase()} toward you, and your position on ${II[i].n.toLowerCase()} is ${d<0.6?'close to theirs':d<1.3?'a stretch for them':'far from theirs'}.`;},
+  o:w=>{const i=btop(w.b),j=IK.indexOf(i),id=BB[w.b].ideal[j],v=g.stances[i],dir=Math.sign(id-v),can=Math.abs(id-v)>=0.6&&Math.abs(v+dir)<=2;const p=clamp(0.35+blocMood(w.b)*0.12+(1-Math.abs(v-id))*0.25,0.08,0.9);
+   return [{l:'Make the ask, no promises',ap:1,s:`${capF(oddsWord(p))} of landing it`,f:()=>{if(Math.random()<p){addBloc(w.b,1.8);g.mom+=0.5;return `${w.nm} endorse you. ${BB[w.b].sn} warm up.`;}addBloc(w.b,-0.3);return `${w.nm} stay on the sidelines for now.`;}},
+    can?{l:`Promise to move on ${II[i].n.toLowerCase()}`,ap:1,s:`Shift to "${posTxt(i,v+dir)}" · costs credibility · near-certain endorsement`,f:()=>{g.stances[i]=v+dir;g.cred-=5;addBloc(w.b,2.4);g.mom+=0.6;BOPP[w.b].forEach(k=>addBloc(k,-0.4));return `You commit to ${lc1(posTxt(i,v+dir))}. ${w.nm} endorse you, and critics call it a flip-flop.`;}}:null,
+    {l:'Pass',ap:0,s:'Keep your positions where they are',f:()=>'You let this one go.'}].filter(Boolean);}},
+ attackad:{k:'Threat',mk:()=>{const st=tStates();const who=isPri()?(topRival()||{}).id:g.opp;if(!st.length||!who)return null;return {s:pickOne(st.slice(0,5)),who,i:worstIssue(),tag:pickOne(['Not on our watch.','Wrong for us.','Too risky. Too extreme.','We can\'t afford it.'])};},
+  t:w=>`${lastN(C[w.who].n)} goes up on air in ${S[w.s].n}`,d:w=>`A new ad hammers your position on ${II[w.i].n.toLowerCase()}: "${capF(lc1(posTxt(w.i,g.stances[w.i])))}? ${w.tag}"`,
+  h:w=>`If you don't answer it this week, it will cost you in ${S[w.s].n}.`,
+  o:w=>[{l:'Rapid-response ad',ap:1,m:isPri()?1.5:2.5,s:'Neutralizes it',f:()=>{addEff(w.s,0.4);return 'Your response ad is on the air within 24 hours, and the attack fizzles.';}},
+        {l:`Answer it in person`,ap:1,st:10,s:'Neutralizes it and adds a little support',f:()=>{addEff(w.s,1.2*orgM());return `You hold a press conference in ${CITY[w.s]||S[w.s].n} and turn the ad into a story about you.`;}}],
+  ig:w=>{if(isPri()){const r=g.rivals.find(r=>r.id===w.who);if(r)r.eff[w.s]=(r.eff[w.s]||0)+2.5;}else g.oppEff[w.s]=(g.oppEff[w.s]||0)+2.5;return `The unanswered ad in ${S[w.s].n} takes a toll.`;}},
+ disaster:{k:'Moment',mk:()=>{const st=tStates();if(!st.length)return null;const s=pickOne(st.slice(0,6));const r=S[s].r;return {s,kind:r==='W'||r==='SW'?'wildfire':(r==='S'||['FL','TX','NC','SC','GA'].includes(s))?'hurricane':'flooding'};},
+  t:w=>`${capF(w.kind)} hits ${S[w.s].n}`,d:w=>`${w.kind==='wildfire'?'A fast-moving wildfire has forced evacuations':w.kind==='hurricane'?'A hurricane has knocked out power for hundreds of thousands':'Days of flooding have swamped whole towns'} across ${S[w.s].n}. How you respond will be watched closely.`,
+  h:w=>g.heat>6?'With scrutiny this high, a visit risks looking like a photo op.':'Nothing here is free: every choice costs time, money or goodwill.',
+  o:w=>[{l:'Visit and help with relief',ap:1,st:10,s:g.heat>6?'Credibility and support, with a photo-op risk':'Credibility and support there',f:()=>{if(g.heat>6&&Math.random()<0.4){g.mom-=0.8;g.cred+=1;return 'Some coverage calls the visit a photo op.';}g.cred+=3;addEff(w.s,1.6);addBloc('senior',0.3);return 'You hand out water and listen. Local coverage is glowing.';}},
+        {l:'Pause ads and raise money for relief',ap:0,m:1,s:'Costs $1M · a quiet credibility gain',f:()=>{g.cred+=2;return 'You pause campaign ads and raise money for relief groups. Even critics approve.';}},
+        {l:'Keep campaigning as planned',ap:0,s:'No cost now · small risk of a bad look',f:()=>{if(Math.random()<0.35){g.mom-=0.5;return `A reporter asks why you're holding rallies while ${S[w.s].n} recovers.`;}return 'You stay on schedule.';}}]},
+ fundq:{k:'This week',mk:()=>({}),t:()=>'Quarter-end fundraising deadline',d:()=>'Donors give more before the reporting deadline, and the totals will be in the press. Fundraising raises about half again as much this week.',h:()=>'',o:()=>[],mod:'fund'},
+ hostile:{k:'Opportunity',mk:()=>({net:g.party==='D'?pickOne(['Fox News','Newsmax','a top conservative podcast']):pickOne(['CNN','MSNBC','The View'])}),
+  t:w=>`${capF(w.net)} invites you for a town hall`,d:()=>'It\'s hostile territory. Do well and you reach voters who never hear your message; stumble and the clip runs for days.',
+  h:()=>isPri()?'Primary voters respect a candidate who can take a punch, but some will ask why you went.':'A win here moves crossover voters your campaign never reaches.',
+  o:w=>{const P=C[g.cand];const p=clamp(0.35+(stat(P,2)-6)*0.07+(stat(P,3)-6)*0.05+(P.med||0)*0.1,0.12,0.9);return [{l:'Accept',ap:1,st:8,s:`${capF(oddsWord(p))} · it depends on your debate skill and discipline`,f:()=>{if(Math.random()<p){g.mom+=0.8;if(!isPri()){addBloc(g.party==='D'?'work':'sub',0.8);addBloc(g.party==='D'?'rural':'young',0.4);}else g.cred+=2;return 'You hold your own and even win applause. The clip travels well.';}g.mom-=1;g.heat+=1;return 'A testy exchange with the host becomes the story.';}},{l:'Decline',ap:0,s:'No risk',f:()=>'You pass, and your base cheers the snub.'}];}},
+ hotissue:{k:'Opportunity',mk:()=>{const i=pickOne(IK);return {i,hd:pickOne(HOTD[i])};},
+  t:w=>`${II[w.i].n} dominates the news`,d:w=>`${w.hd} Every candidate is being asked where they stand.`,
+  h:w=>`Your position: ${posTxt(w.i,g.stances[w.i])}, ${leanWord(w.i,g.stances[w.i])}.`,
+  o:w=>{const d=Math.abs(g.stances[w.i]-want(w.i));return [{l:'Lead on it with a plan',ap:1,m:.5,st:6,s:d<0.8?'Your position fits the moment':'Risky: your position is out of step right now',f:()=>{g.salMod[w.i]+=0.2;const x=(1.0-d)*1.6;g.mom+=x;g.cred+=1;const ch=applyReact(w.i,sideOf(g.stances[w.i]),1.5);return (x>0?'Your plan leads the coverage.':'Your plan draws fire from all sides.')+reactText(ch);}},{l:'Change the subject',ap:0,s:'Lowers the issue\'s profile a little',f:()=>{g.salMod[w.i]-=0.1;return 'You keep the focus elsewhere, and the story moves on without you.';}}];}},
+ volunteers:{k:'Opportunity',mk:()=>{const st=tStates();return st.length?{s:pickOne(st)}:null;},
+  t:w=>`Volunteer surge in ${S[w.s].n}`,d:()=>'Hundreds of new volunteers signed up after a viral post. They need offices and organizers, fast.',h:w=>`Field offices keep producing support every turn${isPri()?` until ${S[w.s].n} votes, and again in the general`:''}.`,
+  o:w=>[{l:'Open a field office there at half price',ap:1,m:.75,s:'Permanent organization',f:()=>{g.org[w.s]=(g.org[w.s]||0)+1;g.stx.org++;return `A new office opens in ${CITY[w.s]||S[w.s].n}, staffed by the new volunteers.`;}},{l:'Route them to phone banks',ap:0,s:'A small, free bump',f:()=>{addEff(w.s,0.6);return 'They make 40,000 calls in a weekend.';}}]},
+ donors:{k:'Opportunity',when:()=>isPri()&&g.rivals.filter(r=>r.active).length>1,mk:()=>{const r=weakRival();return r?{who:r.id}:null;},
+  t:w=>`${lastN(C[w.who].n)}'s donors are shopping around`,d:w=>`After a rough stretch for ${C[w.who].n}, some of their biggest bundlers are taking meetings.`,h:()=>'',
+  o:w=>[{l:'Take the meetings',ap:1,s:'Money, and it rattles their campaign',f:()=>{const x=2+stat(C[g.cand],1)*0.3;g.money+=x;const r=g.rivals.find(r=>r.id===w.who);if(r)r.mom-=0.8;return `Three major bundlers switch sides (${fmtM(x)}).`;}},{l:'Not now',ap:0,s:'',f:()=>'You stay focused on voters.'}]},
+ probe:{k:'Threat',mk:()=>({x:pickOne(['your book deal','a former consulting client','stock trades by a close aide','old social media posts','a campaign vendor owned by a donor','a speech you gave to bankers'])}),
+  t:()=>'Reporters are digging',d:w=>`A major paper is preparing a story about ${w.x}. You can get ahead of it or wait it out.`,h:()=>'If you do nothing, the story runs at the end of the week.',
+  o:w=>[{l:'Release everything now',ap:1,s:'Takes the air out of it · small chance something embarrassing surfaces',f:()=>{g.heat=Math.max(0,g.heat-2.5);g.cred+=2;if(Math.random()<0.2){g.mom-=0.6;return 'The documents are mostly boring, but one email gets quoted everywhere.';}return 'The story runs on page A14 and dies.';}},
+        {l:'Have the lawyers push back',ap:0,m:.5,s:'Costs $0.5M · it may run anyway',f:()=>{if(Math.random()<0.5)return 'The paper holds the story.';g.heat+=1.5;return 'The story runs anyway, with "the campaign threatened legal action" in paragraph two.';}}],
+  ig:w=>{g.heat+=2;g.cred-=2;return `The story about ${w.x} runs. You had no comment.`;}},
+ bus:{k:'Opportunity',when:()=>!isPri(),mk:()=>{const cp=competitive(10);const c=BELL.filter(x=>cp.includes(x[1]));if(!c.length)return null;const b=pickOne(c);return {cty:b[0],s:b[1]};},
+  t:w=>`Undecided voters in ${w.cty}`,d:w=>`Your data team says ${w.cty}, ${S[w.s].n} is full of persuadable voters who haven't seen a candidate in person.`,h:w=>`${S[w.s].n} is ${tierOf(pollMargin(w.s))==='toss'?'a pure toss-up':'in play'}.`,
+  o:w=>[{l:'Two-day bus tour',ap:2,st:16,m:1,s:`A big push in ${S[w.s].n}`,f:()=>{addEff(w.s,3.6*orgM());return `Eleven stops in two days across ${w.cty}. Local papers put you on the front page.`;}},{l:'Send surrogates instead',ap:1,m:.8,s:'Less effect, no stamina',f:()=>{addEff(w.s,1.6);return `Your surrogates work ${w.cty} all weekend.`;}}]},
+ forum:{k:'Threat',when:()=>isPri()&&upcomingStates(1).length>0,mk:()=>{const s=upcomingStates(1)[0];const i=IK.slice().sort((a,b)=>sal(s,b)-sal(s,a))[Math.floor(Math.random()*2)];return {s,i};},
+  t:w=>`${S[w.s].n} forum on ${II[w.i].n.toLowerCase()}`,d:w=>`A local group in ${CITY[w.s]||S[w.s].n} is hosting a candidate forum. Your rivals will be there.`,h:w=>`Your position is ${fitWord(issFit(w.s,w.i))} for the room. Skip it and your rivals get the stage to themselves.`,
+  o:w=>[{l:'Attend',ap:1,st:6,s:'Payoff depends on your fit',f:()=>{const f=issFit(w.s,w.i);addEff(w.s,1+f*1.8);return f>0.1?'You get the loudest applause of the night.':'Polite applause, and some pointed questions.';}}],
+  ig:w=>{const r=topRival();if(r)r.eff[w.s]=(r.eff[w.s]||0)+1.2;return `You skip the ${S[w.s].n} forum. ${r?C[r.id].n+' owns the room.':''}`;}},
+ celeb:{k:'Opportunity',mk:()=>({who:pickOne(['A Grammy-winning singer','An NFL Hall of Famer','A star podcaster','A beloved sitcom actor','A country music star'])}),
+  t:w=>`${w.who} offers to campaign with you`,d:()=>'They have millions of followers, and a habit of saying whatever comes to mind.',h:()=>'',
+  o:()=>[{l:'Hold a joint rally',ap:1,st:6,s:'Buzz with young voters · they might go off-script',f:()=>{addBloc('young',0.9);if(Math.random()<0.3){g.heat+=2;g.mom-=0.3;return 'The rally is huge, until your guest riffs on a sensitive topic and you spend two days answering for it.';}g.mom+=0.9;return 'Lines around the block, and the clip of you two on stage goes viral.';}},{l:'Politely decline',ap:0,s:'',f:()=>'You thank them and keep it professional.'}]},
+ coach:{k:'Opportunity',when:()=>cal().debate&&cal().debate!=='vp'&&g.prep<3,mk:()=>({}),
+  t:()=>'A veteran debate coach is available',d:()=>'A coach who has prepped three nominees offers you a weekend of mock debates before this week\'s debate.',h:()=>'',
+  o:()=>[{l:'Hire them',ap:0,m:1.5,s:'Costs $1.5M · +1 prep without spending an action',f:()=>{g.prep=Math.min(3,g.prep+1);return 'Two days of brutal mock debates. You feel sharper.';}}]},
+ home:{k:'Threat',when:()=>/Governor of|Governor|governor of/.test(C[g.cand].role||'')&&!/Former governor|former governor/.test(C[g.cand].role||''),mk:()=>({x:pickOne(['a budget standoff','a prison strike','a bridge collapse','a teachers\' strike'])}),
+  t:()=>'A crisis back home',d:w=>`${C[g.cand].home?S[C[g.cand].home].n+' is':'Your state is'} dealing with ${w.x}, and the press wants to know who is running the state.`,h:()=>'If you ignore it, critics will say you abandoned your job.',
+  o:()=>[{l:'Fly home and handle it',ap:1,st:6,s:'Credibility up · costs a day on the trail',f:()=>{g.cred+=3;if(C[g.cand].home)addEff(C[g.cand].home,0.8);return 'You hold a press conference in the capitol and get it resolved. It looks presidential.';}}],
+  ig:()=>{g.cred-=3;g.mom-=0.5;return 'Critics say you are running for a new job while ignoring your current one.';}},
+ vote:{k:'Threat',when:()=>/senator|representative/i.test(C[g.cand].role||'')&&!/former U\.S\. senator|Former/.test(C[g.cand].role||''),mk:()=>({i:pickOne(IK)}),
+  t:w=>`A big vote in Washington on ${II[w.i].n.toLowerCase()}`,d:()=>'Leadership needs you back for a close vote. Missing it would hand your opponents an easy line.',h:w=>`Your position: ${posTxt(w.i,g.stances[w.i])}.`,
+  o:w=>[{l:'Fly back and vote',ap:1,st:8,s:'Credibility up · the issue gets attention',f:()=>{g.cred+=3;g.salMod[w.i]+=0.1;return 'You cast the deciding vote, and the cable networks carry it live.';}}],
+  ig:w=>{g.cred-=3;return `You miss the vote on ${II[w.i].n.toLowerCase()}. "Absent" becomes a talking point.`;}},
+ record:{k:'Threat',when:()=>/Vice President|Secretary/.test(C[g.cand].role||''),mk:()=>({x:pickOne(['the administration\'s tariff policy','a foreign-policy reversal','a controversial pardon','rising prices'])}),
+  t:()=>'You\'re asked to defend the administration',d:w=>`A reporter presses you on ${w.x}. Your old job follows you everywhere.`,h:()=>'Owning it keeps the base happy; breaking with it wins the middle but looks disloyal.',
+  o:()=>[{l:'Defend the record',ap:0,s:'Base likes it, swing voters cool',f:()=>{(DBASE[g.party]||[]).forEach(b=>addBloc(b,0.5));DSWING.forEach(b=>addBloc(b,-0.3));return 'You stand by the record without apology.';}},{l:'Carefully break with it',ap:0,s:'Swing voters notice · base grumbles · credibility risk',f:()=>{DSWING.forEach(b=>addBloc(b,0.5));(DBASE[g.party]||[]).forEach(b=>addBloc(b,-0.4));g.cred-=1;return '"I would have done it differently." It leads every newscast.';}}],
+  ig:()=>{g.heat+=1;return 'Your no-comment becomes its own story.';}},
+};
+function wkGen(){
+  g.week=[];g.wkHist=g.wkHist||[];const recent=new Set(g.wkHist.slice(-4));
+  const ids=Object.keys(WKT).filter(id=>!recent.has(id)&&(!WKT[id].when||WKT[id].when()));
+  const n=isPri()||ph()==='pre'?2:3;const used=[];
+  for(let k=0;k<n&&ids.length;k++){
+    const wt=ids.map(id=>(WKT[id].k==='Threat'?1.1:1)*(id==='fundq'?0.5:1)*(['home','vote','record'].includes(id)?1.3:1));
+    let r=Math.random()*wt.reduce((a,b)=>a+b,0),pi=0;for(;pi<ids.length;pi++){r-=wt[pi];if(r<=0)break;}pi=Math.min(pi,ids.length-1);
+    const id=ids.splice(pi,1)[0];const p=WKT[id].mk();if(!p)continue;g.week.push(Object.assign({tid:id,done:false},p));used.push(id);
+  }
+  g.wkHist=g.wkHist.concat(used).slice(-8);
+}
+function wkMul(mod){return (g.week||[]).some(w=>WKT[w.tid]&&WKT[w.tid].mod===mod)?1.5:1;}
+function wkDo(wi,oi){const w=g.week[wi];if(!w||w.done)return;const T=WKT[w.tid];const o=T.o(w)[oi];if(!o)return;
+  if(g.ap<(o.ap||0)||g.money<(o.m||0)||g.stamina<(o.st||0)){toast('Not enough '+(g.ap<(o.ap||0)?'action points':g.money<(o.m||0)?'money':'stamina')+' for that.');return;}
+  mk('Campaign developments');g._act=T.t(w);spend(o.ap||0,o.m||0,o.st||0);const out=o.f();g.cred=clamp(g.cred,0,100);w.done=true;w.out=out;logN(T.t(w)+': '+out);afterAct();}
+function wkExpire(){(g.week||[]).forEach(w=>{const T=WKT[w.tid];if(!w.done&&T&&T.ig){mk('Campaign developments');const out=T.ig(w);logN(out);mk('Ignored: '+T.t(w));}});g.week=[];}
+function renderWeek(){const el=$('weekPnl');if(!el)return;const W0=(g.week||[]);const sg=sigCard();
+  if(!W0.length&&!sg){el.innerHTML='';el.style.display='none';return;}el.style.display='';
+  el.innerHTML=`<h2>This week</h2>`+sg+W0.map((w,wi)=>{const T=WKT[w.tid];if(!T)return '';let h='',os=[];try{h=T.h?T.h(w):'';os=T.o(w);}catch(e){}
+    const cost=o=>[o.ap?o.ap+' AP':'',o.m?fmtM(o.m):'',o.st?o.st+' stamina':''].filter(Boolean).join(' · ')||'Free';
+    return `<div class="wk ${T.k==='Threat'?'thr':''} ${w.done?'done':''}"><div class="wkk">${esc(T.k)}</div><b>${esc(T.t(w))}</b><p>${esc(T.d(w))}</p>${h&&!w.done?`<p class="wkh">${esc(h)}</p>`:''}`+
+      (w.done?`<p class="wko">${esc(soften(w.out||''))}</p>`:os.map((o,oi)=>`<button class="wkb" data-w="${wi}" data-o="${oi}" ${(g.ap<(o.ap||0)||g.money<(o.m||0)||g.stamina<(o.st||0))?'disabled':''}><span>${esc(o.l)}</span><small>${esc(cost(o))}${o.s?' · '+esc(o.s):''}</small></button>`).join(''))+`</div>`;}).join('');
+  el.querySelectorAll('.wkb').forEach(b=>b.onclick=()=>wkDo(+b.dataset.w,+b.dataset.o));
+  el.querySelectorAll('.sigb').forEach(b=>b.onclick=()=>sigDo());
+}
+/* ---------- Signature moves: one thing only this candidate can do ---------- */
+const priX=x=>isPri()?x*1.4:x;
+function regS(rs,n){return SK.filter(s=>rs.includes(S[s].r)&&targetable(s)).sort((a,b)=>(isPri()?(turnsUntilVote(a)-turnsUntilVote(b)):(Math.abs(genMargin(a))-Math.abs(genMargin(b))))).slice(0,n);}
+function coin(p){return Math.random()<p;}
+const SIG={
+ vance:{n:'Rust Belt plant tour',d:'Three factory towns in two days. Working-class voters love it; suburbanites tune out.',cd:2,f:()=>{const st=regS(['RUST'],3);st.forEach(s=>addEff(s,1.3));addBloc('work',1.1);addBloc('union',0.4);if(!isPri())addBloc('sub',-0.3);return `Hard hats and handshakes in ${st.join(', ')||'the Rust Belt'}.`;}},
+ rubio:{n:'Foreign-policy address',d:'A major speech on America\'s place in the world. Worth more when the world is on fire.',cd:2,f:()=>{const hot=natSal('foreign')>0.55;g.cred+=4;g.mom+=priX(hot?1.6:0.7);addBloc('latino',0.5);return hot?'With the world on edge, the speech lands as a commander-in-chief moment.':'A well-received speech, though voters are focused elsewhere.';}},
+ desantis:{n:'Bill-signing rally',d:'Sign a Florida bill in front of a cheering crowd and dare the press to cover it.',cd:2,f:()=>{g.mom+=priX(0.8);addBloc('rural',0.8);if(!isPri())addBloc('sub',-0.4);else g.cred+=2;return 'A bill-signing rally with a culture-war edge. The base eats it up.';}},
+ haley:{n:'Suburban kitchen-table tour',d:'Small events with suburban women in swing counties.',cd:2,f:()=>{addBloc('sub',1.4);addBloc('senior',0.4);if(isPri())addBloc('rural',-0.4);tStates().slice(0,2).forEach(s=>addEff(s,0.8));return 'Coffee, questions and no teleprompter. Suburban moms like what they hear.';}},
+ cruz:{n:'Marathon floor speech',d:'Hold the floor for hours on a cause the base loves. Exhausting, and it sharpens your debating.',cd:3,stam:15,f:()=>{g.prep=Math.min(3,g.prep+1);g.mom+=priX(0.9);g.heat+=1;return 'Thirteen hours on the floor. Conservative media carries every minute.';}},
+ paul:{n:'Money-bomb day',d:'A one-day online fundraising blitz from your devoted donors.',cd:3,f:()=>{const x=4+Math.max(0,g.mom)*0.8;g.money+=x;addBloc('young',0.5);return `The money bomb raises ${fmtM(x)} in 24 hours.`;}},
+ newsom:{n:'Troll war online',d:'Go after your opponent in their own style. Big reach, real risk.',cd:2,f:()=>{const o=isPri()?topRival():null;if(isPri()&&o)o.mom-=1.3;else if(!isPri())g.oppMom-=1.3;g.heat+=1;if(coin(0.65)){g.mom+=1;return 'Your all-caps posts go mega-viral and the other side is furious.';}g.mom-=0.8;return 'The posts get attention, but plenty of it is "is this presidential?"';}},
+ shapiro:{n:'Commonwealth record tour',d:'Take your Pennsylvania record on the road. In the primary, it doubles as your electability pitch.',cd:2,f:()=>{if(isPri()){g.mom+=1.1;g.cred+=2;addBloc('work',0.5);addBloc('sub',0.4);return 'Your pitch: I win Pennsylvania, and whoever wins Pennsylvania wins the White House. Donors and party leaders are listening.';}const st=['PA','OH','MI','WI'].filter(s=>targetable(s));st.forEach((s,i)=>addEff(s,i===0?2.4:0.9));g.cred+=2;return 'Potholes filled, permits sped up, a bridge rebuilt in 12 days. The record speaks.';}},
+ buttigieg:{n:'Into the lion\'s den',d:'Go on Fox News and make the case to people who never hear it.',cd:2,f:()=>{if(coin(0.8)){addBloc('work',0.7);addBloc('rural',0.5);addBloc('sub',0.4);g.mom+=0.5;return 'Your Fox hit racks up millions of views among Republicans.';}g.mom-=0.5;return 'A host cuts you off repeatedly. You keep your cool, but it\'s a slog.';}},
+ aoc:{n:'Livestream to the base',d:'Go live with millions of supporters. Money and energy, with a cost in the middle.',cd:2,f:()=>{const x=3+Math.max(0,g.mom)*0.5;g.money+=x;addBloc('young',1.2);g.mom+=priX(0.6);if(!isPri()){addBloc('senior',-0.3);addBloc('sub',-0.3);}return `Two million viewers and ${fmtM(x)} in small donations.`;}},
+ kelly:{n:'Border trip with sheriffs',d:'Tour the border with local law enforcement. Trust on security is your edge.',cd:2,f:()=>{g.cred+=3;addBloc('sub',0.6);addBloc('work',0.4);addBloc('latino',0.3);if(targetable('AZ'))addEff('AZ',1.8);return 'Photos of you with Arizona sheriffs lead the evening news.';}},
+ harris:{n:'Call in the coalition',d:'Your network of allies, donors and organizers mobilizes at once.',cd:2,f:()=>{addBloc('black',1.2);addBloc('sub',0.4);g.money+=1.5;return 'Endorsers, donors and organizers move in one coordinated wave.';}},
+ beshear:{n:'Red-county tour',d:'Campaign where Democrats never go. Slow to build, hard to match.',cd:2,f:()=>{addBloc('rural',1.1);addBloc('work',0.6);g.cred+=1;if(isPri())g.nid=Math.min(3,(g.nid||0)+0.4);return 'Diners in counties that went red by 40. People remember that you came.';}},
+ pritzker:{n:'Self-funded blitz',d:'Write a check from your own fortune for ads in three key states.',cd:3,f:()=>{const st=tStates().slice(0,3);st.forEach(s=>addEff(s,adEff(3,s)));g.heat+=0.5;return `Your own money floods ${st.join(', ')} with ads. Critics say you're buying it.`;}},
+ whitmer:{n:'Fix-the-damn-roads swing',d:'A Great Lakes swing built around your record. Union households love it.',cd:2,f:()=>{['MI','WI','PA'].filter(s=>targetable(s)).forEach(s=>addEff(s,1.4));addBloc('union',0.7);return 'Hard hats, orange cones and big crowds across the Great Lakes.';}},
+ moore:{n:'Service town hall',d:'A town hall with veterans and first responders. Your biography does the talking.',cd:2,f:()=>{g.cred+=3;addBloc('black',0.6);addBloc('sub',0.6);g.mom+=0.4;if(isPri())g.nid=Math.min(3,(g.nid||0)+0.3);return 'A veterans\' town hall that ends in a standing ovation.';}},
+ ossoff:{n:'Online fundraising sprint',d:'Your digital team\'s specialty: a 72-hour email and text blitz.',cd:2,f:()=>{const x=4.5+Math.max(0,g.mom)*0.4;g.money+=x;addBloc('young',0.4);return `The sprint raises ${fmtM(x)}.`;}},
+ khanna:{n:'Move into an early state',d:'Rent an apartment and live where the next vote is. In the general, give your AI-economy speech instead.',cd:3,f:()=>{if(isPri()){const s=upcomingStates(2)[0]||'NH';g.org[s]=(g.org[s]||0)+1;addEff(s,2);g.nid=Math.min(3,(g.nid||0)+0.3);return `You move to ${S[s].n} for the stretch run. Locals start calling you a neighbor.`;}addBloc('work',0.6);addBloc('union',0.6);g.cred+=1;return 'Your "AI should work for workers" speech gets wide coverage.';}},
+ emanuel:{n:'Cable-news brawl',d:'Pick a fight on live TV. You win most of them; the base doesn\'t always like how.',cd:2,f:()=>{if(isPri()){const r=topRival();if(r)r.mom-=1.2;}else g.oppMom-=1.2;g.mom+=0.4;addBloc('young',-0.4);g.heat+=1;return 'Ten minutes of sharp-elbowed TV that gets replayed all day.';}},
+ booker:{n:'Marathon speech',d:'Hold the floor for a record-breaking stretch. Inspiring, and exhausting.',cd:3,stam:20,f:()=>{g.mom+=priX(1.2);addBloc('black',0.5);addBloc('young',0.4);return 'Hour after hour on your feet. Millions tune in for the finish.';}},
+ youngkin:{n:'Fleece-vest suburban tour',d:'Kitchen tables and school-board meetings in the suburbs.',cd:2,f:()=>{addBloc('sub',1.3);if(!isPri())addBloc('rural',-0.2);['VA','PA','GA'].filter(s=>targetable(s)).slice(0,2).forEach(s=>addEff(s,0.9));return 'Parents line up to talk schools and costs with you.';}},
+ kemp:{n:'The Georgia machine',d:'Your field operation, built to survive any primary, sets up shop in two more states.',cd:3,f:()=>{const st=[targetable('GA')?'GA':null].concat(tStates().filter(s=>s!=='GA')).filter(Boolean).slice(0,2);st.forEach(s=>g.org[s]=(g.org[s]||0)+1);g.cred+=1;return `Your organizers open shop in ${st.join(' and ')}. Free field offices, for good.`;}},
+ hegseth:{n:'Troops and patriots rally',d:'A flag-waving rally with veterans. The base roars; swing voters wince.',cd:2,f:()=>{addBloc('rural',1.2);addBloc('work',0.6);g.mom+=priX(0.6);g.heat+=1;if(!isPri())addBloc('sub',-0.6);return 'A rally that feels like a pep rally for the whole movement.';}},
+ cuban:{n:'Shark Tank policy pitch',d:'Pitch a policy like a startup, live, with the numbers on screen.',cd:2,f:()=>{if(coin(0.7)){g.mom+=0.9;addBloc('sub',0.6);addBloc('young',0.3);return 'Your health-cost pitch goes viral: "I\'d invest in that."';}g.mom-=0.6;return 'Economists pick apart your numbers on live TV.';}},
+ smitha:{n:'Take over a sports show',d:'Two hours of hot takes on a national sports broadcast. Enormous reach, enormous risk.',cd:2,f:()=>{addBloc('young',0.8);addBloc('work',0.6);if(coin(0.6)){g.mom+=1.6;return 'The segment is the most-watched clip in America.';}g.mom-=1.1;g.heat+=1.5;return 'One take goes too far, and you spend the week walking it back.';}},
+ tucker:{n:'Prime-time monologue',d:'Fifteen minutes straight to camera, aimed at both parties\' establishments.',cd:2,f:()=>{addBloc('rural',0.6);if(!isPri())addBloc('sub',-0.5);if(coin(0.65)){g.mom+=1.6;return 'The monologue racks up 40 million views.';}g.mom-=1;g.heat+=1;return 'The monologue backfires when advertisers and allies distance themselves.';}},
+ trumpjr:{n:'Family rally',d:'Bring the family name to a stadium. The base turns out; the press digs in.',cd:2,f:()=>{addBloc('rural',1);addBloc('work',0.8);g.mom+=priX(0.8);g.heat+=1.5;if(!isPri())addBloc('sub',-0.6);return 'A stadium rally with the family on stage. Wall-to-wall coverage.';}},
+ massie:{n:'Hold the line',d:'Cast a lonely principled vote and dare leadership to punish you.',cd:2,f:()=>{g.cred+=5;addBloc('young',0.5);g.money+=1.5;return 'You\'re the lone no. Donors who love a rebel send money.';}},
+};
+function sigOf(){return SIG[g.cand]||null;}
+function sigReady(){const s=sigOf();if(!s)return false;return g.turn>=(g.sigNext||0);}
+function sigCard(){const s=sigOf();if(!s)return '';const ok=sigReady()&&g.ap>=1&&g.stamina>=(s.stam||6);const wait=(g.sigNext||0)-g.turn;
+  return `<div class="wk sig"><div class="wkk">Signature move · only you</div><b>${esc(s.n)}</b><p>${esc(s.d)}</p>${g.sigOut&&g.sigT===g.turn?`<p class="wko">${esc(soften(g.sigOut))}</p>`:''}<button class="sigb wkb" ${ok?'':'disabled'}><span>${sigReady()?'Do it':'Ready in '+wait+' turn'+(wait>1?'s':'')}</span><small>1 AP · ${s.stam||6} stamina · then ${s.cd} turns to recharge</small></button></div>`;}
+function sigDo(){const s=sigOf();if(!s||!sigReady()||g.ap<1||g.stamina<(s.stam||6))return;mk('Campaign developments');g._act=s.n;spend(1,0,s.stam||6);const out=s.f();g.cred=clamp(g.cred,0,100);g.sigNext=g.turn+s.cd;g.sigOut=out;g.sigT=g.turn;logN(s.n+': '+out);afterAct();}
 
 /* =========================================================
    WILDCARDS (rare, big)
@@ -1653,12 +1938,12 @@ function finishDraft(st){
 }
 function startH2HvsAI(myStances){
   const R0=D.rosters[0],R1=D.rosters[1];
-  const aiSt={};const base=candPool().filter(c=>c.p===D.parties[1]&&!c.wc);const tpl=pickOne(base).s;IK.forEach(i=>aiSt[i]=clamp(Math.round(tpl[i]*0.7+(Math.random()<.2?(Math.random()<.5?-1:1):0)),-2,2));
+  const aiSt={};const base=Object.values(C).filter(c=>c.p===D.parties[1]&&!c.wc);const tpl=pickOne(base).s;IK.forEach(i=>aiSt[i]=clamp(Math.round(tpl[i]*0.7+(Math.random()<.2?(Math.random()<.5?-1:1):0)),-2,2));
   C.h2h0=buildCand('h2h0',D.names[0],D.parties[0],R0,myStances);C.h2h1=buildCand('h2h1',D.names[1],D.parties[1],R1,aiSt);
   pickId='h2h0';pickStances={...myStances};const keep={mode:SET.mode,opp:SET.oppChoice};SET.mode='general';SET.oppChoice='h2h1';
   $('draft').classList.add('hidden');$('game').classList.remove('hidden');window.scrollTo(0,0);
   newGame();SET.mode=keep.mode;SET.oppChoice=keep.opp;
-  g.h2hAI=true;g.h2hCands={h2h0:C.h2h0,h2h1:C.h2h1};g.jit.h2h0=[0,0,0,0,0];g.jit.h2h1=[0,0,0,0,0];g.draftVp=[R0.vp,R1.vp];g.spent=R0.spent;
+  g.h2hAI=true;g.jit.h2h0=[0,0,0,0,0];g.jit.h2h1=[0,0,0,0,0];g.draftVp=[R0.vp,R1.vp];g.spent=R0.spent;
   const x0=rosterExtras(R0),x1=rosterExtras(R1);g.money+=x0.money-10;g.staff=x0.staff;g.oppo=x0.oppo;Object.assign(g.org,x0.org);
   for(const s in x1.org)g.oppEff[s]=(g.oppEff[s]||0)+5;if(x1.money)g.oppMom+=x1.money/15;if(x1.staff>1)g.oppMom+=1;
   g.log=[];logN(`Draft complete. You spent ${R0.spent} capital; ${D.names[1]} spent ${R1.spent}. The general election begins.`);
@@ -1697,7 +1982,7 @@ function h2hWorldStart(){
     for(const s in S.org)S.eff[s]=(S.eff[s]||0)+S.org[s]*0.7*(0.55+stat(P,4)*0.09);
     S.noise={_n:gauss()};SK.forEach(s=>S.noise[s]=gauss()*1.6);S.turnEventDone=false;S.debScore=null;S.done=false;
     if(news)S.log.unshift({t:CAL[W.turn].d,x:news});
-    briefing(S.lastSnap,inc,momBefore);if(W.turn>GEN_START)S.log.unshift({t:CAL[W.turn].d,x:S.brief.replace(/<[^>]+>/g,'')});
+    briefing(S.lastSnap,inc,momBefore);raceReport();wkGen();if(W.turn>GEN_START)S.log.unshift({t:CAL[W.turn].d,x:S.brief.replace(/<[^>]+>/g,'')});
     S.log=S.log.slice(0,40);
   });
 }
@@ -1708,7 +1993,7 @@ function h2hPlay(i){
   setTimeout(()=>runTurnEvent(),300);
 }
 function h2hSideDone(){
-  const i=g.side;
+  const i=g.side;wkExpire();
   const fin=()=>{W.sides[i].done=true;
     if(W.net==='local'){if(i===0)passScreen(1,()=>h2hPlay(1));else h2hResolve();}
     else{const d={env:W.env-H.base.env,oppMom:W.sides[1-i].mom-H.base.oppMom,sal:{}};IK.forEach(k=>d.sal[k]=(W.salMod[k]||0)-(H.base.sal[k]||0));
@@ -1869,7 +2154,7 @@ function render(){
   $('phaseK').textContent={pre:'Invisible primary',pri:'Primary season',conv:'Convention',gen:'General election'}[c.ph]+' · Turn '+(g.turn+1)+' of '+CAL.length;
   $('phaseT').textContent=c.t+(c.c?` — ${c.c.length} contest${c.c.length>1?'s':''} this turn`:'');
   $('phaseSub').textContent=c.sub+(c.debate?' 🎙 Debate at end of turn.':'')+(c.c?' Votes are cast when you end the turn.':'');
-  $('brief').innerHTML=g.brief||'';
+  $('brief').innerHTML=(g.brief||'')+(g.rep||'');
   g.stx.maxHeat=Math.max(g.stx.maxHeat,g.heat);
   // map
   let fill,txt,tip=null,pring=null,psub=null;
@@ -1893,7 +2178,7 @@ function render(){
   }
   $('map').innerHTML=mapSVG(fill,txt,g.sel,tip,pring,psub);
   document.querySelectorAll('#map .tile').forEach(t=>t.onclick=()=>{g.sel=t.dataset.s;render();});
-  renderPolls();renderState();renderActs();renderPlatform();renderCoalition();
+  renderPolls();renderState();renderActs();renderPlatform();renderCoalition();renderWeek();
   $('feed').innerHTML=g.log.map(l=>`<div><span class="t">${esc(l.t)}</span>${esc(l.x)}</div>`).join('');
 }
 function renderPolls(){
@@ -2005,7 +2290,7 @@ seg('optMode','mode',[['full','Full campaign','Primaries, convention and general
 seg('optDiff','diff',[['easy','Easy','Weaker, cheaper opponents'],['normal','Normal','A fair fight'],['hard','Hard','Well-funded opponents, a headwind for you']]);
 seg('optEnv','env',[['neutral','Neutral','An even national climate'],['midterm','Post-2026 midterm mood','Democrats won both chambers in Nov. 2026. Starts D+3'],['random','Random','Anything goes']]);
 if(loadSave())$('btnResume').classList.remove('hidden');
-$('btnResume').onclick=()=>{g=loadSave();if(!g)return;clearDrafted();if(g.h2hCands)Object.assign(C,g.h2hCands);if(g.calVar)applyCal(g.calVar);$('title').classList.add('hidden');$('game').classList.remove('hidden');g.turnEventDone=true;render();if(cal().ph==='conv'&&!g.vp)runConvention();};
+$('btnResume').onclick=()=>{g=loadSave();if(!g)return;if(g.calVar)applyCal(g.calVar);$('title').classList.add('hidden');$('game').classList.remove('hidden');g.turnEventDone=true;render();if(cal().ph==='conv'&&!g.vp)runConvention();};
 $('btnAch').onclick=showAch;
 $('btnH2H').onclick=openH2H;
 $('btnProfile').onclick=showProfile;
@@ -2027,11 +2312,11 @@ function drawPick(){
   $('tabD').className=pickParty==='D'?'onD':'';$('tabR').className=pickParty==='R'?'onR':'';
   const labels=['Name recognition','Fundraising','Debate','Discipline','Organizing'];
   const card=c=>`<div class="card ${c.wc?'wcard':''} ${pickId===c.id?'sel':''}" data-id="${c.id}"><span class="pin" style="background:${partyHex(c.p)}"></span>${c.wc?`<div class="wctag">🃏 ${esc(c.wc.tag)}</div>`:''}<h3>${esc(c.n)}</h3><div class="role">${esc(c.role)} · ${homeN(c)}</div><div class="trait">${esc(c.trait)}</div>${c.st.map((v,i)=>`<div class="statrow"><span>${labels[i]}</span><span class="bar"><i style="width:${v*10}%"></i></span><span class="mono">${v}</span></div>`).join('')}${c.wc?`<ul class="wcrules">${c.wc.rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul><div class="wcch"><b>Challenge:</b> ${esc(c.wc.ch)}</div>`:''}</div>`;
-  const all=candPool().filter(c=>c.p===pickParty);
+  const all=Object.values(C).filter(c=>c.p===pickParty);
   $('cards').innerHTML=all.filter(c=>!c.wc).map(card).join('')+`<div class="wchead"><div class="kicker">Wildcards</div><h3>Unconventional campaigns</h3><p class="mut">Outsiders and long shots, each with special rules and a challenge to complete. Harder, stranger and worth their own achievements.</p></div>`+all.filter(c=>c.wc).map(card).join('');
   document.querySelectorAll('.card').forEach(el=>el.onclick=()=>{pickId=el.dataset.id;pickStances={...C[pickId].s};drawPick();});
   $('btnLaunch').disabled=!pickId;
-  if(SET.mode==='general'){$('oppPick').classList.remove('hidden');const ot=pickParty==='D'?'R':'D';const o=[['random','Random','Weighted toward frontrunners']].concat(candPool().filter(c=>c.p===ot).map(c=>[c.id,c.n+(c.wc?' 🃏':''),homeN(c)]));if(SET.oppChoice!=='random'&&(!C[SET.oppChoice]||C[SET.oppChoice].p!==ot))SET.oppChoice='random';seg('optOpp','oppChoice',o);}
+  if(SET.mode==='general'){$('oppPick').classList.remove('hidden');const ot=pickParty==='D'?'R':'D';const o=[['random','Random','Weighted toward frontrunners']].concat(Object.values(C).filter(c=>c.p===ot).map(c=>[c.id,c.n+(c.wc?' 🃏':''),homeN(c)]));if(SET.oppChoice!=='random'&&(!C[SET.oppChoice]||C[SET.oppChoice].p!==ot))SET.oppChoice='random';seg('optOpp','oppChoice',o);}
   drawStanceEd();
 }
 function drawStanceEd(){
@@ -2059,7 +2344,6 @@ function confirmRestart(){
     {l:'Cancel',f:openMenu}]});
 }
 function goTitle(){
-  clearDrafted();
   $('game').classList.add('hidden');$('pick').classList.add('hidden');$('draft').classList.add('hidden');$('title').classList.remove('hidden');updateProfileBtn();
   $('btnResume').classList.toggle('hidden',!loadSave());
   $('btnAch').textContent='Achievements ('+achCount()+'/'+ACH.length+')';window.scrollTo(0,0);
