@@ -249,6 +249,16 @@ table.rt th{font-family:var(--mono);font-size:10px;color:var(--mut);font-weight:
 .wk b{font-size:14px}.wk p{margin:3px 0;font-size:12.5px;line-height:1.4}.wkh{color:#e3b24f}.wko{color:#8fcf9f;font-style:italic}
 .wkb{display:block;width:100%;text-align:left;margin-top:5px;padding:6px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:inherit;cursor:pointer;font:inherit;font-size:13px}
 .wkb:hover:not([disabled]){border-color:#e3b24f}.wkb[disabled]{opacity:.45;cursor:default}.wkb small{display:block;color:#9aa3b5;font-size:11.5px;margin-top:1px}
+
+.rep summary{cursor:pointer;list-style:none;font-size:12.5px}.rep summary::-webkit-details-marker{display:none}.rep summary b{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9aa3b5}
+.rep summary:after{content:' ▸';color:#9aa3b5}.rep[open] summary:after{content:' ▾'}.rep[open] summary{margin-bottom:4px}
+.rep{padding:5px 10px}
+.acts.wkl{display:flex;flex-direction:column;gap:6px}
+.wk{margin-bottom:0;padding:7px 10px}.wkt{display:flex;align-items:baseline;gap:8px}.wkt b{font-size:13.5px}.wkt .wkk{margin:0;flex:none}
+.wkbs{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;align-items:center}
+.wkb{display:inline-block;width:auto;margin:0;padding:4px 9px;font-size:12.5px}.wkb small{display:inline;margin-left:6px;font-size:11px}
+.wkig{font-size:11px;color:#e0716b}.wko{font-size:12px;margin-top:3px}
+.act.sigact{border-color:rgba(87,196,184,.45);background:rgba(87,196,184,.07)}.act.sigact b{color:#7fd8cd}
 </style>
 </head>
 <body>
@@ -330,7 +340,6 @@ table.rt th{font-family:var(--mono);font-size:10px;color:var(--mut);font-weight:
       </div>
     </div>
     <div class="side">
-      <div class="pnl weekpnl" id="weekPnl"></div>
       <div class="pnl stbox" id="statePnl"></div>
       <div class="pnl">
         <div class="tabs" id="actTabs"></div>
@@ -522,8 +531,8 @@ function raceReport(){
   const rows=Object.values(m).map(r=>{const od=ro?(r.ot[ro]||0):0;r.net=r.me-od;r.mag=Math.abs(r.me)+Object.values(r.ot).reduce((a,b)=>a+Math.abs(b),0);return r;}).filter(r=>r.mag>0.15).sort((a,b)=>b.mag-a.mag).slice(0,6);
   const tot=rows.reduce((a,r)=>a+r.net,0);
   const tag=(nm,d)=>Math.abs(d)<0.15?'':`<span class="${(nm==='You')===(d>0)?'pos':'neg'}">${esc(nm)} ${arrows(d,Math.abs(d))}</span>`;
-  g.rep=`<div class="rep"><div class="rephd"><b>What moved the race</b><span class="${tot>0.4?'pos':tot<-0.4?'neg':'mut'}">${tot>1.5?'A good week for you':tot>0.4?'Slightly your way':tot>-0.4?'Roughly a wash':tot>-1.5?'Slightly against you':'A rough week'}</span></div>`+
-    rows.map(r=>`<div class="reprow"><span>${esc(r.l)}</span><span>${tag('You',r.me)} ${Object.entries(r.ot).map(([k,d])=>tag(oppNm(k),d)).join(' ')}</span></div>`).join('')+(g.repSpend?`<div class="repsp">${esc(g.repSpend)}</div>`:'')+`</div>`;
+  const big=rows[0];g.rep=`<details class="rep"><summary><b>What moved the race</b> <span class="${tot>0.4?'pos':tot<-0.4?'neg':'mut'}">${tot>1.5?'A good week for you':tot>0.4?'Slightly your way':tot>-0.4?'Roughly a wash':tot>-1.5?'Slightly against you':'A rough week'}</span>${big?` <span class="mut">· biggest factor: ${esc(big.l)}</span>`:''}</summary>`+
+    rows.map(r=>`<div class="reprow"><span>${esc(r.l)}</span><span>${tag('You',r.me)} ${Object.entries(r.ot).map(([k,d])=>tag(oppNm(k),d)).join(' ')}</span></div>`).join('')+(g.repSpend?`<div class="repsp">${esc(g.repSpend)}</div>`:'')+`</details>`;
 }
 function spendSnap(){const o={};if(isPri())(g.rivals||[]).filter(r=>r.active).forEach(r=>{for(const s in r.eff)o[r.id+'|'+s]=r.eff[s];});else for(const s in g.oppEff)o['_opp|'+s]=g.oppEff[s];return o;}
 function spendNote(){const b=g._sb||{},n=spendSnap();const by={};for(const k in n){const d=n[k]-(b[k]||0);if(d<=0.3)continue;const [who,s]=k.split('|');(by[who]=by[who]||[]).push([s,d]);}
@@ -660,7 +669,7 @@ function startTurn(){
   if(g.pac>0){const spend=Math.min(g.pac,6);g.pac-=spend;const tg=isPri()?upcomingStates(2).slice(0,4):competitive(5);tg.forEach(s=>addEff(s,spend/tg.length*1.2));}
   // poll noise
   const pq=g.cycle?g.cycle.pollQ[1]:1;g.noise={_n:gauss()*1.0*pq};SK.forEach(s=>g.noise[s]=gauss()*1.6*pq);
-  newsShocks();spendNote();raceReport();wkGen();
+  newsShocks();spendNote();raceReport();wkGen();if(wkOpen())g.tab='week';
   if(c.ph==='gen'&&g.stx.genStart==null)g.stx.genStart=natMargin(genMargin);
   briefing(g.lastSnap,inc,momBefore);if(g.turn>0)logN(g.brief.replace(/<[^>]+>/g,''));
   g.moodPrev={};BKS.forEach(k=>g.moodPrev[k]=blocMood(k));
@@ -1591,15 +1600,16 @@ function wkDo(wi,oi){const w=g.week[wi];if(!w||w.done)return;const T=WKT[w.tid];
   if(g.ap<(o.ap||0)||g.money<(o.m||0)||g.stamina<(o.st||0)){toast('Not enough '+(g.ap<(o.ap||0)?'action points':g.money<(o.m||0)?'money':'stamina')+' for that.');return;}
   mk('Campaign developments');g._act=T.t(w);spend(o.ap||0,o.m||0,o.st||0);const out=o.f();g.cred=clamp(g.cred,0,100);w.done=true;w.out=out;logN(T.t(w)+': '+out);afterAct();}
 function wkExpire(){(g.week||[]).forEach(w=>{const T=WKT[w.tid];if(!w.done&&T&&T.ig){mk('Campaign developments');const out=T.ig(w);logN(out);mk('Ignored: '+T.t(w));}});g.week=[];}
-function renderWeek(){const el=$('weekPnl');if(!el)return;const W0=(g.week||[]);const sg=sigCard();
-  if(!W0.length&&!sg){el.innerHTML='';el.style.display='none';return;}el.style.display='';
-  el.innerHTML=`<h2>This week</h2>`+sg+W0.map((w,wi)=>{const T=WKT[w.tid];if(!T)return '';let h='',os=[];try{h=T.h?T.h(w):'';os=T.o(w);}catch(e){}
-    const cost=o=>[o.ap?o.ap+' AP':'',o.m?fmtM(o.m):'',o.st?o.st+' stamina':''].filter(Boolean).join(' · ')||'Free';
-    return `<div class="wk ${T.k==='Threat'?'thr':''} ${w.done?'done':''}"><div class="wkk">${esc(T.k)}</div><b>${esc(T.t(w))}</b><p>${esc(T.d(w))}</p>${h&&!w.done?`<p class="wkh">${esc(h)}</p>`:''}`+
-      (w.done?`<p class="wko">${esc(soften(w.out||''))}</p>`:os.map((o,oi)=>`<button class="wkb" data-w="${wi}" data-o="${oi}" ${(g.ap<(o.ap||0)||g.money<(o.m||0)||g.stamina<(o.st||0))?'disabled':''}><span>${esc(o.l)}</span><small>${esc(cost(o))}${o.s?' · '+esc(o.s):''}</small></button>`).join(''))+`</div>`;}).join('');
-  el.querySelectorAll('.wkb').forEach(b=>b.onclick=()=>wkDo(+b.dataset.w,+b.dataset.o));
-  el.querySelectorAll('.sigb').forEach(b=>b.onclick=()=>sigDo());
-}
+function wkCost(o){return [o.ap?o.ap+' AP':'',o.m?fmtM(o.m):'',o.st?o.st+' stamina':''].filter(Boolean).join(' · ')||'Free';}
+function wkOpen(){return (g.week||[]).filter(w=>!w.done&&WKT[w.tid]&&WKT[w.tid].o(w).length).length;}
+function renderWeekTab(){const W0=g.week||[];
+  if(!W0.length)return '<div class="mut" style="padding:8px;font-size:12.5px">Nothing unusual this week.</div>';
+  return W0.map((w,wi)=>{const T=WKT[w.tid];if(!T)return '';let os=[];try{os=T.o(w);}catch(e){}
+    return `<div class="wk ${T.k==='Threat'?'thr':''} ${w.done?'done':''}" data-w="${wi}"><div class="wkt"><span class="wkk">${esc(T.k)}</span><b>${esc(T.t(w))}</b></div>`+
+      (w.done?`<div class="wko">${esc(soften(w.out||''))}</div>`:`<div class="wkbs">`+os.map((o,oi)=>`<button class="wkb" data-w="${wi}" data-o="${oi}" ${(g.ap<(o.ap||0)||g.money<(o.m||0)||g.stamina<(o.st||0))?'disabled':''}>${esc(o.l)}<small>${esc(wkCost(o))}</small></button>`).join('')+(T.ig?`<span class="wkig">Ignore it and it costs you</span>`:'')+`</div>`)+`</div>`;}).join('');}
+function wkInfo(wi,oi){const w=g.week[wi],T=WKT[w.tid];let h='',o=null;try{h=T.h?T.h(w):'';if(oi!=null)o=T.o(w)[oi];}catch(e){}
+  $('actInfo').innerHTML=`<div class="h">${esc(T.t(w))}</div><div>${esc(T.d(w))}</div>${h?`<div style="color:var(--gold);margin-top:4px">${esc(h)}</div>`:''}${o&&o.s?`<div class="h">${esc(o.l)}</div><div>${esc(o.s)}</div>`:''}${T.ig?`<div class="h">If you ignore it</div><div>It hits you when you end the turn.</div>`:''}`;}
+
 /* ---------- Signature moves: one thing only this candidate can do ---------- */
 const priX=x=>isPri()?x*1.4:x;
 function regS(rs,n){return SK.filter(s=>rs.includes(S[s].r)&&targetable(s)).sort((a,b)=>(isPri()?(turnsUntilVote(a)-turnsUntilVote(b)):(Math.abs(genMargin(a))-Math.abs(genMargin(b))))).slice(0,n);}
@@ -1637,7 +1647,7 @@ const SIG={
 function sigOf(){return SIG[g.cand]||null;}
 function sigReady(){const s=sigOf();if(!s)return false;return g.turn>=(g.sigNext||0);}
 function sigCard(){const s=sigOf();if(!s)return '';const ok=sigReady()&&g.ap>=1&&g.stamina>=(s.stam||6);const wait=(g.sigNext||0)-g.turn;
-  return `<div class="wk sig"><div class="wkk">Signature move · only you</div><b>${esc(s.n)}</b><p>${esc(s.d)}</p>${g.sigOut&&g.sigT===g.turn?`<p class="wko">${esc(soften(g.sigOut))}</p>`:''}<button class="sigb wkb" ${ok?'':'disabled'}><span>${sigReady()?'Do it':'Ready in '+wait+' turn'+(wait>1?'s':'')}</span><small>1 AP · ${s.stam||6} stamina · then ${s.cd} turns to recharge</small></button></div>`;}
+  return `<button class="act sigact" id="sigBtn" ${ok&&!g.over?'':'disabled'}><b>★ ${esc(s.n)}</b><small>Signature move · only you</small><span class="proj">${sigReady()?'Ready now':'Recharging · '+wait+' turn'+(wait>1?'s':'')}</span><div class="cost">1 AP · ${s.stam||6} stamina</div></button>`;}
 function sigDo(){const s=sigOf();if(!s||!sigReady()||g.ap<1||g.stamina<(s.stam||6))return;mk('Campaign developments');g._act=s.n;spend(1,0,s.stam||6);const out=s.f();g.cred=clamp(g.cred,0,100);g.sigNext=g.turn+s.cd;g.sigOut=out;g.sigT=g.turn;logN(s.n+': '+out);afterAct();}
 
 /* =========================================================
@@ -2178,7 +2188,7 @@ function render(){
   }
   $('map').innerHTML=mapSVG(fill,txt,g.sel,tip,pring,psub);
   document.querySelectorAll('#map .tile').forEach(t=>t.onclick=()=>{g.sel=t.dataset.s;render();});
-  renderPolls();renderState();renderActs();renderPlatform();renderCoalition();renderWeek();
+  renderPolls();renderState();renderActs();renderPlatform();renderCoalition();
   $('feed').innerHTML=g.log.map(l=>`<div><span class="t">${esc(l.t)}</span>${esc(l.x)}</div>`).join('');
 }
 function renderPolls(){
@@ -2219,13 +2229,20 @@ function renderState(){
   $('statePnl').innerHTML=h;
 }
 function renderActs(){
-  const tabs=[['camp','Campaign trail'],['media','Media & money'],['hq','Headquarters']];
+  const nw=wkOpen();const tabs=[['week','This week'+(nw?' · '+nw:'')],['camp','Campaign trail'],['media','Media & money'],['hq','Headquarters']];
   $('actTabs').innerHTML=tabs.map(t=>`<button class="${g.tab===t[0]?'on':''}" data-t="${t[0]}">${t[1]}</button>`).join('');
   document.querySelectorAll('#actTabs button').forEach(b=>b.onclick=()=>{g.tab=b.dataset.t;renderActs();});
+  if(g.tab==='week'){$('acts').className='acts wkl';$('acts').innerHTML=renderWeekTab();
+    document.querySelectorAll('#acts .wkb').forEach(b=>{b.onclick=()=>wkDo(+b.dataset.w,+b.dataset.o);b.onmouseenter=()=>wkInfo(+b.dataset.w,+b.dataset.o);});
+    document.querySelectorAll('#acts .wk').forEach(c=>c.onmouseenter=()=>wkInfo(+c.dataset.w,null));
+    $('actInfo').innerHTML=`<div class="h">This week</div><div>Situations that expire when the turn ends. Hover over one for the details and trade-offs.</div>`;
+    $('btnEnd').textContent=g.ap>0?`End turn (${g.ap} AP unused) →`:'End turn →';return;}
+  $('acts').className='acts';
   const acts=ACTS[g.tab];
-  $('acts').innerHTML=acts.map((a,i)=>{const c=typeof a.c==='function'?a.c():a.c;let pj='';try{pj=a.p?a.p():'';}catch(e){}return `<button class="act" data-i="${i}" ${a.ok()&&!g.over?'':'disabled'}><b>${a.n}</b><small>${esc(a.d)}</small>${pj?`<span class="proj">${esc(pj)}</span>`:''}<div class="cost">${c}</div></button>`;}).join('');
+  $('acts').innerHTML=(g.tab==='camp'?sigCard():'')+acts.map((a,i)=>{const c=typeof a.c==='function'?a.c():a.c;let pj='';try{pj=a.p?a.p():'';}catch(e){}return `<button class="act" data-i="${i}" ${a.ok()&&!g.over?'':'disabled'}><b>${a.n}</b><small>${esc(a.d)}</small>${pj?`<span class="proj">${esc(pj)}</span>`:''}<div class="cost">${c}</div></button>`;}).join('');
   const info=a=>{let n='',l='';try{n=a.now();l=a.later();}catch(e){}$('actInfo').innerHTML=`<div class="h">${esc(a.n)} · right now</div><div>${esc(n)}</div>${l?`<div class="h">Over time</div><div>${esc(l)}</div>`:''}`;};
-  document.querySelectorAll('#acts .act').forEach(b=>{const a=acts[+b.dataset.i];b.onclick=()=>a.f();b.onmouseenter=()=>info(a);b.onfocus=()=>info(a);});
+  const sb=$('sigBtn');if(sb){const S0=sigOf();sb.onclick=()=>sigDo();sb.onmouseenter=()=>{$('actInfo').innerHTML=`<div class="h">${esc(S0.n)} · signature move</div><div>${esc(S0.d)}</div><div class="h">Recharge</div><div>After you use it, it takes ${S0.cd} turns to be ready again.</div>`;};}
+  document.querySelectorAll('#acts .act:not(#sigBtn)').forEach(b=>{const a=acts[+b.dataset.i];b.onclick=()=>a.f();b.onmouseenter=()=>info(a);b.onfocus=()=>info(a);});
   $('actInfo').innerHTML=`<div class="h">Tip</div><div>Hover over an action to see what it does this turn and what it builds over time. Green lines are rough ratings for <b>${g.sel?S[g.sel].n:'the selected state'}</b>; click the map to change states.</div>`;
   $('btnEnd').textContent=g.ap>0?`End turn (${g.ap} AP unused) →`:'End turn →';
 }
