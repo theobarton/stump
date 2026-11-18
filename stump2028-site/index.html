@@ -1135,6 +1135,7 @@ function weakRival(){return g.rivals.filter(r=>r.active).sort((a,b)=>(g.del[a.id
 
 function runTurnEvent(){
   if(!g||g.turnEventDone||g.over||$('game').classList.contains('hidden'))return;
+  if(!$('modal').classList.contains('hidden')){setTimeout(runTurnEvent,400);return;}
   g.turnEventDone=true;
   if(cal().ev==='launch'){launchEvent();return;}
   // wildcard: rare and big (max 3 per game)
@@ -2344,7 +2345,7 @@ function drawStanceEd(){
   document.querySelectorAll('#stanceEd .five button').forEach(b=>b.onclick=()=>{pickStances[b.dataset.i]=+b.dataset.v;drawStanceEd();});
 }
 $('btnLaunch').onclick=()=>{if(!pickId)return;$('pick').classList.add('hidden');$('game').classList.remove('hidden');window.scrollTo(0,0);newGame();};
-$('btnEnd').onclick=()=>{if(!g||g.over||g.turn>=CAL.length||!$('modal').classList.contains('hidden'))return;if(g.h2h)h2hSideDone();else endTurn();};
+$('btnEnd').onclick=()=>{if(!g||g.over||g.turn>=CAL.length||!$('modal').classList.contains('hidden'))return;if(!g.turnEventDone&&!g.h2h){runTurnEvent();return;}if(g.h2h)h2hSideDone();else endTurn();};
 $('btnStances').onclick=()=>openStanceModal();
 function openMenu(){
   const c=g&&!g.over?cal():null;
